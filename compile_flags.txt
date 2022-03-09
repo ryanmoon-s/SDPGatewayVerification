@@ -3,4 +3,10 @@
 -I
 .
 -I
-comm
+Comm
+-I
+Comm/RSATools
+-I
+Comm/TLog
+-I
+Comm/SPAKnock
