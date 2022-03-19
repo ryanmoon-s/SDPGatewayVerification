@@ -33,3 +33,7 @@
 
 # bazel
 bazel*
+
+# openssl lib
+!Libs/openssl/lib64/libcrypto.a
+!Libs/openssl/lib64/libssl.a
