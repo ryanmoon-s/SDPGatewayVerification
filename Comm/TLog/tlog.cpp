@@ -1,11 +1,12 @@
 #include "tlog.h"
 #include <string>
 
+std::string log_level[] = { "DEBUG", "MSGXX", "WARNX", "ERROR", "NODEF"};
+
 void TLog::tlog(LOGLevel level, const char *msg) {
 	time_t t;
 	time(&t);
 	char time_str[20];
-    std::string log_level[] = { "DEBUG", "MSG", "WARN", "ERR", "UNKNOWN"};
     std::string prefix = log_level[level];
 
 	strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", localtime(&t));	

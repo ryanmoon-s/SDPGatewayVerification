@@ -10,3 +10,5 @@ Comm/RSATools
 Comm/TLog
 -I
 Comm/SPAKnock
+-I
+Libs/openssl/include/openssl

@@ -1,11 +1,19 @@
 cc_library(
     name = "tlog",
     srcs = [
+        "tlog.h",
         "tlog.cpp",
+    ],
+    hdrs = [
         "tlog.h",
     ],
     deps = [
+        "//Comm:comm",
     ],
+    copts = [
+        "-std=c++11",
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
@@ -15,6 +23,9 @@ cc_binary(
     ],
     deps = [
         "//Comm/TLog:tlog",
+    ],
+    copts = [
+        "-std=c++11",
     ],
 )
 

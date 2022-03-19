@@ -10,14 +10,19 @@
 #define TCP_PORT_CLIENT              6663
 
 // linux sys includes
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <sys/types.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <arpa/inet.h>
-#include <unistd.h>
+#include <netinet/in.h>
+#include <errno.h>
+#include <error.h>
+#include <string.h>
+#include <time.h>
 
 
 #endif
