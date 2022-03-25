@@ -1,5 +1,4 @@
 #include "tlog.h"
-#include <string>
 
 std::string log_level[] = { "DEBUG", "MSGXX", "WARNX", "ERROR", "NODEF"};
 
