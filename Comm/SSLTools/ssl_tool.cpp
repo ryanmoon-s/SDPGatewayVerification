@@ -2,11 +2,13 @@
 #include "Comm/comm_def.h"
 #include "Comm/TLog/tlog.h"
 
-int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) { 
+int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) 
+{ 
     to_text.clear();
 
     FILE *fp = fopen(key_path.c_str(), "r");
-    if (fp == NULL) {
+    if (fp == NULL) 
+    {
         TLOG((ERR, "fopen error:%s, key_path:%s", strerror(errno), key_path.c_str()));
         return -1;
     }
@@ -32,7 +34,8 @@ int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key
      * 每轮输出大小都是rsa_size
     */
     int limit_size = rsa_size - 42;
-    while (!text.empty()) {
+    while (!text.empty()) 
+    {
         int split_size = std::min(static_cast<int>(text.size()), limit_size); 
         int to_size = RSA_public_encrypt(split_size, (unsigned char*)text.c_str(), 
                 (unsigned char*)to, rsa, RSA_PKCS1_OAEP_PADDING); 
@@ -40,7 +43,8 @@ int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key
 
         // 必须传入to_size，防止数据缺失
         to_text.append(std::string(to, to_size));
-        if (text.size() <= limit_size) {
+        if (text.size() <= limit_size) 
+        {
             break;
         }
         text = text.substr(limit_size);
@@ -53,11 +57,13 @@ int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key
     return 0;
 }
 
-int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) {
+int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) 
+{
     to_text.clear();
 
     FILE *fp = fopen(key_path.c_str(), "r");
-    if (fp == NULL) {
+    if (fp == NULL) 
+    {
         TLOG((ERR, "fopen error:%s, key_path:%s", strerror(errno), key_path.c_str()));
         return -1;
     }
@@ -80,7 +86,8 @@ int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key
      * 每轮输出大小都不超过rsa_size - 42
     */
     int left_size = text.size();
-    while (!text.empty()) {
+    while (!text.empty()) 
+    {
         int to_size = RSA_private_decrypt(rsa_size, (unsigned char*)text.c_str(), (unsigned char*)to, rsa, RSA_PKCS1_OAEP_PADDING);
         SSL_iAssert_LT0(to_size, "RSA_private_decrypt");
 
@@ -96,7 +103,8 @@ int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key
     return 0;
 }
 
-int SSLTools::MD5Encrypt(std::string& to_text, std::string text) {
+int SSLTools::MD5Encrypt(std::string& to_text, std::string text) 
+{
     MD5_CTX ctx;
     char md5_result[BUFSIZ];
     int ret = MD5_Init(&ctx);
@@ -112,7 +120,8 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text) {
     return 0;
 }
 
-int SSLTools::SSL_Init() {
+int SSLTools::SSL_Init() 
+{
     // 初始化
     OpenSSL_add_ssl_algorithms();
     SSL_load_error_strings();
@@ -127,7 +136,8 @@ int SSLTools::SSL_Init() {
     return 0;
 }
 
-int SSLTools::SSL_LoadCertificate(std::string cert, std::string pri_key) {
+int SSLTools::SSL_LoadCertificate(std::string cert, std::string pri_key) 
+{
     // 加载自己的证书
     int ret = SSL_CTX_use_certificate_file(ssl_data_.ctx, cert.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, "SSL_CTX_use_certificate_file");
@@ -143,12 +153,33 @@ int SSLTools::SSL_LoadCertificate(std::string cert, std::string pri_key) {
     return 0;
 }
 
-int SSLTools::SSL_BindSocket(int fd) {
+int SSLTools::SSL_BindSocket(int fd) 
+{
     int ret = SSL_set_fd (ssl_data_.ssl, fd);
     SSL_iAssert_NE1(ret, "SSL_set_fd");
 
     ret = SSL_connect(ssl_data_.ssl);
     SSL_iAssert_NE1(ret, "SSL_connect");
 
+    return 0;
+}
+
+int SSLTools::SSL_DumpCertInfo() 
+{
+    X509 *cert = SSL_get_peer_certificate(ssl_data_.ssl);      
+    SSL_iAssert_NULL(cert, "SSL_get_peer_certificate");
+    TLOG((DEBUG, "Server certificate:/n"));
+
+    char *str = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+    SSL_iAssert_NULL(str, "X509_NAME_oneline");
+    TLOG((DEBUG, "/t subject: %s/n", str));
+    free (str);
+
+    str = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+    SSL_iAssert_NULL(str, "X509_NAME_oneline");
+    TLOG((DEBUG, "/t issuer: %s/n", str));
+    free(str);
+
+    X509_free(cert);
     return 0;
 }

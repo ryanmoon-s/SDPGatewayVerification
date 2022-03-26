@@ -1,5 +1,6 @@
 #include "tlog.h"
 
-int main() {
+int main() 
+{
     TLOG((DEBUG, "my old is %d", 8));
 }

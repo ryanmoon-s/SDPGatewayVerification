@@ -6,10 +6,14 @@
 
 class Client {
 public:
+    // 与SDPController交互，获取通行票据
     int GetTicket();
-    int TLSConnect();
-    
 
+    // 建立SSL加密通道连接
+    int SSL_Connect(std::string ip, int port);
+
+    // 在SSL加密通道下，同步消息
+    int SSL_SyncMsg(std::string msg);
 };
 
 

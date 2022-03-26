@@ -21,9 +21,14 @@ public:
     int MD5Encrypt(std::string& to_text, std::string text);
 
     // SSL加密通道
+    // step 1
     int SSL_Init();
+    // step 2
     int SSL_LoadCertificate(std::string cert, std::string pri_key);
+    // step 3
     int SSL_BindSocket(int fd);
+    // step 4
+    int SSL_DumpCertInfo();
 
 private:
     SSL_Data ssl_data_;

@@ -34,7 +34,7 @@ private:
 #define iAssert(ret, Func)                      \
     do {                                        \
         if (ret < 0) {                          \
-            TLOG((ERR, "Func error"));         \
+            TLOG((ERR, "Func error"));          \
             return -1;                          \
         }                                       \
     } while(0)

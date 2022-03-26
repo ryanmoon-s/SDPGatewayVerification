@@ -1,9 +1,20 @@
-
 cc_binary(
-    name = "my_app",
+    name = "sdp_controller",
     srcs = [
-        "my_app.cpp"
+        "sdp_controller.h"
+        "sdp_controller.cpp"
+    ],
+    hdrs = [
+        "sdp_controller.h"
     ],
     deps = [
+        "//Comm:comm",
+        "//Comm/TLog:tlog",
+        "//Comm/SSLTools:ssl_tools",
+        "//Comm/SPATools:spa_tools",
     ],
+    copts = [
+        "-std=c++11",
+    ],
+    visibility = ["//visibility:public"],
 )

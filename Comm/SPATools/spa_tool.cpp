@@ -7,7 +7,8 @@ static std::string meta_data_str[] = {"account:", "password:", "ip:", "address:"
 /*
  * account,password,ip,address,timestamp,is_valid(0,1),
  */
-int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) {
+int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) 
+{
     std::string text;
     text.append(meta_data_str[0] + voucher.u_acc.user_account + ",");
     text.append(meta_data_str[1] + voucher.u_acc.user_password + ",");
@@ -20,7 +21,8 @@ int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) {
     // encrypt text
     std::string rsa_en_text;
     int ret = SSLTools().RSAEncrypt(rsa_en_text, text, RSA_PUB_KEY_PATH, PUB_ENCRYPT);
-    if (ret < 0) {
+    if (ret < 0) 
+    {
         TLOG((ERR, "RSAEncrypt"));
         return -1;
     }
@@ -28,7 +30,8 @@ int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) {
     // md5 for text
     std::string md5_en_text;
     ret = SSLTools().MD5Encrypt(md5_en_text, text);
-    if (ret < 0) {
+    if (ret < 0) 
+    {
         TLOG((ERR, "MD5Encrypt"));
         return -1;
     }
@@ -40,7 +43,8 @@ int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) {
     return 0;
 }
 
-int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) {
+int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) 
+{
     std::string src = packet.encrypt_spa_voucher;
     std::string rsa_en_text;
     std::string rsa_de_text;
@@ -48,7 +52,8 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) {
     std::string md5_en_text_new;
 
     int pos = src.find(SeparatorForStr);
-    if (pos == src.size()) {
+    if (pos == src.size()) 
+    {
         TLOG((ERR, "SeparatorForStr not found"));
         voucher.is_valid = false;
         return -1;
@@ -58,18 +63,21 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) {
     md5_en_text = src.substr(std::string(SeparatorForStr).size() + pos);
     
     int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_PATH, PUB_ENCRYPT);
-    if (ret < 0) {
+    if (ret < 0) 
+    {
         TLOG((ERR, "RSADecrypt"));
         return -1;
     }
 
     // 验证md5
     ret = SSLTools().MD5Encrypt(md5_en_text_new, rsa_de_text);
-    if (ret < 0) {
+    if (ret < 0) 
+    {
         TLOG((ERR, "MD5Encrypt"));
         return -1;
     }
-    if (md5_en_text_new != md5_en_text) {
+    if (md5_en_text_new != md5_en_text) 
+    {
         TLOG((ERR, "MD5 not match"));
         return -1;
     }
@@ -77,14 +85,16 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) {
 
     // 解包
     ret = _ParseVoucherFromStr(voucher, rsa_de_text);
-    if (ret < 0) {
+    if (ret < 0) 
+    {
         TLOG((ERR, "ParseVoucherFromStr"));
     }
 
     return 0;
 }
 
-int SPATools::_ParseVoucherFromStr(SPAVoucher& voucher, const std::string& str) {
+int SPATools::_ParseVoucherFromStr(SPAVoucher& voucher, const std::string& str) 
+{
     TLOG((DEBUG, "str: %s", str.c_str()));
     std::string value;
 
@@ -115,11 +125,13 @@ int SPATools::_ParseVoucherFromStr(SPAVoucher& voucher, const std::string& str) 
     return 0;
 }
 
-int SPATools::_GetValueFromStr(std::string& value, const std::string& str, const std::string& key) {
+int SPATools::_GetValueFromStr(std::string& value, const std::string& str, const std::string& key) 
+{
     std::string src = str;
 
     int pos = src.find(key);
-    if (pos == src.size()) {
+    if (pos == src.size())
+    {
         TLOG((ERR, "key not found"));
         return -1;
     }
@@ -128,13 +140,15 @@ int SPATools::_GetValueFromStr(std::string& value, const std::string& str, const
     // key:    account:
     // pos:    p
     int value_begin_index = pos + key.size();
-    if (value_begin_index >= src.size()) {
+    if (value_begin_index >= src.size()) 
+    {
         TLOG((ERR, "value not found"));
         return -1;
     }
     src = src.substr(value_begin_index);
     pos = src.find(",");
-    if (pos == src.size()) {
+    if (pos == src.size()) 
+    {
         TLOG((ERR, "format error"));
         return -1;
     }

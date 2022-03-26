@@ -2,7 +2,8 @@
 
 std::string log_level[] = { "DEBUG", "MSGXX", "WARNX", "ERROR", "NODEF"};
 
-void TLog::tlog(LOGLevel level, const char *msg) {
+void TLog::tlog(LOGLevel level, const char *msg) 
+{
 	time_t t;
 	time(&t);
 	char time_str[20];
@@ -18,9 +19,12 @@ void TLog::msg_tlog(LOGLevel level, const char *fmt, ...)
 	va_list ap;
 
     va_start(ap, fmt);
-	if (fmt != NULL) {
+	if (fmt != NULL) 
+    {
         vsnprintf(buf, sizeof(buf), fmt, ap);
-    } else {
+    }
+    else 
+    {
         buf[0] = '\0';
     }
     va_end(ap);
