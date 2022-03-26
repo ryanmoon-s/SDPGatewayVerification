@@ -112,31 +112,43 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text) {
     return 0;
 }
 
-int SSLTools::TLS_Init() {
+int SSLTools::SSL_Init() {
     // 初始化
     OpenSSL_add_ssl_algorithms();
     SSL_load_error_strings();
+
     // 客户端协议(SSLv2/SSLv3/TLSv1)
     const SSL_METHOD* meth = TLSv1_client_method();
-    // 申请SSL会话环境
-    tls_.ctx = SSL_CTX_new(meth);
-    SSL_iAssert_NULL(tls_.ctx, "SSL_CTX_new");
+
+    // 申请SSL会话环境变量
+    ssl_data_.ctx = SSL_CTX_new(meth);
+    SSL_iAssert_NULL(ssl_data_.ctx, "SSL_CTX_new");
 
     return 0;
 }
 
-int SSLTools::TLS_LoadCertificate() {
+int SSLTools::SSL_LoadCertificate(std::string cert, std::string pri_key) {
     // 加载自己的证书
-    int ret = SSL_CTX_use_certificate_file(tls_.ctx, CERTF, SSL_FILETYPE_PEM);
+    int ret = SSL_CTX_use_certificate_file(ssl_data_.ctx, cert.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, "SSL_CTX_use_certificate_file");
 
     // 加载自己的私钥,以用于签名
-    ret = SSL_CTX_use_PrivateKey_file(tls_.ctx, KEYF, SSL_FILETYPE_PEM);
+    ret = SSL_CTX_use_PrivateKey_file(ssl_data_.ctx, pri_key.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, "SSL_CTX_use_PrivateKey_file");
 
     // 调用了以上两个函数后,检验一下自己的证书与私钥是否配对
-    SSL_CTX_check_private_key(tls_.ctx);
+    SSL_CTX_check_private_key(ssl_data_.ctx);
     SSL_iAssert_NE1(ret, "SSL_CTX_check_private_key");
+
+    return 0;
+}
+
+int SSLTools::SSL_BindSocket(int fd) {
+    int ret = SSL_set_fd (ssl_data_.ssl, fd);
+    SSL_iAssert_NE1(ret, "SSL_set_fd");
+
+    ret = SSL_connect(ssl_data_.ssl);
+    SSL_iAssert_NE1(ret, "SSL_connect");
 
     return 0;
 }

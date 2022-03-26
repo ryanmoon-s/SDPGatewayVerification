@@ -12,10 +12,17 @@
 #include <string>
 #include <iostream>
 
-#define PRIKEY "prikey.pem"
-#define PUBKEY "pubkey.pem"
-#define PUB_KEY_PATH "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/pubkey.pem"
-#define PRI_KEY_PATH "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/key.pem"
+#define RSA_PUB_KEY_PATH "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/rsa/pubkey.pem"
+#define RSA_PRI_KEY_PATH "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/rsa/key.pem"
+
+#define SSL_CRT_CA "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/certs/ca.crt"
+
+#define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/client/client.crt"
+#define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/client/client.key"
+
+#define SSL_CRT_SERVER "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/server/server.crt"
+#define SSL_KEY_SERVER "/home/shun/SDPGatewayVerification/Comm/SSLTools/Keys/server/server.key"
+
 
 #define SSL_ERR_TLOG()                                      \
     do {                                                    \

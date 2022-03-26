@@ -8,7 +8,7 @@ enum RSAOP {
     PRI_ENCRYPT, // 私钥加密，公钥解密
 };
 
-struct TLS_Data {
+struct SSL_Data {
     SSL_CTX     *ctx;
     SSL         *ssl;
 };
@@ -20,12 +20,13 @@ public:
     int RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op);
     int MD5Encrypt(std::string& to_text, std::string text);
 
-    // TLS加密通道
-    int TLS_Init();
-    int TLS_LoadCertificate();
+    // SSL加密通道
+    int SSL_Init();
+    int SSL_LoadCertificate(std::string cert, std::string pri_key);
+    int SSL_BindSocket(int fd);
 
 private:
-    TLS_Data tls_;
+    SSL_Data ssl_data_;
 };
 
 #endif

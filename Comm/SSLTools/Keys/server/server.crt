@@ -1,0 +1,47 @@
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: md5WithRSAEncryption
+        Issuer: C=XX, L=Default City, O=Default Company Ltd, CN=shii
+        Validity
+            Not Before: Mar 26 05:42:41 2022 GMT
+            Not After : Mar 23 05:42:41 2032 GMT
+        Subject: C=XX, L=Default City, O=Default Company Ltd, CN=shii
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:ca:0a:8d:58:4c:1f:90:e0:64:9d:90:6f:8e:2f:
+                    56:2b:6f:7a:b3:47:a1:17:72:ab:e3:a3:ac:5e:82:
+                    aa:2e:f4:0c:55:5e:01:bc:d0:bc:c5:e6:48:ad:d2:
+                    3a:78:40:d7:13:fa:0f:bd:3e:8e:49:d5:99:11:c1:
+                    bc:cf:8a:8e:f6:15:04:a3:ab:5f:ba:ca:94:c6:a5:
+                    c6:0c:fd:bb:d5:f3:1e:27:12:b1:7f:91:82:6c:81:
+                    2d:f2:14:5e:58:3a:a0:4f:2a:47:ee:66:a5:db:7c:
+                    79:a5:a2:0c:e7:d9:87:40:80:4b:85:f8:4c:18:06:
+                    28:b6:32:5e:aa:0d:b1:b7:0b
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: md5WithRSAEncryption
+         3e:99:ae:fd:2c:41:ee:30:c4:dc:92:c6:62:54:22:d7:1e:31:
+         5f:ac:de:8d:aa:48:65:d2:4e:4b:61:a0:a9:06:8b:43:52:a8:
+         37:a5:c7:fb:6a:91:6a:1a:7c:2f:6c:14:38:cd:0e:e2:6a:3f:
+         88:86:11:13:a0:22:01:21:18:e4:6a:d2:c3:1c:b7:9d:58:cd:
+         a1:9b:ce:eb:cd:0b:56:0f:43:f5:32:e0:bf:71:61:ac:93:1a:
+         d0:82:45:0e:82:4e:7c:a6:97:9a:7c:42:33:15:65:63:17:1d:
+         79:a0:4a:22:c1:99:8e:c0:b8:38:2e:dc:30:63:ae:b2:18:aa:
+         cd:1c
+-----BEGIN CERTIFICATE-----
+MIICETCCAXoCAQEwDQYJKoZIhvcNAQEEBQAwUTELMAkGA1UEBhMCWFgxFTATBgNV
+BAcMDERlZmF1bHQgQ2l0eTEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDEN
+MAsGA1UEAwwEc2hpaTAeFw0yMjAzMjYwNTQyNDFaFw0zMjAzMjMwNTQyNDFaMFEx
+CzAJBgNVBAYTAlhYMRUwEwYDVQQHDAxEZWZhdWx0IENpdHkxHDAaBgNVBAoME0Rl
+ZmF1bHQgQ29tcGFueSBMdGQxDTALBgNVBAMMBHNoaWkwgZ8wDQYJKoZIhvcNAQEB
+BQADgY0AMIGJAoGBAMoKjVhMH5DgZJ2Qb44vVitverNHoRdyq+OjrF6Cqi70DFVe
+AbzQvMXmSK3SOnhA1xP6D70+jknVmRHBvM+KjvYVBKOrX7rKlMalxgz9u9XzHicS
+sX+RgmyBLfIUXlg6oE8qR+5mpdt8eaWiDOfZh0CAS4X4TBgGKLYyXqoNsbcLAgMB
+AAEwDQYJKoZIhvcNAQEEBQADgYEAPpmu/SxB7jDE3JLGYlQi1x4xX6zejapIZdJO
+S2GgqQaLQ1KoN6XH+2qRahp8L2wUOM0O4mo/iIYRE6AiASEY5GrSwxy3nVjNoZvO
+680LVg9D9TLgv3FhrJMa0IJFDoJOfKaXmnxCMxVlYxcdeaBKIsGZjsC4OC7cMGOu
+shiqzRw=
+-----END CERTIFICATE-----

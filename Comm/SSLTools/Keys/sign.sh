@@ -1,21 +1,16 @@
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
-    echo "Usage: sign.sh dir xx.csr"
+    echo "Usage: ./sign.sh path_to_csr xx.csr"
     exit 1
 fi
 
-# 证书输出的根目录
-sslOutputRoot="/etc/feature_ssl"
-sslOutputRoot=$1
-# 签署的csr文件 
+# csr文件目录
+CSR_PATH=$1
+# csr文件
 CSR=$2
 
-if [ ! -d ${sslOutputRoot} ]; then
-    mkdir -p ${sslOutputRoot}
-fi
-cd ${sslOutputRoot}
-
+cd ${CSR_PATH}
 
 echo "# 开始使用CA根证书签署服务器证书签署文件 ..."
 #
@@ -27,10 +22,16 @@ echo "# 开始使用CA根证书签署服务器证书签署文件 ..."
 #  Copyright (c) 1998-1999 Ralf S. Engelschall, All Rights Reserved.
 #
 
-
+# xx.csr -> xx.crt
 case $CSR in
 *.csr ) CERT="`echo $CSR | sed -e 's/\.csr/.crt/'`" ;;
 * ) CERT="$CSR.crt" ;;
+esac
+
+# xx.csr -> xx.key
+case $CSR in
+*.csr ) KEY="`echo $CSR | sed -e 's/\.csr/.key/'`" ;;
+* ) KEY="$CSR.key" ;;
 esac
 
 #   make sure environment exists
@@ -53,13 +54,13 @@ cat >ca.config <<EOT
 default_ca = CA_own
 [ CA_own ]
 dir = .
-certs = ./certs
+certs = ../certs
 new_certs_dir = ./ca.db.certs
 database = ./ca.db.index
 serial = ./ca.db.serial
 RANDFILE = ./ca.db.rand
-certificate = ./ca.crt
-private_key = ./ca.key
+certificate = ../certs/ca.crt
+private_key = ../certs/ca.key
 default_days = 3650
 default_crl_days = 30
 default_md = md5
@@ -80,7 +81,7 @@ EOT
 echo "CA signing: $CSR -> $CERT:"
 openssl ca -config ca.config -out $CERT -infiles $CSR
 echo "CA verifying: $CERT <-> CA cert"
-openssl verify -CAfile ./certs/ca.crt $CERT
+openssl verify -CAfile ../certs/ca.crt $CERT
 
 
 #  cleanup after SSLeay
@@ -90,7 +91,7 @@ rm -f ca.db.index.old
 
 
 # 修改 server.key 的权限，保证密钥安全
-chmod 400 server.key
+chmod 400 ${KEY}
 
 
 #  die gracefully

@@ -19,7 +19,7 @@ int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) {
 
     // encrypt text
     std::string rsa_en_text;
-    int ret = SSLTools().RSAEncrypt(rsa_en_text, text, PUB_KEY_PATH, PUB_ENCRYPT);
+    int ret = SSLTools().RSAEncrypt(rsa_en_text, text, RSA_PUB_KEY_PATH, PUB_ENCRYPT);
     if (ret < 0) {
         TLOG((ERR, "RSAEncrypt"));
         return -1;
@@ -57,7 +57,7 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) {
     rsa_en_text = src.substr(0, pos);
     md5_en_text = src.substr(std::string(SeparatorForStr).size() + pos);
     
-    int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, PRI_KEY_PATH, PUB_ENCRYPT);
+    int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_PATH, PUB_ENCRYPT);
     if (ret < 0) {
         TLOG((ERR, "RSADecrypt"));
         return -1;
