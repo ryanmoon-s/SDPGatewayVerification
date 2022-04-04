@@ -1,5 +1,5 @@
 #include "ssl_tool.h"
-#include "Comm/comm_def.h"
+#include "Comm/CommDef/comm_def.h"
 #include "Comm/TLog/tlog.h"
 
 int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) 

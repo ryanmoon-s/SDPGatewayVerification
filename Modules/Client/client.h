@@ -1,7 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "Comm/comm_def.h"
+#include "Comm/CommDef/comm_def.h"
 #include "Comm/TLog/tlog.h"
 
 class Client {

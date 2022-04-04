@@ -1,5 +1,5 @@
 cc_library(
-    name = "comm",
+    name = "commdef",
     srcs = [
         "comm_def.h"
     ],

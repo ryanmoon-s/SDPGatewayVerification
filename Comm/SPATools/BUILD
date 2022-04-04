@@ -8,7 +8,7 @@ cc_library(
         "spa_tool.h",
     ],
     deps = [
-        "//Comm:comm",
+        "//Comm/CommDef:commdef",
         "//Comm/TLog:tlog",
         "//Comm/SSLTools:ssl_tools",
     ],

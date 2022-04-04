@@ -1,7 +1,7 @@
 #ifndef SPA_TOOL_H
 #define SPA_TOOL_H
 
-#include "Comm/comm_def.h"
+#include "Comm/CommDef/comm_def.h"
 #include <string>
 
 #include <openssl/err.h>
