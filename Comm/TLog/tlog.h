@@ -14,27 +14,40 @@ enum LOGLevel{
 
 class TLog {
 public:
-    TLog(int line, std::string file, std::string func):_line(line), _file(file), _func(func) {}
-    void msg_tlog(LOGLevel level, const char *fmt, ...);
-    void tlog(LOGLevel level, const char *msg);
+    TLog(int level, int line, std::string file, std::string func):_level(level), _line(line), _file(file), _func(func) {}
+    void msg_tlog(const char *fmt, ...);
+    void tlog(const char *msg);
 
 private:
+    int _level;
     int _line;
     std::string _func;
     std::string _file;
 };
 
 // TLOG((DEBUG, "%d", id));
-#define TLOG(X)	                                  \
-    do {                                          \
-        TLog tlog(__LINE__, __FILE__, __func__);  \
-        tlog.msg_tlog X;                          \
+#define TLOG(Level, Wrap)                                \
+    do {                                                 \
+        TLog tlog(Level, __LINE__, __FILE__, __func__);  \
+        tlog.msg_tlog Wrap;                              \
     } while(0)
 
-#define iAssert(ret, Func)                      \
+#define TLOG_DBG(Wrap)                          \
+    TLOG(DEBUG, Wrap)
+
+#define TLOG_ERR(Wrap)                          \
+    TLOG(ERR, Wrap)
+
+#define TLOG_MSG(Wrap)                          \
+    TLOG(MSG, Wrap)
+
+#define TLOG_WARN(Wrap)                         \
+    TLOG(WARN, Wrap)
+
+#define iAssert(ret, Wrap)                      \
     do {                                        \
         if (ret < 0) {                          \
-            TLOG((ERR, "Func error"));          \
+            TLOG_ERR(Wrap);                     \
             return -1;                          \
         }                                       \
     } while(0)

@@ -2,18 +2,19 @@
 #define CLIENT_H
 
 #include "Comm/CommDef/comm_def.h"
+#include "Comm/CommDef/controller_def.h"
 #include "Comm/TLog/tlog.h"
+#include "Comm/SPATools/spa_tool.h"
 
 class Client {
 public:
-    // 与SDPController交互，获取通行票据
-    int GetTicket();
+    // 与SDPController交互
+    // 获取可访问的应用列表: {<IP, PORT>}
+    int GetAccessibleAppList(set<ACC_LIST_TYPE>& list, const SPAVoucher& vocher);
 
-    // 建立SSL加密通道连接
-    int SSL_Connect(std::string ip, int port);
-
-    // 在SSL加密通道下，同步消息
-    int SSL_SyncMsg(std::string msg);
+    // 与AppGateway交互
+    // 访问应用
+    int AccessApplication();
 };
 
 

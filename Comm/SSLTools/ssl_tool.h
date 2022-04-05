@@ -9,8 +9,32 @@ enum RSAOP {
 };
 
 struct SSL_Data {
-    SSL_CTX     *ctx;
-    SSL         *ssl;
+    SSL_CTX *ctx;
+    SSL     *ssl;
+};
+
+class SSLHelper {
+public:
+    int SSLInit();
+    // for client
+    int SSLConnect(std::string ip, int port);
+    // for server
+    int SSLBindSocket(int fd);
+    // transfer data
+    int SSLSend(const std::string& msg);
+    int SSLRecv(std::string& msg);
+
+private:
+    SSL_Data ssl_data_;
+
+    // step 1
+    int _SSL_Init();
+    // step 2
+    int _SSL_LoadCertificate(std::string cert, std::string pri_key);
+    // step 3
+    int _SSL_BindSocket(int fd);
+    // step 4
+    int _SSL_DumpCertInfo();
 };
 
 class SSLTools {
@@ -20,18 +44,8 @@ public:
     int RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op);
     int MD5Encrypt(std::string& to_text, std::string text);
 
-    // SSL加密通道
-    // step 1
-    int SSL_Init();
-    // step 2
-    int SSL_LoadCertificate(std::string cert, std::string pri_key);
-    // step 3
-    int SSL_BindSocket(int fd);
-    // step 4
-    int SSL_DumpCertInfo();
-
-private:
-    SSL_Data ssl_data_;
+    // 用于建立SSL连接的Client
+    SSLHelper sslclient;
 };
 
 #endif

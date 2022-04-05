@@ -8,7 +8,7 @@ cc_binary(
         "sdp_controller.h"
     ],
     deps = [
-        "//Comm/CommDef:commdef",
+        "//Comm/CommDef:comm_def",
         "//Comm/TLog:tlog",
         "//Comm/SSLTools:ssl_tools",
         "//Comm/SPATools:spa_tools",

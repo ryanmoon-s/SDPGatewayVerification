@@ -8,7 +8,7 @@ cc_binary(
         "client.h",
     ],
     deps = [
-        "//Comm/CommDef:commdef",
+        "//Comm/CommDef:comm_def",
         "//Comm/TLog:tlog",
         "//Comm/SPATools:spa_tools",
         "//Comm/SSLTools:ssl_tools",

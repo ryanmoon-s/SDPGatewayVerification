@@ -1,10 +1,12 @@
 cc_library(
-    name = "commdef",
+    name = "comm_def",
     srcs = [
-        "comm_def.h"
+        "comm_def.h",
+        "controller_def.h",
     ],
     hdrs = [
-        "comm_def.h"
+        "comm_def.h",
+        "controller_def.h",
     ],
     deps = [
     ],

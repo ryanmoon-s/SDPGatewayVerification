@@ -10,7 +10,7 @@ cc_library(
         "ssl_tool.h",
     ],
     deps = [
-        "//Comm/CommDef:commdef",
+        "//Comm/CommDef:comm_def",
         "//Comm/TLog:tlog",
         "//Libs/openssl:ssl",
     ],

@@ -8,7 +8,7 @@ cc_library(
         "tlog.h",
     ],
     deps = [
-        "//Comm/CommDef:commdef",
+        "//Comm/CommDef:comm_def",
     ],
     copts = [
         "-std=c++11",

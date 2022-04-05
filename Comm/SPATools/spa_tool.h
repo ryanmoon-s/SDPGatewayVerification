@@ -31,11 +31,11 @@ struct SPAPacket {
 class SPATools {
 public:
     // SPA凭证 -> SPA数据包
-    int EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher);
+    static int EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher);
     // SPA数据包 -> SPA凭证
-    int DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet);
+    static int DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet);
     // SPA敲门
-    int SPAKnocking(SPAPacket packet);
+    static int SPAKnocking(SPAPacket packet);
 
 private:
     int _ParseVoucherFromStr(SPAVoucher& voucher, const std::string& str); 
