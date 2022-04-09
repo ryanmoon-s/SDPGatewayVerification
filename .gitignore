@@ -34,7 +34,8 @@
 # bazel
 bazel*
 
-# openssl lib
-openssl-3.0.1
+# -- ANTI --
+
+# lib
 !lib64/*
 

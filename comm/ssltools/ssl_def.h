@@ -15,16 +15,16 @@
 #include "comm/commdef//comm_def.h"
 #include "comm/tlog/tlog.h"
 
-#define RSA_PUB_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/rsa/pubkey.pem"
-#define RSA_PRI_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/rsa/key.pem"
+#define RSA_PUB_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/pubkey.pem"
+#define RSA_PRI_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/key.pem"
 
-#define SSL_CRT_CA "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/certs/ca.crt"
+#define SSL_CRT_CA "/home/shun/SDPGatewayVerification/comm/ssltools/keys/certs/ca.crt"
 
-#define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/client/client.crt"
-#define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/client/client.key"
+#define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
+#define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
 
-#define SSL_CRT_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/server/server.crt"
-#define SSL_KEY_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/Keys/server/server.key"
+#define SSL_CRT_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/server/server.crt"
+#define SSL_KEY_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/server/server.key"
 
 enum CMP_CASE_TYPE {
     CMP_TYPE_LT_0,
