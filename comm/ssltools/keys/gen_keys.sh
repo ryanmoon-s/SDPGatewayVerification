@@ -2,7 +2,9 @@
 
 dir_source=`pwd`
 
-# ---------- RSA ----------
+# =========================
+# ========== RSA ==========
+# =========================
 
 dir_rsa="${dir_source}/rsa"
 if [ ! -d ${dir_rsa} ]; then
@@ -16,7 +18,11 @@ echo "# 提取公钥"
 openssl rsa -in key.pem -pubout -out pubkey.pem
 echo "# == CA证书 == "
 
-# ---------- CA ----------
+# =========================
+# ========== SSL ==========
+# =========================
+
+# ----- CA -----
 
 dir_certs="${dir_source}/certs"
 if [ ! -d ${dir_certs} ]; then
@@ -33,7 +39,7 @@ echo "# 生成CA自签名的证书"
 openssl req -new -x509 -key ca.key -out ca.crt 
 
 
-# ---------- Server ----------
+# ----- Server -----
 
 cd ${dir_source}
 dir_server="${dir_source}/server"
@@ -53,7 +59,7 @@ openssl rsa -in server.key -out server.key
 echo "# 生成证书签署请求文件"
 openssl req -new -key server.key -out server.csr
 
-# ---------- Client ----------
+# ----- Client -----
 
 cd ${dir_source}
 dir_client="${dir_source}/client"
@@ -74,7 +80,7 @@ echo "# 生成证书签署请求文件"
 openssl req -new -key client.key -out client.csr
 
 
-# ---------- Sign ----------
+# ----- Sign -----
 
 echo "# == 用CA证书签名 == "
 
