@@ -1,31 +1,29 @@
 cc_library(
     name = "ssl",
     srcs = [
-
     ]+select({
-    "//conditions:default":[        "lib64/libssl.a"],
-    }),
+	"//conditions:default":["lib64/libssl.a"],
+	}),
     hdrs = [
     ],
     includes = ['.', 'include'],
     deps = [
-        "//Libs/openssl:crypto",
+        ":crypto",
     ],
     copts = [
     ],
     linkopts = [
+        "-lpthread",
     ],
     visibility = ["//visibility:public"],
 )
 
-
 cc_library(
     name = "crypto",
     srcs = [
-
     ]+select({
-    "//conditions:default":[        "lib64/libcrypto.a"],
-    }),
+	"//conditions:default":["lib64/libcrypto.a"],
+	}),
     hdrs = [
     ],
     includes = ['.', 'include'],

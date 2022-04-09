@@ -114,22 +114,24 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text)
     ret = MD5_Final((unsigned char*)md5_result, &ctx);
     SSL_iAssert_LT0(ret, ("MD5_Final"));
 
-    to_text = std::string(md5_result);
+    to_text = std::string(md5_result, ret);
     return 0;
 }
 
 int SSLHelper::_SSL_Init() 
 {
     // 初始化
-    OpenSSL_add_ssl_algorithms();
-    SSL_load_error_strings();
+    // OpenSSL_add_ssl_algorithms();
+
+    // undefined reference to `SSL_load_error_strings'
+    // SSL_load_error_strings();
 
     // 客户端协议(SSLv2/SSLv3/TLSv1)
-    const SSL_METHOD* meth = TLSv1_client_method();
+    // const SSL_METHOD* meth = TLSv1_client_method();
 
     // 申请SSL会话环境变量
-    ssl_data_.ctx = SSL_CTX_new(meth);
-    SSL_iAssert_NULL(ssl_data_.ctx, ("SSL_CTX_new"));
+    // ssl_data_.ctx = SSL_CTX_new(meth);
+    // SSL_iAssert_NULL(ssl_data_.ctx, ("SSL_CTX_new"));
 
     return 0;
 }
@@ -164,22 +166,24 @@ int SSLHelper::_SSL_BindSocket(int fd)
 
 int SSLHelper::_SSL_DumpCertInfo() 
 {
-    X509 *cert = SSL_get_peer_certificate(ssl_data_.ssl);      
-    SSL_iAssert_NULL(cert, ("SSL_get_peer_certificate"));
-    TLOG_DBG(("Server certificate:/n"));
+    // undefined reference to `SSL_get_peer_certificate
 
-    char *str = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
-    SSL_iAssert_NULL(str, ("X509_NAME_oneline"));
-    TLOG_DBG(("/t subject: %s/n", str));
-    free (str);
+    // X509 *cert = SSL_get_peer_certificate(ssl_data_.ssl);      
+    // SSL_iAssert_NULL(cert, ("SSL_get_peer_certificate"));
+    // TLOG_DBG(("Server certificate:/n"));
 
-    str = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
-    SSL_iAssert_NULL(str, ("X509_NAME_oneline"));
-    TLOG_DBG(("/t issuer: %s/n", str));
-    free(str);
+    // char *str = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+    // SSL_iAssert_NULL(str, ("X509_NAME_oneline"));
+    // TLOG_DBG(("/t subject: %s/n", str));
+    // free (str);
 
-    X509_free(cert);
-    return 0;
+    // str = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+    // SSL_iAssert_NULL(str, ("X509_NAME_oneline"));
+    // TLOG_DBG(("/t issuer: %s/n", str));
+    // free(str);
+
+    // X509_free(cert);
+    // return 0;
 }
 
 int SSLHelper::SSLInit() 

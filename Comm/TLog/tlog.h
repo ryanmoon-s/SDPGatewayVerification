@@ -25,7 +25,7 @@ private:
     std::string _file;
 };
 
-// TLOG((DEBUG, "%d", id));
+// TLOG_DBG(("%d", id));
 #define TLOG(Level, Wrap)                                \
     do {                                                 \
         TLog tlog(Level, __LINE__, __FILE__, __func__);  \

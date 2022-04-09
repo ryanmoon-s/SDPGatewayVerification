@@ -23,6 +23,7 @@ cc_binary(
     ],
     deps = [
         "//Comm/TLog:tlog",
+        "//Comm/Proto:spa_cc_pb",
     ],
     copts = [
         "-std=c++11",

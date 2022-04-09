@@ -11,6 +11,7 @@ cc_library(
         "//Comm/CommDef:comm_def",
         "//Comm/TLog:tlog",
         "//Comm/SSLTools:ssl_tools",
+        "//Comm/Proto:spa_cc_pb",
     ],
     copts = [
         "-std=c++11",

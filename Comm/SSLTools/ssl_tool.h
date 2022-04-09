@@ -10,7 +10,7 @@ enum RSAOP {
 
 struct SSL_Data {
     SSL_CTX *ctx;
-    SSL     *ssl;
+    SSL   *ssl;
 };
 
 class SSLHelper {
@@ -20,6 +20,7 @@ public:
     int SSLConnect(std::string ip, int port);
     // for server
     int SSLBindSocket(int fd);
+
     // transfer data
     int SSLSend(const std::string& msg);
     int SSLRecv(std::string& msg);
@@ -45,7 +46,7 @@ public:
     int MD5Encrypt(std::string& to_text, std::string text);
 
     // 用于建立SSL连接的Client
-    SSLHelper sslclient;
+    // SSLHelper sslclient;
 };
 
 #endif

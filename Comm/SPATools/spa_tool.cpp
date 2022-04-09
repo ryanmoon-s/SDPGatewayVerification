@@ -7,23 +7,18 @@ static std::string meta_data_str[] = {"account:", "password:", "ip:", "address:"
 /*
  * account,password,ip,address,timestamp,is_valid(0,1),
  */
-int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher) 
+int SPATools::EncryptVoucher(spa::SPAPacket& packet, const spa::SPAVoucher& voucher) 
 {
     std::string text;
-    text.append(meta_data_str[0] + voucher.u_acc.user_account + ",");
-    text.append(meta_data_str[1] + voucher.u_acc.user_password + ",");
-    text.append(meta_data_str[2] + voucher.u_ip + ",");
-    text.append(meta_data_str[3] + voucher.u_address + ",");
-    text.append(meta_data_str[4] + std::to_string(voucher.u_timestamp) + ",");
-    text.append(meta_data_str[5] + (voucher.is_valid ? "1" : "0") + ",");
-    TLOG((DEBUG, "voucher to str: %s", text.c_str()));
+    voucher.SerializeToString(&text);
+    TLOG_DBG(("voucher.SerializeToString: %s", text.c_str()));
 
     // encrypt text
     std::string rsa_en_text;
     int ret = SSLTools().RSAEncrypt(rsa_en_text, text, RSA_PUB_KEY_PATH, PUB_ENCRYPT);
     if (ret < 0) 
     {
-        TLOG((ERR, "RSAEncrypt"));
+        TLOG_ERR(("RSAEncrypt"));
         return -1;
     }
 
@@ -32,20 +27,20 @@ int SPATools::EncryptVoucher(SPAPacket& packet, const SPAVoucher& voucher)
     ret = SSLTools().MD5Encrypt(md5_en_text, text);
     if (ret < 0) 
     {
-        TLOG((ERR, "MD5Encrypt"));
+        TLOG_ERR(("MD5Encrypt"));
         return -1;
     }
 
-    packet.encrypt_spa_voucher = rsa_en_text + SeparatorForStr + md5_en_text;
+    packet.set_encrypt_spa_voucher(rsa_en_text + SeparatorForStr + md5_en_text);
     // 中间有\0，可能显示不完全
-    TLOG((DEBUG, "encrypt_spa_voucher: %s", packet.encrypt_spa_voucher.c_str()));
+    TLOG_DBG(("encrypt_spa_voucher: %s", packet.encrypt_spa_voucher().c_str()));
 
     return 0;
 }
 
-int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet) 
+int SPATools::DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAPacket& packet) 
 {
-    std::string src = packet.encrypt_spa_voucher;
+    std::string src = packet.encrypt_spa_voucher();
     std::string rsa_en_text;
     std::string rsa_de_text;
     std::string md5_en_text;
@@ -54,8 +49,8 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet)
     int pos = src.find(SeparatorForStr);
     if (pos == src.size()) 
     {
-        TLOG((ERR, "SeparatorForStr not found"));
-        voucher.is_valid = false;
+        TLOG_ERR(("SeparatorForStr not found"));
+        voucher.set_is_valid(false);
         return -1;
     }
 
@@ -65,7 +60,7 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet)
     int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_PATH, PUB_ENCRYPT);
     if (ret < 0) 
     {
-        TLOG((ERR, "RSADecrypt"));
+        TLOG_ERR(("RSADecrypt"));
         return -1;
     }
 
@@ -73,89 +68,23 @@ int SPATools::DecryptVoucher(SPAVoucher& voucher, const SPAPacket& packet)
     ret = SSLTools().MD5Encrypt(md5_en_text_new, rsa_de_text);
     if (ret < 0) 
     {
-        TLOG((ERR, "MD5Encrypt"));
+        TLOG_ERR(("MD5Encrypt"));
         return -1;
     }
     if (md5_en_text_new != md5_en_text) 
     {
-        TLOG((ERR, "MD5 not match"));
+        TLOG_ERR(("MD5 not match:\nold:%s\nnew:%s", md5_en_text.c_str(), md5_en_text_new.c_str()));
         return -1;
     }
-    TLOG((DEBUG, "RSADecrypt success and MD5 match, str:%s", rsa_de_text.c_str()));
+    TLOG_DBG(("RSADecrypt success, MD5 match, str:%s", rsa_de_text.c_str()));
 
     // 解包
-    ret = _ParseVoucherFromStr(voucher, rsa_de_text);
-    if (ret < 0) 
+    ret = voucher.ParseFromString(rsa_de_text);
+    if (ret == false) 
     {
-        TLOG((ERR, "ParseVoucherFromStr"));
+        TLOG_ERR(("voucher.ParseFromString"));
     }
 
     return 0;
 }
 
-int SPATools::_ParseVoucherFromStr(SPAVoucher& voucher, const std::string& str) 
-{
-    TLOG((DEBUG, "str: %s", str.c_str()));
-    std::string value;
-
-    int ret = _GetValueFromStr(value, str, meta_data_str[0]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.u_acc.user_account = value;
-
-    ret = _GetValueFromStr(value, str, meta_data_str[1]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.u_acc.user_password = value;
-
-    ret = _GetValueFromStr(value, str, meta_data_str[2]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.u_ip = value;
-
-    ret = _GetValueFromStr(value, str, meta_data_str[3]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.u_address= value;
-
-    ret = _GetValueFromStr(value, str, meta_data_str[4]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.u_timestamp = static_cast<uint32_t>(stoi(value));
-
-    ret = _GetValueFromStr(value, str, meta_data_str[5]); 
-    iAssert(ret, _GetValueFromStr);
-    voucher.is_valid = stoi(value);
-
-    return 0;
-}
-
-int SPATools::_GetValueFromStr(std::string& value, const std::string& str, const std::string& key) 
-{
-    std::string src = str;
-
-    int pos = src.find(key);
-    if (pos == src.size())
-    {
-        TLOG((ERR, "key not found"));
-        return -1;
-    }
-
-    // str:    account:xxx
-    // key:    account:
-    // pos:    p
-    int value_begin_index = pos + key.size();
-    if (value_begin_index >= src.size()) 
-    {
-        TLOG((ERR, "value not found"));
-        return -1;
-    }
-    src = src.substr(value_begin_index);
-    pos = src.find(",");
-    if (pos == src.size()) 
-    {
-        TLOG((ERR, "format error"));
-        return -1;
-    }
-
-    // xxx,
-    // 0  p
-    value = src.substr(0, pos);
-
-    return 0;
-}

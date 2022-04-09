@@ -36,6 +36,5 @@ bazel*
 
 # openssl lib
 openssl-3.0.1
-!Libs/openssl/lib64/libcrypto.a
-!Libs/openssl/lib64/libssl.a
+!lib64/*
 
