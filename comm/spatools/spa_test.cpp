@@ -10,7 +10,7 @@ int main() {
     voucher.set_address("ChengDu");
     voucher.set_is_valid(true);
     voucher.set_timestamp(time(NULL));
-
+    
     SPATools tool;
     spa::SPAPacket packet;
     tool.EncryptVoucher(packet, voucher);

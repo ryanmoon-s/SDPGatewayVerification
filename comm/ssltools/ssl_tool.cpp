@@ -118,6 +118,22 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text)
     return 0;
 }
 
+SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key) 
+{
+    int ret = _SSL_Init();
+    if (ret < 0)
+    {
+        TLOG_ERR(("_SSL_Init"));
+    }
+
+    // 装载证书
+    ret = _SSL_LoadCertificate(cert, pri_key);
+    if (ret < 0)
+    {
+        TLOG_ERR(("_SSL_LoadCertificate"));
+    }
+}
+
 int SSLConnector::_SSL_Init() 
 {
     // 初始化
@@ -151,17 +167,6 @@ int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string pri_key)
     return 0;
 }
 
-int SSLConnector::_SSL_BindSocket(int fd) 
-{
-    int ret = SSL_set_fd(ssl_data_.ssl, fd);
-    SSL_iAssert_NE1(ret, ("SSL_set_fd fd:%d", fd));
-
-    ret = SSL_connect(ssl_data_.ssl);
-    SSL_iAssert_NE1(ret, ("SSL_connect fd:%d", fd));
-
-    return 0;
-}
-
 int SSLConnector::_SSL_DumpCertInfo() 
 {
     X509 *cert = SSL_get_peer_certificate(ssl_data_.ssl);      
@@ -182,62 +187,34 @@ int SSLConnector::_SSL_DumpCertInfo()
     return 0;
 }
 
-int SSLConnector::SSLInit() 
+int SSLConnector::SSLConnect(int fd) 
 {
-    int ret = 0;
-    ret = _SSL_Init();
-    iAssert(ret, ("_SSL_Init"));
+    int ret = SSL_set_fd(ssl_data_.ssl, fd);
+    SSL_iAssert_NE1(ret, ("SSL_set_fd fd:%d", fd));
+
+    ret = SSL_connect(ssl_data_.ssl);
+    SSL_iAssert_NE1(ret, ("SSL_connect fd:%d", fd));
 
     return 0;
 }
 
-int SSLConnector::SSLConnectToServer(std::string ip, int port) 
+int SSLConnector::SSLAccept(int fd) 
 {
-    int ret = 0, fd;
-    struct sockaddr_in addr;
+    int ret = SSL_set_fd(ssl_data_.ssl, fd);
+    SSL_iAssert_NE1(ret, ("SSL_set_fd fd:%d", fd));
 
-    fd = socket(AF_INET, SOCK_STREAM, 0); 
-    iAssert(fd, ("socket"));
-
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(ip.c_str());
-    addr.sin_port = htons(port);
-
-    ret = connect(fd, (struct sockaddr*)&addr, sizeof(addr));
-    iAssert(ret, ("connect ip:%s port:%d", ip.c_str(), port));
-
-    ret = _SSL_BindSocket(fd);
-    iAssert(ret, ("_SSL_BindSocket fd:%d", fd));
+    ret = SSL_accept(ssl_data_.ssl);
+    SSL_iAssert_NE1(ret, ("SSL_accept fd:%d", fd));
 
     return 0;
 }
 
-int SSLConnector::SSLBindClientSocket(int fd) 
+int SSLConnector::SSLWrite(const char* buf, int size) 
 {
-    int ret = _SSL_BindSocket(fd);
-    iAssert(ret, ("_SSL_BindSocket fd:%d", fd));
-
-    return 0;
+    return SSL_write(ssl_data_.ssl, buf, size); 
 }
 
-int SSLConnector::SSLSend(const std::string& msg) 
+int SSLConnector::SSLRead(char* buf, int size) 
 {
-    int ret = 0;
-    ret = SSL_write(ssl_data_.ssl, msg.c_str(), sizeof(msg)); 
-    iAssert(ret, ("SSL_write %s", msg.c_str()));
-
-    return ret;
-}
-
-int SSLConnector::SSLRecv(std::string& msg) 
-{
-    int ret = 0;
-    char buf[BUFSIZ];
-
-    while (ret > 0) {
-        ret = SSL_read(ssl_data_.ssl, buf, sizeof(buf));
-        msg.append(buf);
-    }
-
-    return msg.size();
+    return SSL_read(ssl_data_.ssl, buf, size);
 }

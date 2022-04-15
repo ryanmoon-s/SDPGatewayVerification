@@ -52,6 +52,22 @@ private:
         }                                       \
     } while(0)
 
+#define iAssertRetNull(ret, Wrap)                      \
+do {                                        \
+    if (ret < 0) {                          \
+        TLOG_ERR(Wrap);                     \
+        return;                          \
+    }                                       \
+} while(0)
+
+#define iAssertNull(ret, Wrap)                  \
+    do {                                        \
+        if (ret == NULL) {                      \
+            TLOG_ERR(Wrap);                     \
+            return -1;                          \
+        }                                       \
+    } while(0)
+
 
 #endif
 

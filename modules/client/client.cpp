@@ -14,9 +14,9 @@ int GetAccessibleAppList(vector<pair<std::string, int>>& list, const spa::SPAVou
     time_t now = time(NULL);
     SSLConnector connector;
     do {
-        ret = connector.SSLConnectToServer(IP_CONTROLLER, TCP_PORT_CONTROLLER);
+        ret = connector.SSLConnect(IP_CONTROLLER, TCP_PORT_CONTROLLER);
     } while(ret != 0 && time(NULL) - now < SPA_WAIT_TIME);
-    iAssert(ret, ("SSLConnectToServer ip:%s port:%d", IP_CONTROLLER, TCP_PORT_CONTROLLER));
+    iAssert(ret, ("SSLConnect ip:%s port:%d", IP_CONTROLLER, TCP_PORT_CONTROLLER));
 
     // 获取可访问的应用列表
     

@@ -1,0 +1,10 @@
+syntax = "proto2";  
+package erpc;
+
+message TestFuncReq {
+    optional string str = 1; 
+}
+
+message TestFuncRsp {
+    optional string str = 1; 
+}
