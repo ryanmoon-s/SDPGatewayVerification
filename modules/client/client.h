@@ -6,6 +6,8 @@
 #include "comm/tlog/tlog.h"
 #include "comm/spatools/spa_tool.h"
 #include "comm/ssltools/ssl_tool.h"
+#include "comm/erpc/erpc_client.h"
+#include "comm/erpc/erpc_handler.h"
 
 #include <vector>
 

@@ -35,10 +35,12 @@ public:
 
 private:
     int _MakeListenFd(int port);
+    int _MakeUdpFd(int port);
 
 private:
     int local_fd_ = 0;
     int listen_fd_ = 0;
+    int udp_fd_ = 0;
     EpollData epoll_data_;
 };
 

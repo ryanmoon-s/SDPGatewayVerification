@@ -10,6 +10,9 @@ EpollDispatcher::EpollDispatcher(int port)
 
     int ret = _MakeListenFd(port);
     iAssertNoRet(ret, ("_MakeListenFd faild"));
+
+    ret = _MakeUdpFd(port);
+    iAssertNoRet(ret, ("_MakeUdpFd faild"));
 }
 
 EpollDispatcher::~EpollDispatcher() 
@@ -110,6 +113,10 @@ int EpollDispatcher::Dispatch()
                     TLOG_ERR(("HandleNetAccept faild"));
                 }
             }
+            else if (fd == udp_fd_)
+            {
+                // UDP 请求
+            }
             else if (fd == local_fd_)
             {
                 // 暂未使用
@@ -163,7 +170,7 @@ int EpollDispatcher::_MakeListenFd(int port)
     FdDataType fd_data;
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER);
+    addr.sin_addr.s_addr = inet_addr(IP_LOCAL_ADDR);
     addr.sin_port = htons(port);
 
     listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 
@@ -184,8 +191,32 @@ int EpollDispatcher::_MakeListenFd(int port)
     fd_data.event_type = EPOLLIN | EPOLLET;
     fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);
 
-    DispatcherAdd(fd_data);
-    iAssert(ret, ("DispatcherAdd: listen_fd_"));
+    ret = DispatcherAdd(fd_data);
+    iAssert(ret, ("DispatcherAdd listen_fd:%d", listen_fd_));
 
     return 0;
+}
+
+int EpollDispatcher::_MakeUdpFd(int port)
+{
+    int ret = 0;
+    FdDataType fd_data;
+
+    udp_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
+    iAssert(udp_fd_, ("socket udp_fd:%d", udp_fd_));
+
+    struct sockaddr_in addr;
+ 
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = inet_addr(IP_LOCAL_ADDR);
+ 
+	ret = bind(udp_fd_, (struct sockaddr*)&addr, sizeof(addr));
+    iAssert(ret, ("bind udp_fd:%d", udp_fd_));
+
+    fd_data.fd = udp_fd_;
+    fd_data.event_type = EPOLLIN | EPOLLET;
+
+    ret = DispatcherAdd(fd_data);
+    iAssert(ret, ("DispatcherAdd udp_fd:%d", udp_fd_));
 }

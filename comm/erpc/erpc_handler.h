@@ -27,10 +27,13 @@ public:
 
 public:
     // 读取与发送数据包
-    int SSLRead(std::string& outstr, std::shared_ptr<SSLConnector> connector);
-    int SSLWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector);
-    int SimpleRead(std::string& outstr, int fd);
-    int SimpleWrite(const std::string& instr, int fd);
+    int HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector);
+    int HandleWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector);
+    int HandleRead(std::string& outstr, int fd);
+    int HandleWrite(const std::string& instr, int fd);
+
+    int UDPRecv(std::string& outstr, int fd, std::string& from_ip, int& from_port);
+    int UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port);
 
 public:
     ErpcHandler() {}

@@ -21,23 +21,23 @@ int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
     std::string PacketReq;
     std::string PacketRsp;
 
-    int ret = SSLRead(PacketReq, connector);
+    int ret = HandleRead(PacketReq, connector);
     if (ret == 0)
     {
-        TLOG_MSG(("SSLRead 0 bytes, can't handle"));
+        TLOG_MSG(("HandleRead 0 bytes, can't handle"));
         return 0;
     }
     else if (ret < 0)
     {
-        TLOG_ERR(("SSLRead error"));
+        TLOG_ERR(("HandleRead error"));
         return ret;
     }
 
     ret = _ParseRequestAndForward(PacketReq, PacketRsp);
     iAssert(ret, ("_ParseRequestAndForward"));
 
-    ret = SSLWrite(PacketRsp, connector);
-    iAssert(ret, ("SSLWrite"));
+    ret = HandleWrite(PacketRsp, connector);
+    iAssert(ret, ("HandleWrite"));
 
     return 0;
 }
@@ -100,13 +100,13 @@ int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::
     std::string PacketRspStr;
     _PackDataToString(PacketReqStr, PacketReq, 0);
 
-    ret = SSLWrite(PacketReqStr, connector);
+    ret = HandleWrite(PacketReqStr, connector);
     if (ret != PacketReqStr.size()) 
     {
         TLOG_ERR(("Write faild, write:%d/%d", ret, PacketReqStr.size()));
     }
 
-    ret = SSLRead(PacketRspStr, connector);
+    ret = HandleRead(PacketRspStr, connector);
     iAssert(ret, ("Wait for response faild"));
 
     ret = _ParseDataFromString(PacketRsp, PacketRspStr, 1);
@@ -233,7 +233,7 @@ T ErpcHandler::_MemoryCorpToObject(const std::string& str)
     return *(T*)(str.c_str());
 }
 
-int ErpcHandler::SSLRead(std::string& outstr, std::shared_ptr<SSLConnector> connector)
+int ErpcHandler::HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector)
 {
     char buff[RD_BUF_SIZE];
     int n = 0, total = 0;
@@ -261,7 +261,7 @@ int ErpcHandler::SSLRead(std::string& outstr, std::shared_ptr<SSLConnector> conn
     return n;
 }
 
-int ErpcHandler::SSLWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector)
+int ErpcHandler::HandleWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector)
 {
     int n = 0, total = 0, w_size = instr.size();
     std::string str = instr;
@@ -297,7 +297,7 @@ int ErpcHandler::SSLWrite(const std::string& instr, std::shared_ptr<SSLConnector
     return total;
 }
 
-int ErpcHandler::SimpleRead(std::string& outstr, int fd)
+int ErpcHandler::HandleRead(std::string& outstr, int fd)
 {
     char buff[RD_BUF_SIZE];
     int n = 0, total = 0;
@@ -325,7 +325,7 @@ int ErpcHandler::SimpleRead(std::string& outstr, int fd)
     return n;
 }
 
-int ErpcHandler::SimpleWrite(const std::string& instr, int fd)
+int ErpcHandler::HandleWrite(const std::string& instr, int fd)
 {
     int n = 0, total = 0, w_size = instr.size();
     std::string str = instr;
@@ -361,3 +361,55 @@ int ErpcHandler::SimpleWrite(const std::string& instr, int fd)
     return total;
 }
 
+int ErpcHandler::UDPRecv(std::string& outstr, int fd, std::string& from_ip, int& from_port)
+{
+    int ret = 0, n = 0;
+    char buff[RD_BUF_SIZE];
+    struct sockaddr_in addr;
+    socklen_t len;
+
+    len = sizeof(addr);
+    n = recvfrom(fd, buff, RD_BUF_SIZE, 0, (sockaddr*)&addr, &len);
+    if (ret == 0)
+    {
+        // re new socket ??
+    }
+    else if (ret < 0)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            return 0;
+        }
+        else if (errno == EINTR)
+        {
+            return 0;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    outstr.assign(buff, n);
+    from_ip.assign(inet_ntoa(addr.sin_addr));
+    from_port = addr.sin_port;
+
+    TLOG_DBG(("size:%d", outstr.size()));
+
+    return 0;
+}
+
+int ErpcHandler::UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port)
+{
+    int ret = 0;
+    struct sockaddr_in addr;
+ 
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(dest_port);
+	addr.sin_addr.s_addr = inet_addr(dest_ip.c_str());
+
+    ret = sendto(fd, outstr.c_str(), outstr.size(), 0, (sockaddr*)&addr, sizeof(addr));
+    iAssert(ret, ("sendto faild, ip:%s, port:%d, errmsg:%s", dest_ip.c_str(), dest_port, strerror(errno)));
+
+    return 0;
+}
