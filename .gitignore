@@ -6,3 +6,4 @@ bazel*
 # lib
 !lib64/*
 
+.vscode/*

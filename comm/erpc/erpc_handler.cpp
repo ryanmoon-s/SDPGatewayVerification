@@ -1,4 +1,5 @@
 #include "erpc_handler.h"
+#include "comm/ssltools/ssl_def.h"
 
 using namespace erpc_def;
 using namespace erpc_service;
@@ -20,8 +21,17 @@ int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
     std::string PacketReq;
     std::string PacketRsp;
 
-    int ret = _HandleRead(PacketReq, connector);
-    iAssert(ret, ("_HandleRead"));
+    int ret = _HandleRead(PacketReq, connector, 0);
+    if (ret == 0)
+    {
+        TLOG_MSG(("_HandleRead 0 bytes, can't handle"));
+        return 0;
+    }
+    else if (ret < 0)
+    {
+        TLOG_ERR(("_HandleRead error"));
+        return ret;
+    }
 
     ret = _ParseRequestAndForward(PacketReq, PacketRsp);
     iAssert(ret, ("_ParseRequestAndForward"));
@@ -34,21 +44,26 @@ int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
 
 int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data)
 {
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER);;
+    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, SSL_SELECT_SERVER);;
 
     int tmp_fd = accept(listen_fd, nullptr, 0);
+    iAssert(tmp_fd, ("accept listen_fd:%d, errno:%d, errmsg:%s", listen_fd, errno, strerror(errno)));
+    
     int ret = fd_data.connector->SSLAccept(tmp_fd);
     iAssert(ret, ("SSLAccept"));
-
+    
     fd_data.fd = tmp_fd;
-    fd_data.event_type = EPOLLIN;
-    fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
+    fd_data.event_type = EPOLLIN | EPOLLET;
 
+    // 非阻塞
+    fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
+    
     return 0;
 }
 
 int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
 {
+    // Generate socket
     int fd = 0, ret = 0;
     struct sockaddr_in addr;
 
@@ -56,15 +71,18 @@ int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);  
     addr.sin_addr.s_addr = inet_addr(ip.c_str()); 
+
     ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
     iAssert(ret, ("connect"));
 
     ret = connector->SSLConnect(fd);
     iAssert(ret, ("SSLConnect"));
 
+    // Request
     std::string PacketReqStr;
     std::string PacketRspStr;
-    ret = _PackDataToString(PacketReqStr, PacketReq);
+    ret = _PackDataToString(PacketReqStr, PacketReq, 0);
+
     ret = _HandleWrite(PacketReqStr, connector);
     if (ret != PacketReqStr.size()) 
     {
@@ -72,8 +90,10 @@ int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::
     }
 
     // wait for response
-    ret = _HandleRead(PacketRspStr, connector);
+    ret = _HandleRead(PacketRspStr, connector, 1);
     iAssert(ret, ("Wait for response faild"));
+
+    _ParseDataFromString(PacketRsp, PacketRspStr, 1);
 
     return 0;
 }
@@ -83,21 +103,21 @@ int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::s
     int ret = 0;
     Packet packet;
     std::string response;
-
-    ret = _ParseDataFromString(packet, PacketReqStr);
+ 
+    ret = _ParseDataFromString(packet, PacketReqStr, 0);
     iAssert(ret, ("_ParseDataFromString"));
-
+    
     ret = _RequestForwardWithCmd(packet.cmdid, packet.body, response, packet.header);
     if (ret < 0) {
         packet.header.ret_code = ret;
         packet.header.ret_msg = "An unknown error occurred on the server";
         return ret;
     }
-
+    
     packet.body = response;
-    _PackDataToString(PacketRspStr, packet);
+    _PackDataToString(PacketRspStr, packet, 1);
     iAssert(ret, ("_PackDataToString"));
-
+    
     return ret;
 }
 
@@ -113,40 +133,48 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
     return erpc_def::kErrServiceNotFound;
 }
 
-int ErpcHandler::_ParseDataFromString(Packet& Packet, const std::string& str)
+int ErpcHandler::_ParseDataFromString(Packet& Packet, const std::string& str, int is_with_header)
 {
     /*
         组包格式
-        4     struct  protobuf
-        cmdid header  body
+        cmdid header body
+        4     4+50   left
     */
+    TLOG_DBG(("_ParseDataFromString Begin size:%d", str.size()));
 
-    int min_size = sizeof(uint32_t) + sizeof(Header);
+    int min_size = 4 + (is_with_header ? 4 + HEADER_RET_MSG_LIMIT_SIZE : 0);
     if (str.size() < min_size)
     {
         return kPacketLengthErr;
     }
-
+    
     // cmdid
-    std::string tmpstr = str.substr(0, sizeof(uint32_t));
+    std::string tmpstr = str.substr(0, 4);
     Packet.cmdid = MemoryCorpToObject<uint32_t>(tmpstr);
+    TLOG_DBG(("Parse cmdid:%u", Packet.cmdid));
 
     // header
-    tmpstr = str.substr(sizeof(uint32_t), sizeof(Header));
-    Packet.header = MemoryCorpToObject<Header>(tmpstr);
+    if (is_with_header)
+    {
+        tmpstr = str.substr(4, 4);
+        Packet.header.ret_code = MemoryCorpToObject<int>(tmpstr);
+        Packet.header.ret_msg = str.substr(8, HEADER_RET_MSG_LIMIT_SIZE);
+        TLOG_DBG(("Parse header ret_code:%d, ret_msg:%s", Packet.header.ret_code, Packet.header.ret_msg.c_str()));
+    }
     
     // body
-    Packet.body = str.substr(sizeof(uint32_t) + sizeof(Header));
+    Packet.body = str.substr(min_size);
+    TLOG_DBG(("Parse body:%s, size:%d", Packet.body.c_str(), Packet.body.size()));
 
     return 0;
 }
 
-int ErpcHandler::_PackDataToString(std::string& str, const Packet& Packet)
+int ErpcHandler::_PackDataToString(std::string& str, const Packet& Packet, int is_with_header)
 {
     /*
         组包格式
-        4     struct  protobuf
-        cmdid header  body
+        cmdid header body
+        4     4+50   left
     */
     
     str.clear();
@@ -155,68 +183,118 @@ int ErpcHandler::_PackDataToString(std::string& str, const Packet& Packet)
     str.append(MemoryCopyToString(Packet.cmdid));
 
     // header
-    str.append(MemoryCopyToString(Packet.header));
+    if (is_with_header)
+    {
+        str.append(MemoryCopyToString(Packet.header.ret_code));
+
+        int msg_size = Packet.header.ret_msg.size();
+        str.append(Packet.header.ret_msg.substr(0, HEADER_RET_MSG_LIMIT_SIZE));
+        TLOG_DBG(("str:%s, %d", Packet.header.ret_msg.c_str(), HEADER_RET_MSG_LIMIT_SIZE - msg_size));
+        // 填充至 HEADER_RET_MSG_LIMIT_SIZE
+        str.append(std::max(0, HEADER_RET_MSG_LIMIT_SIZE - msg_size), '\0');
+    }
 
     // body
     str.append(Packet.body);
 
+    TLOG_DBG(("_PackDataToString End size:%d", str.size()));
+
     return 0;
 }
 
-int ErpcHandler::_HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector)
+
+int ErpcHandler::_HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector, int is_block)
 {
     char buff[RD_BUF_SIZE];
     int n = 0, total = 0;
-    while (true) 
+
+    if (is_block)
     {
+        // 阻塞读 Client
         n = connector->SSLRead(buff, RD_BUF_SIZE);
         if (n == 0)
         {
-            break;
+            // close socket TODO
         }
         else if (n < 0)
         {
-            if (errno == EAGAIN)
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
             {
-                break;
+                return n;
             }
-            else if (errno == EINTR || errno == EWOULDBLOCK)
+            else if (errno == EINTR)
             {
-                continue;
+                return n;
             }
             return -1;
         }
-        total += n;
+        total = n;
+        TLOG_DBG(("block %d, %s", n, buff));
+    }
+    else
+    {
+        // 非阻塞读 Server
+        while (true) 
+        {
+            n = connector->SSLRead(buff, RD_BUF_SIZE);
+            if (n == 0)
+            {
+                break;
+            }
+            else if (n < 0)
+            {
+                if (errno == EAGAIN)
+                {
+                    break;
+                }
+                else if (errno == EINTR || errno == EWOULDBLOCK)
+                {
+                    continue;
+                }
+                return -1;
+            }
+            total += n;
+            TLOG_DBG(("SSLRead no_block n:%d, total:%d", n, total));
+        }
     }
 
     outstr = std::string(buff, total);
+    TLOG_DBG(("_HandleRead size:%d", outstr.size()));
     return total;
 }
 
 int ErpcHandler::_HandleWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector)
 {
-    int n = 0, total = 0;
+    int n = 0, total = 0, w_size = instr.size();
+    std::string str = instr;
+    
     while (true)
     {
-        n = connector->SSLWrite(instr.c_str(), instr.size());
+        str = str.substr(total);
+        n = connector->SSLWrite(str.c_str(), str.size());
         if (n == 0)
         {
             break;
         }
         else if (n < 0)
         {
-            if (errno == EAGAIN)
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
             {
                 break;
             }
-            else if (errno == EINTR || errno == EWOULDBLOCK)
+            else if (errno == EINTR)
             {
                 continue;
             }
             return -1;
         }
         total += n;
+        if (total == w_size)
+        {
+            break;
+        }
     }
 
+    TLOG_DBG(("_HandleWrite size:%d", total));
     return total;
 }

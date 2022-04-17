@@ -1,10 +1,15 @@
 #include "erpc_server.h"
 #include "comm/commdef/comm_def.h"
+#include "comm/ssltools/ssl_def.h"
+
+int mini_epoll_proc();
+int mini_server_ssl();
 
 int main()
 {
     Server server;
     server.Run(TCP_PORT_CONTROLLER);
+    // mini_server_ssl();
 }
 
 int mini_epoll_proc()
@@ -44,4 +49,43 @@ int mini_epoll_proc()
 
     int nums = epoll_wait(epollfd, events, MAXEVENTS, -1);
     iAssert(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epollfd, errno, strerror(errno)));
+}
+
+int mini_server_ssl()
+{
+    // listen fd
+    int ret = 0, resue = 1, listen_fd_ = 0;
+    struct sockaddr_in addr;
+
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER);
+    addr.sin_port = htons(TCP_PORT_CONTROLLER);
+
+    listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 
+    iAssert(listen_fd_, ("socket: listen_fd:%d", listen_fd_));
+
+    ret = setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, (const void *)&resue, sizeof(int));
+    iAssert(ret, ("setsockopt: listen_fd:%d", listen_fd_));
+
+    ret = bind(listen_fd_, (struct sockaddr*)&addr, sizeof(addr));
+    iAssert(ret, ("bind: listen_fd:%d", listen_fd_));
+
+    ret = listen(listen_fd_, 1024);
+    iAssert(ret, ("listen: listen_fd:%d", listen_fd_));
+
+    // fcntl(listen_fd_, F_SETFL, fcntl(listen_fd_, F_GETFL, 0) | O_NONBLOCK); 
+    
+    // SSL
+
+    SSLConnector connector(SSL_CRT_SERVER, SSL_KEY_SERVER, SSL_SELECT_SERVER);
+    struct sockaddr_in cli_addr;
+
+    socklen_t cli_len = sizeof(cli_addr);
+    int tmp_fd = accept(listen_fd_, (struct sockaddr*)&cli_addr, &cli_len);
+    TLOG_DBG(("accept listen_fd:%d, tmp_fd:%d, errno:%d, errmsg:%s", listen_fd_, tmp_fd, errno, strerror(errno)));
+
+    ret = connector.SSLAccept(tmp_fd);
+    iAssert(ret, ("SSLAccept"));
+
+    TLOG_DBG(("3"));
 }

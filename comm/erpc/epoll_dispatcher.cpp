@@ -62,8 +62,9 @@ int EpollDispatcher::DispatcherMod(const FdDataType& fd_data)
 
 int EpollDispatcher::Dispatch(int listen_fd) 
 {
-    int nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, -1);
-    iAssert(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
+    int ret = 0, nums = 0;
+    nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, 5000);
+    iAssertNoRet(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
 
     TLOG_DBG(("epoll_wait wakeup, epollfd:%d nums:%d", epoll_data_.epollfd, nums));
 
@@ -73,24 +74,29 @@ int EpollDispatcher::Dispatch(int listen_fd)
 
         if ((type & EPOLLERR) || (type & EPOLLHUP)) 
         {
-            TLOG_DBG(("epoll error, fd:%d", fd));
+            TLOG_DBG(("epoll error, erase fd:%d", fd));
+            DispatcherDel(epoll_data_.fdmap[fd]);
             close(fd);
+            epoll_data_.fdmap.erase(fd);
             continue;
         }
 
         if (type & EPOLLIN) 
         {
-            TLOG_DBG(("epoll read fd:%d", fd));
+            TLOG_DBG(("epoll read listen_fd:%d, wakeup_fd:%d", listen_fd, fd));
             FdDataType fd_data;
             if (fd == listen_fd)
             {
-                ErpcHandler().HandleNetAccept(listen_fd, fd_data);
-                this->DispatcherAdd(fd_data);
+                ret = ErpcHandler().HandleNetAccept(listen_fd, fd_data);
+                iAssertNoRet(ret, ("HandleNetAccept new_fd:%d", fd_data.fd));
+                ret = DispatcherAdd(fd_data);
+                iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
             }
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
-                ErpcHandler().HandleNetRquest(fd_data);
+                ret = ErpcHandler().HandleNetRquest(fd_data);
+                iAssertNoRet(ret, ("HandleNetRquest fd:%d", fd_data.fd));
             }
         }
 

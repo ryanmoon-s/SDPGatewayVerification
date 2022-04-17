@@ -12,7 +12,7 @@ namespace erpc_service
 {
     // rpc service table
     enum ServiceMapTable {
-        CMD_TEST_FUNC = 1,
+        CMD_TEST_FUNC = 101,
     };
 
     // rpc service

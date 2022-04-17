@@ -52,6 +52,14 @@ private:
         }                                       \
     } while(0)
 
+#define iAssertNoRet(ret, Wrap)             \
+do {                                        \
+    if (ret < 0) {                          \
+        TLOG_ERR(Wrap);                     \
+    }                                       \
+} while(0)
+
+
 #define iAssertRetNull(ret, Wrap)                      \
 do {                                        \
     if (ret < 0) {                          \
@@ -67,6 +75,10 @@ do {                                        \
             return -1;                          \
         }                                       \
     } while(0)
+
+
+#define TJ      \
+    TLOG_DBG(("x"));
 
 
 #endif

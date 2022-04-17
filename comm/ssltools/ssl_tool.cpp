@@ -118,51 +118,67 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text)
     return 0;
 }
 
-SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key) 
+SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, int select) 
 {
-    int ret = _SSL_Init();
+    int ret = _SSL_Init(select);
     if (ret < 0)
     {
         TLOG_ERR(("_SSL_Init"));
     }
 
     // 装载证书
-    ret = _SSL_LoadCertificate(cert, pri_key);
+    ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
     if (ret < 0)
     {
         TLOG_ERR(("_SSL_LoadCertificate"));
     }
 }
 
-int SSLConnector::_SSL_Init() 
+int SSLConnector::_SSL_Init(int select) 
 {
     // 初始化
     OpenSSL_add_ssl_algorithms();
     SSL_load_error_strings();
 
     // 客户端协议(SSLv2/SSLv3/TLSv1)
-    const SSL_METHOD* meth = TLSv1_client_method();
-
-    // 申请SSL会话环境变量
-    ssl_data_.ctx = SSL_CTX_new(meth);
+    if (select == SSL_SELECT_CLIENT)
+    {
+        const SSL_METHOD* method = SSLv2_client_method();
+        ssl_data_.ctx = SSL_CTX_new(method);
+    }
+    else if (select == SSL_SELECT_SERVER)
+    {
+        const SSL_METHOD* method = SSLv2_server_method();
+        ssl_data_.ctx = SSL_CTX_new(method);
+    }
     SSL_iAssert_NULL(ssl_data_.ctx, ("SSL_CTX_new"));
 
     return 0;
 }
 
-int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string pri_key) 
+int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string ca_cert, std::string pri_key) 
 {
+    // 验证与否，是否要验证对方
+    // SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER, NULL);   
+    SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_NONE, NULL);   
+    // 若验证，则放置CA证书
+    // SSL_CTX_load_verify_locations(ssl_data_.ctx, cert.c_str(),NULL); 
+
     // 加载自己的证书
     int ret = SSL_CTX_use_certificate_file(ssl_data_.ctx, cert.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, ("SSL_CTX_use_certificate_file"));
 
-    // 加载自己的私钥,以用于签名
+    // 加载自己的私钥，以用于签名
     ret = SSL_CTX_use_PrivateKey_file(ssl_data_.ctx, pri_key.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, ("SSL_CTX_use_PrivateKey_file"));
 
-    // 调用了以上两个函数后,检验一下自己的证书与私钥是否配对
-    SSL_CTX_check_private_key(ssl_data_.ctx);
+    // 调用了以上两个函数后，检验一下自己的证书与私钥是否配对
+    ret = SSL_CTX_check_private_key(ssl_data_.ctx);
     SSL_iAssert_NE1(ret, ("SSL_CTX_check_private_key"));
+
+    // 申请SSL套接字
+    ssl_data_.ssl = SSL_new(ssl_data_.ctx);
+    SSL_iAssert_NULL(ssl_data_.ssl, ("SSL_new"));
 
     return 0;
 }
@@ -200,12 +216,13 @@ int SSLConnector::SSLConnect(int fd)
 
 int SSLConnector::SSLAccept(int fd) 
 {
+    // SEGMENT FAULT
     int ret = SSL_set_fd(ssl_data_.ssl, fd);
     SSL_iAssert_NE1(ret, ("SSL_set_fd fd:%d", fd));
 
     ret = SSL_accept(ssl_data_.ssl);
     SSL_iAssert_NE1(ret, ("SSL_accept fd:%d", fd));
-
+    
     return 0;
 }
 

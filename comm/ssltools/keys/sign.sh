@@ -36,13 +36,13 @@ esac
 
 #   make sure environment exists
 if [ ! -d ca.db.certs ]; then
- mkdir ca.db.certs
+    mkdir ca.db.certs
 fi
 if [ ! -f ca.db.serial ]; then
- echo '01' >ca.db.serial
+    echo '01' > ca.db.serial
 fi
 if [ ! -f ca.db.index ]; then
- cp /dev/null ca.db.index
+    cp /dev/null ca.db.index
 fi
 
  

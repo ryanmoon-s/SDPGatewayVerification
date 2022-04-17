@@ -42,15 +42,17 @@ cmdid header  body
 */
 
 struct Header {
-    int ret_code;           // 返回码
-    std::string ret_msg;    // 返回码的说明
+    int ret_code;           // 返回码       4字节
+    std::string ret_msg;    // 返回码的说明 50字节
 };
+#define HEADER_RET_MSG_LIMIT_SIZE 50
 
 struct Packet {
     uint32_t cmdid;     // 二进制
     Header header;      // 二进制
     std::string body;   // 原string
 };
+
 
 }
 
