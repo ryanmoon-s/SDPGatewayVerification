@@ -17,6 +17,7 @@ public:
 private:
     int _MakeListenFd(int port);
 
+    std::map<std::string, int> ip_white_table_;
     EpollDispatcher epoll_dispatcher_;
     int listen_fd_;
 };

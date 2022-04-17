@@ -32,6 +32,7 @@ enum SERVER_RET_ERR_DEF {
 
 enum SIMPLE_ERROR {
     kPacketLengthErr = -1001,
+    kIpNotInWhiteTable = -1002,
 };
 
 

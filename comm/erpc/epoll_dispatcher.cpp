@@ -60,13 +60,13 @@ int EpollDispatcher::DispatcherMod(const FdDataType& fd_data)
     return 0;
 }
 
-int EpollDispatcher::Dispatch(int listen_fd) 
+int EpollDispatcher::Dispatch(int listen_fd, const std::map<std::string, int>& ip_white_table) 
 {
     int ret = 0, nums = 0;
     nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, -1);
     iAssertNoRet(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
 
-    TLOG_DBG(("epoll_wait wakeup, epollfd:%d nums:%d", epoll_data_.epollfd, nums));
+    TLOG_DBG(("epoll wakeup, epollfd:%d nums:%d", epoll_data_.epollfd, nums));
 
     for (int i = 0; i < nums; i++) {
         int fd = epoll_data_.events[i].data.fd;
@@ -84,10 +84,21 @@ int EpollDispatcher::Dispatch(int listen_fd)
             FdDataType fd_data;
             if (fd == listen_fd)
             {
-                ret = ErpcHandler().HandleNetAccept(listen_fd, fd_data);
-                iAssertNoRet(ret, ("HandleNetAccept new_fd:%d", fd_data.fd));
-                ret = DispatcherAdd(fd_data);
-                iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
+                ret = ErpcHandler().HandleNetAccept(listen_fd, fd_data, ip_white_table);
+                
+                if (ret == 0)
+                {
+                    ret = DispatcherAdd(fd_data);
+                    iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
+                }
+                else if (ret == kIpNotInWhiteTable)
+                {
+                    TLOG_MSG(("HandleNetAccept IP is illegal"));
+                }
+                else
+                {
+                    TLOG_ERR(("HandleNetAccept faild"));
+                }
             }
             else
             {

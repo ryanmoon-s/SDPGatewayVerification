@@ -16,7 +16,7 @@ namespace erpc_service
     };
 
     // rpc service
-    int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp, Header& header);
+    int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp);
 
 
 

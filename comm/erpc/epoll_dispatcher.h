@@ -25,7 +25,7 @@ public:
     int DispatcherAdd(const FdDataType& fd_data);
     int DispatcherDel(const FdDataType& fd_data);
     int DispatcherMod(const FdDataType& fd_data);
-    int Dispatch(int listen_fd);
+    int Dispatch(int listen_fd, const std::map<std::string, int>& ip_white_table);
 
 public:
     EpollDispatcher();

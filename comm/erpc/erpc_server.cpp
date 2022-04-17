@@ -12,10 +12,13 @@ int Server::Run(int port)
     ret = _MakeListenFd(port);
     iAssert(ret, ("_MakeListenFd"));
 
+    // white table
+    ip_white_table_["127.0.0.1"] = 1;
+
     TLOG_MSG(("Listen port:%d , Server begin to run ... ...", port));
     while (true) 
     {
-        ret = epoll_dispatcher_.Dispatch(listen_fd_);
+        ret = epoll_dispatcher_.Dispatch(listen_fd_, ip_white_table_);
         iAssert(ret, ("Dispatch faild, listen_fd:%d", listen_fd_));
     }
 
