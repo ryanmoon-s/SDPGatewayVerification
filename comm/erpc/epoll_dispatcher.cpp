@@ -8,7 +8,8 @@ EpollDispatcher::EpollDispatcher(int port)
     epoll_data_.events = (struct epoll_event*)calloc(MAXEVENTS, sizeof(struct epoll_event));
     iAssertNoRet(epoll_data_.events, ("calloc epoll_data_.events faild"));
 
-    _MakeListenFd(port);
+    int ret = _MakeListenFd(port);
+    iAssertNoRet(ret, ("_MakeListenFd faild"));
 }
 
 EpollDispatcher::~EpollDispatcher() 
@@ -82,13 +83,13 @@ int EpollDispatcher::Dispatch()
 
         if ((type & EPOLLERR) || (type & EPOLLHUP)) 
         {
-            TLOG_DBG(("epoll error, erase fd:%d", fd));
+            TLOG_ERR(("epoll error, erase fd:%d", fd));
             DispatcherDel(epoll_data_.fdmap[fd]);
         }
 
         if (type & EPOLLIN) 
         {
-            TLOG_DBG(("epoll read listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
+            TLOG_DBG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
             FdDataType fd_data;
             if (fd == listen_fd_)
             {
@@ -130,7 +131,7 @@ int EpollDispatcher::Dispatch()
 
         if (type & EPOLLOUT) 
         {
-           TLOG_DBG(("epoll write fd:%d", fd));
+           TLOG_DBG(("epoll out fd:%d", fd));
         }
     }
 
@@ -180,7 +181,7 @@ int EpollDispatcher::_MakeListenFd(int port)
     fcntl(listen_fd_, F_SETFL, fcntl(listen_fd_, F_GETFL, 0) | O_NONBLOCK); 
 
     fd_data.fd = listen_fd_;
-    fd_data.event_type = EPOLLIN | EPOLLET | EPOLLRDHUP;
+    fd_data.event_type = EPOLLIN | EPOLLET;
     fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);
 
     DispatcherAdd(fd_data);
