@@ -12,12 +12,10 @@ int main() {
     ret = Client().FuncReverseClient(req, rsp, header);
     iAssert(ret, ("FuncReverseClient"));
     
-    TLOG_DBG(("FuncReverse Sucess: req.str:%s, rsp.str:%s", req.str().c_str(), rsp.str().c_str()));
-    TLOG_DBG(("FuncReverse Sucess: header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
+    TLOG_MSG(("FuncReverse Sucess: req.str:%s, rsp.str:%s", req.str().c_str(), rsp.str().c_str()));
+    TLOG_MSG(("FuncReverse Sucess: header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
 
     return 0;
-
-    // mini_client_ssl();
 }
 
 int mini_client_ssl()

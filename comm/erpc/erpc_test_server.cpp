@@ -7,8 +7,8 @@ int mini_server_ssl();
 
 int main()
 {
-    Server server;
-    server.Run(TCP_PORT_CONTROLLER);
+    Server server(TCP_PORT_CONTROLLER);
+    server.Run();
 }
 
 int mini_epoll_proc()

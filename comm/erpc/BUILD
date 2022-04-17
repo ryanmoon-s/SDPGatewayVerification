@@ -2,6 +2,7 @@ cc_library(
     name = "erpc_client_lib",
     srcs = [
         "epoll_dispatcher.cpp",
+        "erpc_config.cpp",
         "erpc_handler.cpp",
         "erpc_service.cpp",
         "erpc_client.cpp",
@@ -9,6 +10,7 @@ cc_library(
     hdrs = [
         "erpc_client.h",
         "erpc_def.h",
+        "erpc_config.h",
         "epoll_dispatcher.h",
         "erpc_handler.h",
         "erpc_service.h",
@@ -30,6 +32,7 @@ cc_library(
     srcs = [
         "erpc_server.cpp",
         "epoll_dispatcher.cpp",
+        "erpc_config.cpp",
         "erpc_handler.cpp",
         "erpc_service.cpp",
     ],
@@ -37,6 +40,7 @@ cc_library(
         "erpc_server.h",
         "erpc_def.h",
         "epoll_dispatcher.h",
+        "erpc_config.h",
         "erpc_handler.h",
         "erpc_service.h",
     ],

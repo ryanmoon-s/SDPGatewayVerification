@@ -3,7 +3,6 @@
 
 #include "comm/tlog/tlog.h"
 #include "comm/proto/erpc.pb.h"
-
 #include "erpc_def.h"
 
 using namespace erpc_def;

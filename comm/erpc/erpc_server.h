@@ -11,15 +11,17 @@
 
 class Server {
 public:
-    Server();
-    int Run(int port);
+    int Run();
+
+public:
+    Server(int port);
+    ~Server();
 
 private:
-    int _MakeListenFd(int port);
-
     std::map<std::string, int> ip_white_table_;
-    EpollDispatcher epoll_dispatcher_;
-    int listen_fd_;
+    EpollDispatcher* epoll_dispatcher_;
+    int port_;
+    int local_fd_ = 0;
 };
 
 

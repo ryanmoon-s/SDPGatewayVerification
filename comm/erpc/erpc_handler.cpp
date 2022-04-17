@@ -21,28 +21,28 @@ int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
     std::string PacketReq;
     std::string PacketRsp;
 
-    int ret = _HandleRead(PacketReq, connector);
+    int ret = SSLRead(PacketReq, connector);
     if (ret == 0)
     {
-        TLOG_MSG(("_HandleRead 0 bytes, can't handle"));
+        TLOG_MSG(("SSLRead 0 bytes, can't handle"));
         return 0;
     }
     else if (ret < 0)
     {
-        TLOG_ERR(("_HandleRead error"));
+        TLOG_ERR(("SSLRead error"));
         return ret;
     }
 
     ret = _ParseRequestAndForward(PacketReq, PacketRsp);
     iAssert(ret, ("_ParseRequestAndForward"));
 
-    ret = _HandleWrite(PacketRsp, connector);
-    iAssert(ret, ("_HandleWrite"));
+    ret = SSLWrite(PacketRsp, connector);
+    iAssert(ret, ("SSLWrite"));
 
     return 0;
 }
 
-int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data, const std::map<std::string, int>& ip_white_table)
+int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data)
 {
     struct sockaddr_in addr;
     socklen_t len = sizeof(addr);
@@ -50,10 +50,14 @@ int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data, const std:
     int tmp_fd = accept(listen_fd, (struct sockaddr*)&addr, &len);
     iAssert(tmp_fd, ("accept listen_fd:%d, errno:%d, errmsg:%s", listen_fd, errno, strerror(errno)));
     
-    //  == reject bad ip
+    //  == reject illegal ip
     std::string ip(inet_ntoa(addr.sin_addr));
-    auto iter = ip_white_table.find(ip);
-    if (iter == ip_white_table.end())
+    ErpcConfig* config = ErpcConfig::GetInstance();
+
+    config->IpWhiteTableOp(IP_WHITE_TABLE_ADD, ip);
+
+    bool result = config->IsIpInWhiteTable(ip);
+    if (!result)
     {
         TLOG_MSG(("HandleNetAccept reject ip:%s", ip.c_str()));
         close(tmp_fd);
@@ -70,7 +74,7 @@ int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data, const std:
     // 非阻塞
     fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
     
-    TLOG_MSG(("Accept fd:%d, ip:%s, port:%u", tmp_fd, inet_ntoa(addr.sin_addr), addr.sin_port));
+    TLOG_MSG(("accept fd:%d, ip:%s, port:%u", tmp_fd, inet_ntoa(addr.sin_addr), addr.sin_port));
     return 0;
 }
 
@@ -96,13 +100,13 @@ int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::
     std::string PacketRspStr;
     _PackDataToString(PacketReqStr, PacketReq, 0);
 
-    ret = _HandleWrite(PacketReqStr, connector);
+    ret = SSLWrite(PacketReqStr, connector);
     if (ret != PacketReqStr.size()) 
     {
         TLOG_ERR(("Write faild, write:%d/%d", ret, PacketReqStr.size()));
     }
 
-    ret = _HandleRead(PacketRspStr, connector);
+    ret = SSLRead(PacketRspStr, connector);
     iAssert(ret, ("Wait for response faild"));
 
     ret = _ParseDataFromString(PacketRsp, PacketRspStr, 1);
@@ -167,14 +171,14 @@ int ErpcHandler::_ParseDataFromString(Packet& Packet, const std::string& str, in
     
     // cmdid
     std::string tmpstr = str.substr(0, 4);
-    Packet.cmdid = MemoryCorpToObject<uint32_t>(tmpstr);
+    Packet.cmdid = _MemoryCorpToObject<uint32_t>(tmpstr);
     TLOG_DBG(("Parse cmdid:%u", Packet.cmdid));
 
     // header
     if (is_with_header)
     {
         tmpstr = str.substr(4, 4);
-        Packet.header.ret_code = MemoryCorpToObject<int>(tmpstr);
+        Packet.header.ret_code = _MemoryCorpToObject<int>(tmpstr);
         Packet.header.ret_msg = str.substr(8, HEADER_RET_MSG_LIMIT_SIZE);
         TLOG_DBG(("Parse header ret_code:%d, ret_msg:%s", Packet.header.ret_code, Packet.header.ret_msg.c_str()));
     }
@@ -197,12 +201,12 @@ void ErpcHandler::_PackDataToString(std::string& str, const Packet& Packet, int 
     str.clear();
 
     // cmdid
-    str.append(MemoryCopyToString(Packet.cmdid));
+    str.append(_MemoryCopyToString(Packet.cmdid));
 
     // header
     if (is_with_header)
     {
-        str.append(MemoryCopyToString(Packet.header.ret_code));
+        str.append(_MemoryCopyToString(Packet.header.ret_code));
 
         int msg_size = Packet.header.ret_msg.size();
         str.append(Packet.header.ret_msg.substr(0, HEADER_RET_MSG_LIMIT_SIZE));
@@ -216,8 +220,20 @@ void ErpcHandler::_PackDataToString(std::string& str, const Packet& Packet, int 
     TLOG_DBG(("End size:%d", str.size()));
 }
 
+template<typename T>
+std::string ErpcHandler::_MemoryCopyToString(const T& data)
+{
+    char* p = (char*)&data;
+    return std::string(p, sizeof(T));
+}
 
-int ErpcHandler::_HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector)
+template<typename T>
+T ErpcHandler::_MemoryCorpToObject(const std::string& str)
+{
+    return *(T*)(str.c_str());
+}
+
+int ErpcHandler::SSLRead(std::string& outstr, std::shared_ptr<SSLConnector> connector)
 {
     char buff[RD_BUF_SIZE];
     int n = 0, total = 0;
@@ -245,7 +261,7 @@ int ErpcHandler::_HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> 
     return n;
 }
 
-int ErpcHandler::_HandleWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector)
+int ErpcHandler::SSLWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector)
 {
     int n = 0, total = 0, w_size = instr.size();
     std::string str = instr;
@@ -280,3 +296,68 @@ int ErpcHandler::_HandleWrite(const std::string& instr, std::shared_ptr<SSLConne
     TLOG_DBG(("size:%d", total));
     return total;
 }
+
+int ErpcHandler::SimpleRead(std::string& outstr, int fd)
+{
+    char buff[RD_BUF_SIZE];
+    int n = 0, total = 0;
+
+    n = read(fd, buff, RD_BUF_SIZE);
+    if (n == 0)
+    {
+        // close socket TODO
+    }
+    else if (n < 0)
+    {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+        {
+            return n;
+        }
+        else if (errno == EINTR)
+        {
+            return n;
+        }
+        return -1;
+    }
+
+    outstr = std::string(buff, n);
+    TLOG_DBG(("size:%d", outstr.size()));
+    return n;
+}
+
+int ErpcHandler::SimpleWrite(const std::string& instr, int fd)
+{
+    int n = 0, total = 0, w_size = instr.size();
+    std::string str = instr;
+    
+    while (true)
+    {
+        str = str.substr(total);
+        n = write(fd, str.c_str(), str.size());
+        if (n == 0)
+        {
+            break;
+        }
+        else if (n < 0)
+        {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                break;
+            }
+            else if (errno == EINTR)
+            {
+                continue;
+            }
+            return -1;
+        }
+        total += n;
+        if (total == w_size)
+        {
+            break;
+        }
+    }
+
+    TLOG_DBG(("size:%d", total));
+    return total;
+}
+
