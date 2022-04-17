@@ -12,11 +12,11 @@ namespace erpc_service
 {
     // rpc service table
     enum ServiceMapTable {
-        CMD_TEST_FUNC = 101,
+        CMD_FUNC_REVERSE = 101,
     };
 
     // rpc service
-    int TestFunc(const erpc::TestFuncReq& objReq, erpc::TestFuncRsp& objRsp, Header& header);
+    int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp, Header& header);
 
 
 

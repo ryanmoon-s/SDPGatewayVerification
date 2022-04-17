@@ -2,17 +2,16 @@
 #include "comm/ssltools/ssl_def.h"
 
 // 一个服务一个Client
-int Client::TestFuncClient(const erpc::TestFuncReq& req, erpc::TestFuncRsp& rsp, Header& header)
+int Client::FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverseRsp& rsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;
     std::shared_ptr<SSLConnector> 
-        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, SSL_SELECT_CLIENT);
+        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
 
-    PacketReq.cmdid = CMD_TEST_FUNC;
+    PacketReq.cmdid = CMD_FUNC_REVERSE;
     req.SerializeToString(&PacketReq.body);
 
-    TLOG_DBG(("size:%d, str:%s", PacketReq.body.size(), PacketReq.body.c_str()));
     int ret = ErpcHandler().ClientRequest(PacketReq, PacketRsp, connector, IP_CONTROLLER, TCP_PORT_CONTROLLER);
     iAssert(ret, ("ClientRequest"));
 

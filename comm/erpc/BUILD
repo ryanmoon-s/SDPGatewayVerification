@@ -1,14 +1,12 @@
 cc_library(
     name = "erpc_client_lib",
     srcs = [
-        # "erpc_server.cpp",
         "epoll_dispatcher.cpp",
         "erpc_handler.cpp",
         "erpc_service.cpp",
         "erpc_client.cpp",
     ],
     hdrs = [
-        # "erpc_server.h",
         "erpc_client.h",
         "erpc_def.h",
         "epoll_dispatcher.h",

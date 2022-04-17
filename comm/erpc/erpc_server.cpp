@@ -12,6 +12,7 @@ int Server::Run(int port)
     ret = _MakeListenFd(port);
     iAssert(ret, ("_MakeListenFd"));
 
+    TLOG_MSG(("Listen port:%d , Server begin to run ... ...", port));
     while (true) 
     {
         ret = epoll_dispatcher_.Dispatch(listen_fd_);
@@ -23,7 +24,6 @@ int Server::Run(int port)
 
 int Server::_MakeListenFd(int port)
 {
-    // listen fd
     int ret = 0, resue = 1;
     struct sockaddr_in addr;
     FdDataType fd_data;
@@ -48,7 +48,7 @@ int Server::_MakeListenFd(int port)
 
     fd_data.fd = listen_fd_;
     fd_data.event_type = EPOLLIN | EPOLLET | EPOLLRDHUP;
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, SSL_SELECT_SERVER);
+    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);
 
     ret = epoll_dispatcher_.DispatcherAdd(fd_data);
     iAssert(ret, ("DispatcherAdd: listen_fd_"));

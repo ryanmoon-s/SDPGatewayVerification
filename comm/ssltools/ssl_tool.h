@@ -17,7 +17,6 @@ struct SSL_Data {
 // 建立ssl连接、传输数据
 class SSLConnector {
 public:
-    SSLConnector(const std::string& cert, const std::string& pri_key, int select);
     // for client
     int SSLConnect(int fd);
     // for server
@@ -27,10 +26,13 @@ public:
     int SSLWrite(const char* buf, int size);
     int SSLRead(char* buf, int size);
 
+public:
+    SSLConnector(const std::string& cert, const std::string& pri_key, int is_server);
+
 private:
     SSL_Data ssl_data_;
 
-    int _SSL_Init(int select);
+    int _SSL_Init(int is_server);
     int _SSL_LoadCertificate(std::string cert, std::string ca_cert, std::string pri_key);
     int _SSL_DumpCertInfo();
 };

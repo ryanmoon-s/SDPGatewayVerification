@@ -63,7 +63,7 @@ int EpollDispatcher::DispatcherMod(const FdDataType& fd_data)
 int EpollDispatcher::Dispatch(int listen_fd) 
 {
     int ret = 0, nums = 0;
-    nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, 5000);
+    nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, -1);
     iAssertNoRet(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
 
     TLOG_DBG(("epoll_wait wakeup, epollfd:%d nums:%d", epoll_data_.epollfd, nums));
@@ -76,9 +76,6 @@ int EpollDispatcher::Dispatch(int listen_fd)
         {
             TLOG_DBG(("epoll error, erase fd:%d", fd));
             DispatcherDel(epoll_data_.fdmap[fd]);
-            close(fd);
-            epoll_data_.fdmap.erase(fd);
-            continue;
         }
 
         if (type & EPOLLIN) 
@@ -97,6 +94,9 @@ int EpollDispatcher::Dispatch(int listen_fd)
                 fd_data = epoll_data_.fdmap[fd];
                 ret = ErpcHandler().HandleNetRquest(fd_data);
                 iAssertNoRet(ret, ("HandleNetRquest fd:%d", fd_data.fd));
+
+                // Keep Alive TODO
+                DispatcherDel(fd_data);
             }
         }
 

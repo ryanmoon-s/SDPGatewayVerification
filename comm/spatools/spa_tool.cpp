@@ -2,11 +2,6 @@
 #include "comm/tlog/tlog.h"
 #include "comm/ssltools/ssl_tool.h"
 
-static std::string meta_data_str[] = {"account:", "password:", "ip:", "address:", "timestamp:", "isvalid:"};
-
-/*
- * account,password,ip,address,timestamp,is_valid(0,1),
- */
 int SPATools::EncryptVoucher(spa::SPAPacket& packet, const spa::SPAVoucher& voucher) 
 {
     std::string text;

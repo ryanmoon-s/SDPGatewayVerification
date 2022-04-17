@@ -9,7 +9,6 @@ int main()
 {
     Server server;
     server.Run(TCP_PORT_CONTROLLER);
-    // mini_server_ssl();
 }
 
 int mini_epoll_proc()
@@ -73,10 +72,7 @@ int mini_server_ssl()
     ret = listen(listen_fd_, 1024);
     iAssert(ret, ("listen: listen_fd:%d", listen_fd_));
 
-    // fcntl(listen_fd_, F_SETFL, fcntl(listen_fd_, F_GETFL, 0) | O_NONBLOCK); 
-    
     // SSL
-
     SSLConnector connector(SSL_CRT_SERVER, SSL_KEY_SERVER, SSL_SELECT_SERVER);
     struct sockaddr_in cli_addr;
 
@@ -87,5 +83,5 @@ int mini_server_ssl()
     ret = connector.SSLAccept(tmp_fd);
     iAssert(ret, ("SSLAccept"));
 
-    TLOG_DBG(("3"));
+    return 0;
 }

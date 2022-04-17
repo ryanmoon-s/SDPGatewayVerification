@@ -33,14 +33,14 @@ public:
 
 private:
 
-    // Packet 解包与打包 
+    // Packet 解包与打包
     // is_with_header: 是否处理Header 0 or 1
     int _ParseDataFromString(Packet& packet, const std::string& str, int is_with_header);
     int _PackDataToString(std::string& str, const Packet& packet, int is_with_header);
 
 
     // 读取与发送数据包
-    int _HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector, int is_block);
+    int _HandleRead(std::string& outstr, std::shared_ptr<SSLConnector> connector);
     int _HandleWrite(const std::string& instr, std::shared_ptr<SSLConnector> connector);
 
 };

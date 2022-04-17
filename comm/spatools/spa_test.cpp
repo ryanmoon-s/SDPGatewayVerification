@@ -17,7 +17,7 @@ int main() {
 
     spa::SPAVoucher de_voucher;
     tool.DecryptVoucher(de_voucher, packet);
-    // // 再次加密，可以看到中途解析成str的voucher数据
+    // 再次加密，可以看到中途解析成str的voucher数据
     tool.EncryptVoucher(packet, de_voucher);
 
     return 0;

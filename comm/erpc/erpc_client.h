@@ -11,7 +11,7 @@ using namespace erpc_service;
 
 class Client {
 public:
-    int TestFuncClient(const erpc::TestFuncReq& req, erpc::TestFuncRsp& rsp, Header& header);
+    int FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverseRsp& rsp, Header& header);
 
 };
 
