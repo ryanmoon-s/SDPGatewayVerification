@@ -5,7 +5,7 @@ int ErpcService::TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::T
     return kErrServiceNotFound;
 }
 
-int ErpcService::TestFuncUdpRecv(const spa::SPAVoucher& spaVoucher)
+int ErpcService::TestFuncUdpRecv(const std::string& msg)
 {
     return kErrServiceNotFound;
 }

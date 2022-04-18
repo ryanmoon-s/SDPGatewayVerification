@@ -13,7 +13,48 @@ using namespace erpc_def;
         rsp.SerializeToString(&response);                                   \
     } while(0)
 
-int ErpcHandler::HandleTCPRequest(const FdDataType& fd_data)
+int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
+{
+    int ret = 0, port = 0;
+    std::string ip;
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(addr);
+
+    int tmp_fd = accept(listen_fd, (struct sockaddr*)&addr, &len);
+    iAssert(tmp_fd, ("accept listen_fd:%d, errno:%d, errmsg:%s", listen_fd, errno, strerror(errno)));
+    
+    ip.assign(inet_ntoa(addr.sin_addr));
+    port = addr.sin_port;
+
+    //  == reject illegal ip
+    ErpcConfig* config = ErpcConfig::GetInstance();
+    // 临时添加白名单 去掉 TODO
+    config->IpWhiteTableOp(IP_WHITE_TABLE_ADD, ip);
+    bool result = config->IsIpInWhiteTable(ip);
+    if (!result)
+    {
+        TLOG_MSG(("HandleRPCAccept reject ip:%s", ip.c_str()));
+        close(tmp_fd);
+        return kIpNotInWhiteTable;
+    }
+
+    fd_data.fd = tmp_fd;
+    fd_data.event_type = EPOLLIN | EPOLLET;
+    fd_data.socket_info.ip = ip;
+    fd_data.socket_info.port = port;
+    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);;
+
+    ret = fd_data.connector->SSLAccept(tmp_fd);
+    iAssert(ret, ("SSLAccept"));
+    
+    // 非阻塞
+    fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
+    
+    TLOG_MSG(("HandleRPCAccept success fd:%d, ip:%s, port:%d", tmp_fd, ip.c_str(), port));
+    return 0;
+}
+
+int ErpcHandler::HandleRPCRequest(const FdDataType& fd_data)
 {
     int fd = fd_data.fd;
     auto connector = fd_data.connector;
@@ -39,70 +80,44 @@ int ErpcHandler::HandleTCPRequest(const FdDataType& fd_data)
     ret = HandleWrite(PacketRsp, connector);
     iAssert(ret, ("HandleWrite"));
 
-    return 0;
-}
-
-int ErpcHandler::HandleTCPAccept(int listen_fd, FdDataType& fd_data)
-{
-    struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
-
-    int tmp_fd = accept(listen_fd, (struct sockaddr*)&addr, &len);
-    iAssert(tmp_fd, ("accept listen_fd:%d, errno:%d, errmsg:%s", listen_fd, errno, strerror(errno)));
-    
-    //  == reject illegal ip
-    std::string ip(inet_ntoa(addr.sin_addr));
-    ErpcConfig* config = ErpcConfig::GetInstance();
-
-    config->IpWhiteTableOp(IP_WHITE_TABLE_ADD, ip);
-
-    bool result = config->IsIpInWhiteTable(ip);
-    if (!result)
-    {
-        TLOG_MSG(("HandleTCPAccept reject ip:%s", ip.c_str()));
-        close(tmp_fd);
-        return kIpNotInWhiteTable;
-    }
-
-    fd_data.fd = tmp_fd;
-    fd_data.event_type = EPOLLIN | EPOLLET;
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);;
-
-    int ret = fd_data.connector->SSLAccept(tmp_fd);
-    iAssert(ret, ("SSLAccept"));
-    
-    // 非阻塞
-    fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
-    
-    TLOG_MSG(("accept fd:%d, ip:%s, port:%u", tmp_fd, inet_ntoa(addr.sin_addr), addr.sin_port));
+    TLOG_MSG(("HandleRPCRequest success, from ip:%s, port:%d", fd_data.socket_info.ip.c_str(), fd_data.socket_info.port));
     return 0;
 }
 
 int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
 {
-    int ret = 0, from_port = 0;
+    int ret = 0;
+    int from_port = 0;
     int fd = fd_data.fd;
+    uint32_t cmdid = 0;
     spa::SPAPacket spaPacket;
     spa::SPAVoucher spaVoucher;
-    std::string msg, from_ip;
+    std::string msg;
+    std::string from_ip;
     
     ret = UDPRecv(msg, fd, from_ip, from_port);
     iAssert(ret, ("UDPRecv faild"));
 
-    spaPacket.ParseFromString(msg);
-    ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
-    iAssert(ret, ("DecryptVoucher faild"));
+    std::string cmdid_str = msg.substr(0, 4);
+    std::string msg_str = msg.substr(4);
 
-    // 解包 CMD_UDP_ TODO
+    // 解包 CMD_UDP_ 前四字节
+    cmdid = _MemoryCorpToObject<uint32_t>(cmdid_str);
+
+    // 转发服务
     ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
-    ret = service->TestFuncUdpRecv(spaVoucher);
+    if (cmdid == ErpcService::CMD_UDP_TEST_FUNC_RECV)
+    {
+        ret = service->TestFuncUdpRecv(msg_str);
+    }
     iAssert(ret, ("TestFuncUdpRecv error ret:%d", ret));
 
     TLOG_MSG(("HandleUDPRequest success, from ip:%s, port:%d", from_ip.c_str(), from_port));
+    TLOG_MSG(("HandleUDPRequest success, forward to cmdid:%d", cmdid));
     return 0;
 }
 
-int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
+int ErpcHandler::ClientRPCRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
 {
     // Generate socket
     int fd = 0, ret = 0;
@@ -139,6 +154,19 @@ int ErpcHandler::ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::
     return 0;
 }
 
+int ErpcHandler::ClientUDPRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port)
+{
+    int ret = 0;
+    std::string cmdid_str;
+
+    cmdid_str = _MemoryCopyToString<uint32_t>(cmdid);
+
+    ret = ErpcHandler().UDPSend(cmdid_str + msg, ip, port);
+    iAssert(ret, ("sendto ret:%d, ip:%s port:%d", ret, ip.c_str(), port));
+
+    return 0;
+}
+
 int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr)
 {
     int ret = 0;
@@ -147,7 +175,7 @@ int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::s
  
     ret = _ParseDataFromString(packet, PacketReqStr, 0);
     iAssert(ret, ("Parse faild"));
-    
+
     ret = _RequestForwardWithCmd(packet.cmdid, packet.body, response);
     packet.header.ret_code = ret;
     if (ret == 0) {
@@ -169,8 +197,8 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
 {
     int ret = 0;
 
-    if (cmdid == ErpcService::CMD_TCP_TEST_FUNC_REVERSE) {
-        TLOG_MSG(("RPC forward to cmdid:%d"));
+    if (cmdid == ErpcService::CMD_RPC_TEST_FUNC_REVERSE) {
+        TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
         RPC_CALL_FORWARD(TestFuncReverse, request, response);
         return 0;
     }
@@ -423,7 +451,7 @@ int ErpcHandler::UDPRecv(std::string& outstr, int fd, std::string& from_ip, int&
     return 0;
 }
 
-int ErpcHandler::UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port)
+int ErpcHandler::UDPSend(const std::string& outstr, const std::string& dest_ip, int dest_port)
 {
     int ret = 0, fd = 0;
     struct sockaddr_in addr;

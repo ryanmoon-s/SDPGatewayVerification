@@ -18,8 +18,16 @@ public:
     }
 
     // udp service
-    virtual int TestFuncUdpRecv(const spa::SPAVoucher& spaVoucher)
+    virtual int TestFuncUdpRecv(const std::string& msg)
     {
+        int ret = 0;
+        spa::SPAPacket spaPacket;
+        spa::SPAVoucher spaVoucher;
+
+        spaPacket.ParseFromString(msg);
+        ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
+        iAssert(ret, ("DecryptVoucher faild"));
+
         std::string voucher_str;
         spaVoucher.SerializeToString(&voucher_str);
         TLOG_MSG(("spaVoucher: %s", voucher_str.c_str()));

@@ -21,14 +21,12 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& vocher)
 }
 
 int VerifyClient::_SPAKnocking(const spa::SPAPacket& packet, std::string ip, int port) {
-    int ret = 0, fd;
-    struct sockaddr_in addr;
+    int ret = 0;
     std::string msg;
-
     packet.SerializeToString(&msg);
 
-    ErpcHandler().UDPSend(msg, ip, port);
-    iAssert(ret, ("sendto ret:%d, ip:%s port:%d", ret, ip.c_str(), port));
+    ret = ErpcClient().TestFuncUdpRecv(ErpcService::CMD_UDP_TEST_FUNC_RECV, msg, ip, port);
+    iAssert(ret, ("TestFuncUdpRecv faild"));
 
     return 0;
 }

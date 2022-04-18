@@ -12,23 +12,27 @@ class ErpcService {
 public:
 
     enum ServiceMapTable {
-        // TCP
-        CMD_TCP_TEST_FUNC_REVERSE = 101,
+        // TEST
+        CMD_RPC_TEST_FUNC_REVERSE = 1,
+        CMD_UDP_TEST_FUNC_RECV = 2,
 
-        // UDP
-        CMD_UDP_TEST_FUNC_RECV = 102,
+        // CONTROLLER
+        CMD_UDP_CONTROLLER_FUNC_RECV = 101,
+
+        // APPGATEWAY
+        CMD_TCP_APPGATEWAY_FUNC_REVERSE = 201,
     };
 
     /***************************** TEST FUNC *****************************/
     
     virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp);
     
-    virtual int TestFuncUdpRecv(const spa::SPAVoucher& spaVoucher);
+    virtual int TestFuncUdpRecv(const std::string& msg);
 
     /***************************** CONTROLLER *****************************/
 
 
-    /***************************** APPLICATION *****************************/
+    /***************************** APPGATEWAY *****************************/
 
 
 

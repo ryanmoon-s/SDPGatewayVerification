@@ -97,21 +97,20 @@ int EpollDispatcher::Dispatch()
 
             if (fd == listen_fd_)
             {
-                ret = handler.HandleTCPAccept(listen_fd_, fd_data);
+                ret = handler.HandleRPCAccept(listen_fd_, fd_data);
                 
                 if (ret == 0)
                 {
                     ret = DispatcherAdd(fd_data);
                     iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
-                    TLOG_MSG(("HandleTCPAccept success fd:%d", fd_data.fd));
                 }
                 else if (ret == kIpNotInWhiteTable)
                 {
-                    TLOG_MSG(("HandleTCPAccept IP is illegal"));
+                    TLOG_MSG(("HandleRPCAccept IP is illegal"));
                 }
                 else
                 {
-                    TLOG_ERR(("HandleTCPAccept faild"));
+                    TLOG_ERR(("HandleRPCAccept faild"));
                 }
             }
             else if (fd == local_fd_)
@@ -129,14 +128,12 @@ int EpollDispatcher::Dispatch()
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
-                ret = handler.HandleTCPRequest(fd_data);
-                iAssertNoRet(ret, ("HandleTCPRequest fd:%d", fd));
+                ret = handler.HandleRPCRequest(fd_data);
+                iAssertNoRet(ret, ("HandleRPCRequest fd:%d", fd));
 
                 // Keep Alive TODO
                 ret = DispatcherDel(fd_data);
                 iAssertNoRet(ret, ("DispatcherDel fd:%d", fd));
-
-                TLOG_MSG(("HandleTCPRequest success fd:%d", fd));
             }
         }
 

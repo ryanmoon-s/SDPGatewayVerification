@@ -18,15 +18,16 @@ struct FdDataType;
 
 class ErpcHandler {
 public:
-    // 服务端TCP入口
-    int HandleTCPRequest(const FdDataType& fd_data);
-    int HandleTCPAccept(int listen_fd, FdDataType& data);
-
+    // 服务端RPC入口
+    int HandleRPCAccept(int listen_fd, FdDataType& data);
+    int HandleRPCRequest(const FdDataType& fd_data);
+    
     // 服务端UDP入口
     int HandleUDPRequest(const FdDataType& fd_data);
 
     // 客户端发送请求
-    int ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port);
+    int ClientRPCRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port);
+    int ClientUDPRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
 
 public:
     // 读取与发送数据包
@@ -37,7 +38,7 @@ public:
 
     // UDP
     int UDPRecv(std::string& outstr, int fd, std::string& from_ip, int& from_port);
-    int UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port);
+    int UDPSend(const std::string& outstr, const std::string& dest_ip, int dest_port);
 
 public:
     ErpcHandler() {}
