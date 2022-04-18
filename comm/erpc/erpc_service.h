@@ -10,16 +10,27 @@ using namespace erpc_def;
 
 class ErpcService {
 public:
-    // rpc service table
+
     enum ServiceMapTable {
-        CMD_FUNC_REVERSE = 101,
+        // TCP
+        CMD_TCP_TEST_FUNC_REVERSE = 101,
+
+        // UDP
+        CMD_UDP_TEST_FUNC_RECV = 102,
     };
 
-    // rpc service
-    virtual int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp) = 0;
+    /***************************** TEST FUNC *****************************/
+    
+    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp);
+    
+    virtual int TestFuncUdpRecv(const spa::SPAVoucher& spaVoucher);
 
-    // udp service
-    virtual int FuncUdpRecv(const spa::SPAVoucher& spaVoucher) = 0;
+    /***************************** CONTROLLER *****************************/
+
+
+    /***************************** APPLICATION *****************************/
+
+
 
 public:
     ~ErpcService() {}

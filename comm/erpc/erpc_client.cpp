@@ -1,7 +1,7 @@
 #include "erpc_client.h"
 #include "comm/ssltools/ssl_def.h"
 
-int Client::FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverseRsp& rsp, Header& header)
+int Client::FuncReverseClient(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;
@@ -9,7 +9,7 @@ int Client::FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverse
         connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
 
     // 变更 1
-    PacketReq.cmdid = ErpcService::CMD_FUNC_REVERSE;
+    PacketReq.cmdid = ErpcService::CMD_TCP_TEST_FUNC_REVERSE;
     req.SerializeToString(&PacketReq.body);
 
     // 变更 2

@@ -93,9 +93,10 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
     iAssert(ret, ("DecryptVoucher faild"));
 
+    // 解包 CMD_UDP_ TODO
     ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
-    ret = service->FuncUdpRecv(spaVoucher);
-    iAssert(ret, ("FuncUdpRecv error ret:%d", ret));
+    ret = service->TestFuncUdpRecv(spaVoucher);
+    iAssert(ret, ("TestFuncUdpRecv error ret:%d", ret));
 
     TLOG_MSG(("HandleUDPRequest success, from ip:%s, port:%d", from_ip.c_str(), from_port));
     return 0;
@@ -168,9 +169,9 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
 {
     int ret = 0;
 
-    if (cmdid == ErpcService::CMD_FUNC_REVERSE) {
+    if (cmdid == ErpcService::CMD_TCP_TEST_FUNC_REVERSE) {
         TLOG_MSG(("RPC forward to cmdid:%d"));
-        RPC_CALL_FORWARD(FuncReverse, request, response);
+        RPC_CALL_FORWARD(TestFuncReverse, request, response);
         return 0;
     }
 

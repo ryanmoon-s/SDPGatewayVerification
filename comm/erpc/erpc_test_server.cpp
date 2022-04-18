@@ -5,10 +5,10 @@
 int mini_epoll_proc();
 int mini_server_ssl();
 
-class ErpcServiceImpl: public ErpcService {
+class TestErpcServiceImpl: public ErpcService {
 public:
     // rpc service
-    virtual int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp) {
+    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp) {
         std::string str = objReq.str();
         std::reverse(str.begin(), str.end());
         objRsp.set_str(str);
@@ -18,7 +18,7 @@ public:
     }
 
     // udp service
-    virtual int FuncUdpRecv(const spa::SPAVoucher& spaVoucher)
+    virtual int TestFuncUdpRecv(const spa::SPAVoucher& spaVoucher)
     {
         std::string voucher_str;
         spaVoucher.SerializeToString(&voucher_str);
@@ -28,7 +28,7 @@ public:
     }
 
 public:
-    ~ErpcServiceImpl() {}
+    virtual ~TestErpcServiceImpl() {}
 };
 
 
@@ -40,7 +40,7 @@ int main()
 {
     Server server(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
 
-    ErpcServiceImpl service;
+    TestErpcServiceImpl service;
     server.RegisterService(&service);
 
     server.Run();

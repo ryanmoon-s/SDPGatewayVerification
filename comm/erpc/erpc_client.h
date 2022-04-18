@@ -10,7 +10,7 @@ using namespace erpc_def;
 
 class Client {
 public:
-    int FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverseRsp& rsp, Header& header);
+    int FuncReverseClient(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header);
 
 };
 

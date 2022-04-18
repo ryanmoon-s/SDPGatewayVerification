@@ -4,16 +4,16 @@ int mini_client_ssl();
 
 int main() {
     int ret = 0;
-    erpc::FuncReverseReq req;
-    erpc::FuncReverseRsp rsp;
+    erpc::TestFuncReverseReq req;
+    erpc::TestFuncReverseRsp rsp;
     Header header;
 
     req.set_str("hello world");
     ret = Client().FuncReverseClient(req, rsp, header);
     iAssert(ret, ("FuncReverseClient"));
     
-    TLOG_MSG(("FuncReverse Sucess: req.str:%s, rsp.str:%s", req.str().c_str(), rsp.str().c_str()));
-    TLOG_MSG(("FuncReverse Sucess: header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
+    TLOG_MSG(("TestFuncReverse Sucess: req.str:%s, rsp.str:%s", req.str().c_str(), rsp.str().c_str()));
+    TLOG_MSG(("TestFuncReverse Sucess: header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
 
     return 0;
 }
