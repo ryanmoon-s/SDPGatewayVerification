@@ -21,7 +21,7 @@ class VerifyClient {
 public:
     // 与SDPController交互
     // 获取可访问的应用列表: {<IP, PORT>}
-    int GetAccessibleAppList(vector<pair<std::string, int>>& list, const spa::SPAVoucher& vocher);
+    int GetAccessibleAppList( /*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher& vocher);
 
 private:
     // SPA敲门，使用UDP进行交互

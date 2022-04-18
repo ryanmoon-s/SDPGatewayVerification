@@ -3,6 +3,7 @@
 
 #include "comm/tlog/tlog.h"
 #include "comm/proto/erpc.pb.h"
+#include "comm/proto/spa.pb.h"
 #include "erpc_def.h"
 
 using namespace erpc_def;
@@ -18,9 +19,16 @@ namespace erpc_service
     int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp);
 
 
+    // udp service
+    int FuncUdpRecv(const spa::SPAVoucher& spaVoucher);
 
 
 }
+
+// class ErpcService {
+// public:
+
+// };
 
 
 #endif

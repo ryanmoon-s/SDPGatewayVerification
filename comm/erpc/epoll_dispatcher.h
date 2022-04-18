@@ -30,7 +30,7 @@ public:
     int GenerateLocalSocket(int& wr_fd);
 
 public:
-    EpollDispatcher(int port);
+    EpollDispatcher(int tcp_port, int udp_port);
     ~EpollDispatcher();
 
 private:

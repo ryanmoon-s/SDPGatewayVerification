@@ -1,7 +1,6 @@
-cc_binary(
+cc_library(
     name = "client_lib",
     srcs = [
-        "client.h",
         "client.cpp",
     ],
     hdrs = [

@@ -9,11 +9,11 @@ using namespace erpc_service;
         erpc::FUNC##Req req;                                            \
         erpc::FUNC##Rsp rsp;                                            \
         req.ParseFromString(request);                                   \
-        ret = FUNC(req, rsp);                                           \
+        ret = erpc_service::FUNC(req, rsp);                             \
         rsp.SerializeToString(&response);                               \
     } while(0)
       
-int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
+int ErpcHandler::HandleTCPRequest(const FdDataType& fd_data)
 {
     int fd = fd_data.fd;
     auto connector = fd_data.connector;
@@ -42,7 +42,7 @@ int ErpcHandler::HandleNetRquest(const FdDataType& fd_data)
     return 0;
 }
 
-int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data)
+int ErpcHandler::HandleTCPAccept(int listen_fd, FdDataType& fd_data)
 {
     struct sockaddr_in addr;
     socklen_t len = sizeof(addr);
@@ -59,7 +59,7 @@ int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data)
     bool result = config->IsIpInWhiteTable(ip);
     if (!result)
     {
-        TLOG_MSG(("HandleNetAccept reject ip:%s", ip.c_str()));
+        TLOG_MSG(("HandleTCPAccept reject ip:%s", ip.c_str()));
         close(tmp_fd);
         return kIpNotInWhiteTable;
     }
@@ -75,6 +75,28 @@ int  ErpcHandler::HandleNetAccept(int listen_fd, FdDataType& fd_data)
     fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
     
     TLOG_MSG(("accept fd:%d, ip:%s, port:%u", tmp_fd, inet_ntoa(addr.sin_addr), addr.sin_port));
+    return 0;
+}
+
+int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
+{
+    int ret = 0, from_port = 0;
+    int fd = fd_data.fd;
+    spa::SPAPacket spaPacket;
+    spa::SPAVoucher spaVoucher;
+    std::string msg, from_ip;
+    
+    ret = UDPRecv(msg, fd, from_ip, from_port);
+    iAssert(ret, ("UDPRecv faild"));
+
+    spaPacket.ParseFromString(msg);
+    ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
+    iAssert(ret, ("DecryptVoucher faild"));
+
+    ret = erpc_service::FuncUdpRecv(spaVoucher);
+    iAssert(ret, ("FuncUdpRecv error ret:%d", ret));
+
+    TLOG_MSG(("HandleUDPRequest success, from ip:%s, port:%d", from_ip.c_str(), from_port));
     return 0;
 }
 
@@ -401,8 +423,11 @@ int ErpcHandler::UDPRecv(std::string& outstr, int fd, std::string& from_ip, int&
 
 int ErpcHandler::UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port)
 {
-    int ret = 0;
+    int ret = 0, fd = 0;
     struct sockaddr_in addr;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0); 
+    iAssert(fd, ("socket faild"));
  
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(dest_port);

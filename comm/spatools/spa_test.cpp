@@ -4,8 +4,8 @@
 
 int main() {
     spa::SPAVoucher voucher;
-    voucher.mutable_acc()->set_user_account("arashi");
-    voucher.mutable_acc()->set_user_password("123321");
+    voucher.mutable_account()->set_acc("arashi");
+    voucher.mutable_account()->set_pwd("123321");
     voucher.set_ip("127.0.0.1");
     voucher.set_address("ChengDu");
     voucher.set_is_valid(true);

@@ -7,6 +7,9 @@
 #include "erpc_def.h"
 #include "comm/proto/erpc.pb.h"
 
+#include "comm/proto/spa.pb.h"
+#include "comm/spatools/spa_tool.h"
+
 using namespace erpc_def;
 struct FdDataType;
 
@@ -15,15 +18,15 @@ struct FdDataType;
 
 class ErpcHandler {
 public:
-    // 服务器端入口
-    int HandleNetRquest(const FdDataType& fd_data);
-    int HandleNetAccept(int listen_fd, FdDataType& data);
+    // 服务端TCP入口
+    int HandleTCPRequest(const FdDataType& fd_data);
+    int HandleTCPAccept(int listen_fd, FdDataType& data);
+
+    // 服务端UDP入口
+    int HandleUDPRequest(const FdDataType& fd_data);
 
     // 客户端发送请求
     int ClientRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port);
-
-    // 操作IP白名单
-    void IpWhiteTableOp(int op, std::string ip);
 
 public:
     // 读取与发送数据包
@@ -32,6 +35,7 @@ public:
     int HandleRead(std::string& outstr, int fd);
     int HandleWrite(const std::string& instr, int fd);
 
+    // UDP
     int UDPRecv(std::string& outstr, int fd, std::string& from_ip, int& from_port);
     int UDPSend(const std::string& outstr, const std::string& dest_ip, const int& dest_port);
 

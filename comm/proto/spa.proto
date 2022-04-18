@@ -1,16 +1,15 @@
-syntax = "proto2";  
 package spa;
 
-message account
+message Account
 {
-    optional string user_account = 1;
-    optional string user_password = 2;
+    optional string acc = 1;
+    optional string pwd = 2;
 }
 
 // SPA 凭证
 message SPAVoucher
 {
-    optional account acc = 1;
+    optional Account account = 1;
     optional string ip = 2;
     optional string address = 3;
     optional uint32 timestamp = 4;
@@ -18,9 +17,9 @@ message SPAVoucher
 }
 
 // SPA数据包
-// = 加密的SPA凭证 + 分隔符 +SPA凭证摘要
+// 1 加密的SPA凭证; 2 SPA凭证摘要
 message SPAPacket
 {
-    optional string encrypt_spa_voucher = 1;
+    optional bytes rsa_data = 1;
+    optional bytes md5_data = 2;
 }
-

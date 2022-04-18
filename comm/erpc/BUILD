@@ -20,6 +20,8 @@ cc_library(
         "//comm/tlog:tlog",
         "//comm/ssltools:ssl_tools",
         "//comm/proto:erpc_cc_pb",
+        "//comm/proto:spa_cc_pb",
+        "//comm/spatools:spa_tools",
     ],
     copts = [
         "-std=c++11",
@@ -49,6 +51,8 @@ cc_library(
         "//comm/tlog:tlog",
         "//comm/ssltools:ssl_tools",
         "//comm/proto:erpc_cc_pb",
+        "//comm/proto:spa_cc_pb",
+        "//comm/spatools:spa_tools",
     ],
     copts = [
         "-std=c++11",

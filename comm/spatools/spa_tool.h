@@ -11,8 +11,6 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 
-#define SeparatorForStr "///@XiHuaUniversity///"
-
 class SPATools {
 public:
     // SPA凭证 -> SPA数据包

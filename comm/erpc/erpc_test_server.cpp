@@ -7,7 +7,7 @@ int mini_server_ssl();
 
 int main()
 {
-    Server server(TCP_PORT_CONTROLLER);
+    Server server(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
     server.Run();
 }
 

@@ -14,13 +14,14 @@ public:
     int Run();
 
 public:
-    Server(int port);
+    Server(int tcp_port, int udp_port);
     ~Server();
 
 private:
     std::map<std::string, int> ip_white_table_;
     EpollDispatcher* epoll_dispatcher_;
-    int port_;
+    int tcp_port_;
+    int udp_port_;
     int local_fd_ = 0;
 };
 

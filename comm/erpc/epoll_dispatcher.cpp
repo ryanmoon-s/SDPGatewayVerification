@@ -1,6 +1,6 @@
 #include "epoll_dispatcher.h"
 
-EpollDispatcher::EpollDispatcher(int port)
+EpollDispatcher::EpollDispatcher(int tcp_port, int udp_port)
 {
     epoll_data_.epollfd = epoll_create1(0);
     iAssertNoRet(epoll_data_.epollfd, ("epoll_create1 faild"));
@@ -8,10 +8,10 @@ EpollDispatcher::EpollDispatcher(int port)
     epoll_data_.events = (struct epoll_event*)calloc(MAXEVENTS, sizeof(struct epoll_event));
     iAssertNoRet(epoll_data_.events, ("calloc epoll_data_.events faild"));
 
-    int ret = _MakeListenFd(port);
+    int ret = _MakeListenFd(tcp_port);
     iAssertNoRet(ret, ("_MakeListenFd faild"));
 
-    ret = _MakeUdpFd(port);
+    ret = _MakeUdpFd(udp_port);
     iAssertNoRet(ret, ("_MakeUdpFd faild"));
 }
 
@@ -94,45 +94,49 @@ int EpollDispatcher::Dispatch()
         {
             TLOG_DBG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
             FdDataType fd_data;
+
             if (fd == listen_fd_)
             {
-                ret = handler.HandleNetAccept(listen_fd_, fd_data);
+                ret = handler.HandleTCPAccept(listen_fd_, fd_data);
                 
                 if (ret == 0)
                 {
                     ret = DispatcherAdd(fd_data);
                     iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
-                    TLOG_MSG(("HandleNetAccept success fd:%d", fd_data.fd));
+                    TLOG_MSG(("HandleTCPAccept success fd:%d", fd_data.fd));
                 }
                 else if (ret == kIpNotInWhiteTable)
                 {
-                    TLOG_MSG(("HandleNetAccept IP is illegal"));
+                    TLOG_MSG(("HandleTCPAccept IP is illegal"));
                 }
                 else
                 {
-                    TLOG_ERR(("HandleNetAccept faild"));
+                    TLOG_ERR(("HandleTCPAccept faild"));
                 }
-            }
-            else if (fd == udp_fd_)
-            {
-                // UDP 请求
             }
             else if (fd == local_fd_)
             {
                 // 暂未使用
                 // 使用前提：this->GenerateLocalSocket();
             }
+            else if (fd == udp_fd_)
+            {
+                // UDP 请求
+                fd_data = epoll_data_.fdmap[fd];
+                ret = handler.HandleUDPRequest(fd_data);
+                iAssertNoRet(ret, ("HandleUDPRequest fd:%d", fd));
+            }
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
-                ret = handler.HandleNetRquest(fd_data);
-                iAssertNoRet(ret, ("HandleNetRquest fd:%d", fd_data.fd));
+                ret = handler.HandleTCPRequest(fd_data);
+                iAssertNoRet(ret, ("HandleTCPRequest fd:%d", fd));
 
                 // Keep Alive TODO
                 ret = DispatcherDel(fd_data);
-                iAssertNoRet(ret, ("DispatcherDel fd:%d", fd_data.fd));
+                iAssertNoRet(ret, ("DispatcherDel fd:%d", fd));
 
-                TLOG_MSG(("HandleNetRquest success fd:%d", fd_data.fd));
+                TLOG_MSG(("HandleTCPRequest success fd:%d", fd));
             }
         }
 
