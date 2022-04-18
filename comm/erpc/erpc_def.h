@@ -27,7 +27,7 @@ namespace erpc_def
 {
 
 enum SERVER_RET_ERR_DEF {
-    kErrServiceNotFound = -10001,
+    kErrServiceNotFound = -501,
 };
 
 enum SIMPLE_ERROR {
@@ -35,11 +35,10 @@ enum SIMPLE_ERROR {
     kIpNotInWhiteTable = -1002,
 };
 
-
 /*
-组包格式 Packet
-4     Header  string->protobuf
-cmdid header  body
+    组包格式
+    cmdid header body
+    4     4+50   left
 */
 
 struct Header {

@@ -6,11 +6,7 @@
 #include "comm/proto/spa.pb.h"
 #include "erpc_def.h"
 
-using namespace erpc_def;
-
-class ErpcService {
-public:
-
+namespace erpc {
     enum ServiceMapTable {
         // TEST
         CMD_RPC_TEST_FUNC_REVERSE = 1,
@@ -22,11 +18,16 @@ public:
         // APPGATEWAY
         CMD_TCP_APPGATEWAY_FUNC_REVERSE = 201,
     };
+    
+}
+
+class ErpcService {
+public:
 
     /***************************** TEST FUNC *****************************/
     
     virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp);
-    
+
     virtual int TestFuncUdpRecv(const std::string& msg);
 
     /***************************** CONTROLLER *****************************/

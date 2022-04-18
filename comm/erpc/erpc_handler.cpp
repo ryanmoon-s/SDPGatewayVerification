@@ -106,7 +106,7 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
 
     // 转发服务
     ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
-    if (cmdid == ErpcService::CMD_UDP_TEST_FUNC_RECV)
+    if (cmdid == erpc::CMD_UDP_TEST_FUNC_RECV)
     {
         ret = service->TestFuncUdpRecv(msg_str);
     }
@@ -197,7 +197,7 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
 {
     int ret = 0;
 
-    if (cmdid == ErpcService::CMD_RPC_TEST_FUNC_REVERSE) {
+    if (cmdid == erpc::CMD_RPC_TEST_FUNC_REVERSE) {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
         RPC_CALL_FORWARD(TestFuncReverse, request, response);
         return 0;

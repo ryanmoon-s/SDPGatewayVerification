@@ -2,10 +2,10 @@
 
 int ErpcService::TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp)
 {
-    return kErrServiceNotFound;
+    return erpc_def::kErrServiceNotFound;
 }
 
 int ErpcService::TestFuncUdpRecv(const std::string& msg)
 {
-    return kErrServiceNotFound;
+    return erpc_def::kErrServiceNotFound;
 }

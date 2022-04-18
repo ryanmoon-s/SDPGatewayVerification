@@ -2,10 +2,10 @@
 #include "comm/tlog/tlog.h"
 #include "comm/ssltools/ssl_tool.h"
 
-int SPATools::EncryptVoucher(spa::SPAPacket& packet, const spa::SPAVoucher& voucher) 
+int SPATools::EncryptVoucher(spa::SPAPacket& spaPacket, const spa::SPAVoucher& spaVoucher) 
 {
     std::string text;
-    voucher.SerializeToString(&text);
+    spaVoucher.SerializeToString(&text);
 
     // rsa
     std::string rsa_en_text;
@@ -18,22 +18,22 @@ int SPATools::EncryptVoucher(spa::SPAPacket& packet, const spa::SPAVoucher& vouc
     iAssert(ret, ("MD5Encrypt faild"));
 
     // 拼接
-    packet.set_rsa_data(rsa_en_text);
-    packet.set_md5_data(md5_en_text);
-    TLOG_DBG(("EncryptVoucher success, size:%d", packet.rsa_data().size()));
+    spaPacket.set_rsa_data(rsa_en_text);
+    spaPacket.set_md5_data(md5_en_text);
+    TLOG_DBG(("EncryptVoucher success, size:%d", spaPacket.rsa_data().size()));
 
     return 0;
 }
 
-int SPATools::DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAPacket& packet) 
+int SPATools::DecryptVoucher(spa::SPAVoucher& spaVoucher, const spa::SPAPacket& spaPacket) 
 {
     std::string rsa_en_text;
     std::string rsa_de_text;
     std::string md5_en_text;
     std::string md5_en_text_new;
 
-    rsa_en_text = packet.rsa_data();
-    md5_en_text = packet.md5_data();
+    rsa_en_text = spaPacket.rsa_data();
+    md5_en_text = spaPacket.md5_data();
     
     int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_PATH, PUB_ENCRYPT);
     iAssert(ret, ("RSADecrypt"));
@@ -50,7 +50,7 @@ int SPATools::DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAPacket& pac
     TLOG_DBG(("DecryptVoucher success; MD5 matched"));
 
     // 解包
-    voucher.ParseFromString(rsa_de_text);
+    spaVoucher.ParseFromString(rsa_de_text);
 
     return 0;
 }
