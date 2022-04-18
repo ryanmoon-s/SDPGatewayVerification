@@ -7,7 +7,6 @@
 #include "comm/proto/erpc.pb.h"
 
 using namespace erpc_def;
-using namespace erpc_service;
 
 class Client {
 public:

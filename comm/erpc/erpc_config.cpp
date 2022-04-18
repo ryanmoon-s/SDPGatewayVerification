@@ -20,3 +20,13 @@ bool ErpcConfig::IsIpInWhiteTable(std::string ip)
     auto iter = ip_white_table_.find(ip);
     return iter != ip_white_table_.end();
 }
+
+void ErpcConfig::SetServiceObj(ErpcService* service)
+{
+    service_ = service;
+}
+
+ErpcService* ErpcConfig::GetServiceObj()
+{
+    return service_;
+}

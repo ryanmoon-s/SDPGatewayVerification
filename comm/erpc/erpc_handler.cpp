@@ -2,17 +2,17 @@
 #include "comm/ssltools/ssl_def.h"
 
 using namespace erpc_def;
-using namespace erpc_service;
 
-#define RPC_CALL_FORWARD(FUNC, request, response)                       \
-    do {                                                                \
-        erpc::FUNC##Req req;                                            \
-        erpc::FUNC##Rsp rsp;                                            \
-        req.ParseFromString(request);                                   \
-        ret = erpc_service::FUNC(req, rsp);                             \
-        rsp.SerializeToString(&response);                               \
+#define RPC_CALL_FORWARD(FUNC, request, response)                           \
+    do {                                                                    \
+        erpc::FUNC##Req req;                                                \
+        erpc::FUNC##Rsp rsp;                                                \
+        req.ParseFromString(request);                                       \
+        ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();  \
+        ret = service->FUNC(req, rsp);                                      \
+        rsp.SerializeToString(&response);                                   \
     } while(0)
-      
+
 int ErpcHandler::HandleTCPRequest(const FdDataType& fd_data)
 {
     int fd = fd_data.fd;
@@ -93,7 +93,8 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
     iAssert(ret, ("DecryptVoucher faild"));
 
-    ret = erpc_service::FuncUdpRecv(spaVoucher);
+    ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
+    ret = service->FuncUdpRecv(spaVoucher);
     iAssert(ret, ("FuncUdpRecv error ret:%d", ret));
 
     TLOG_MSG(("HandleUDPRequest success, from ip:%s, port:%d", from_ip.c_str(), from_port));
@@ -167,7 +168,7 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
 {
     int ret = 0;
 
-    if (cmdid == CMD_FUNC_REVERSE) {
+    if (cmdid == ErpcService::CMD_FUNC_REVERSE) {
         TLOG_MSG(("RPC forward to cmdid:%d"));
         RPC_CALL_FORWARD(FuncReverse, request, response);
         return 0;

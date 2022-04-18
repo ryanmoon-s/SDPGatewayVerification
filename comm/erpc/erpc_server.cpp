@@ -25,3 +25,9 @@ Server::~Server()
 {
     delete epoll_dispatcher_;
 }
+
+void Server::RegisterService(ErpcService* service)
+{
+    ErpcConfig* config = ErpcConfig::GetInstance();
+    config->SetServiceObj(service);
+}

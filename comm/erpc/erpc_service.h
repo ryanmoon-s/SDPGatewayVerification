@@ -8,27 +8,22 @@
 
 using namespace erpc_def;
 
-namespace erpc_service 
-{
+class ErpcService {
+public:
     // rpc service table
     enum ServiceMapTable {
         CMD_FUNC_REVERSE = 101,
     };
 
     // rpc service
-    int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp);
-
+    virtual int FuncReverse(const erpc::FuncReverseReq& objReq, erpc::FuncReverseRsp& objRsp) = 0;
 
     // udp service
-    int FuncUdpRecv(const spa::SPAVoucher& spaVoucher);
+    virtual int FuncUdpRecv(const spa::SPAVoucher& spaVoucher) = 0;
 
-
-}
-
-// class ErpcService {
-// public:
-
-// };
+public:
+    ~ErpcService() {}
+};
 
 
 #endif

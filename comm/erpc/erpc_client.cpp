@@ -9,7 +9,7 @@ int Client::FuncReverseClient(const erpc::FuncReverseReq& req, erpc::FuncReverse
         connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
 
     // 变更 1
-    PacketReq.cmdid = CMD_FUNC_REVERSE;
+    PacketReq.cmdid = ErpcService::CMD_FUNC_REVERSE;
     req.SerializeToString(&PacketReq.body);
 
     // 变更 2

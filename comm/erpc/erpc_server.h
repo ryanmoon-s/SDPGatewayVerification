@@ -3,7 +3,9 @@
 
 #include <map>
 #include "erpc_def.h"
+#include "erpc_server.h"
 #include "epoll_dispatcher.h"
+#include "erpc_service.h"
 
 #include "comm/ssltools/ssl_tool.h"
 #include "comm/commdef/comm_def.h"
@@ -12,6 +14,9 @@
 class Server {
 public:
     int Run();
+
+    // 注册服务，传入子类指针
+    void RegisterService(ErpcService* service);
 
 public:
     Server(int tcp_port, int udp_port);
