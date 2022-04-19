@@ -1,5 +1,4 @@
-#ifndef ERPC_HANDLER_H
-#define ERPC_HANDLER_H
+#pragma once
 
 #include "epoll_dispatcher.h"
 #include "erpc_service.h"
@@ -62,7 +61,3 @@ private:
     template<typename T>
     T _MemoryCorpToObject(const std::string& str);
 };
-
-
-
-#endif

@@ -1,5 +1,5 @@
 cc_library(
-    name = "ssl_tools",
+    name = "ssl_tools_lib",
     srcs = [
         "ssl_def.h",
         "ssl_tool.h",
@@ -10,8 +10,8 @@ cc_library(
         "ssl_tool.h",
     ],
     deps = [
-        "//comm/commdef:comm_def",
-        "//comm/tlog:tlog",
+        "//comm/commdef:comm_def_lib",
+        "//comm/tlog:tlog_lib",
         "//lib3rd/openssl:ssl",
     ],
     copts = [
@@ -26,7 +26,7 @@ cc_binary(
         "ssl_test.cpp",
     ],
     deps = [
-        "//comm/ssltools:ssl_tools",
+        "//comm/ssltools:ssl_tools_lib",
     ],
     copts = [
         "-std=c++11",

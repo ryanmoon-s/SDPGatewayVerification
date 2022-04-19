@@ -1,5 +1,5 @@
 cc_library(
-    name = "spa_tools",
+    name = "spa_tools_lib",
     srcs = [
         "spa_tool.h",
         "spa_tool.cpp",
@@ -8,9 +8,9 @@ cc_library(
         "spa_tool.h",
     ],
     deps = [
-        "//comm/commdef:comm_def",
-        "//comm/tlog:tlog",
-        "//comm/ssltools:ssl_tools",
+        "//comm/commdef:comm_def_lib",
+        "//comm/tlog:tlog_lib",
+        "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:spa_cc_pb",
     ],
     copts = [
@@ -25,7 +25,7 @@ cc_binary(
         "spa_test.cpp",
     ],
     deps = [
-        "//comm/spatools:spa_tools",
+        "//comm/spatools:spa_tools_lib",
     ],
     copts = [
         "-std=c++11",

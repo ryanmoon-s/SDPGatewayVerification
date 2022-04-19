@@ -1,5 +1,4 @@
-#ifndef SPA_TOOL_H
-#define SPA_TOOL_H
+#pragma once
 
 #include "comm/commdef/comm_def.h"
 #include "comm/proto/spa.pb.h" 
@@ -18,10 +17,4 @@ public:
     // SPA数据包 -> SPA凭证
     int DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAPacket& packet);
 };
-
-
-
-
-
-#endif
 

@@ -106,7 +106,7 @@ int EpollDispatcher::Dispatch()
                 }
                 else if (ret == kIpNotInWhiteTable)
                 {
-                    TLOG_MSG(("HandleRPCAccept IP is illegal"));
+                    TLOG_MSG(("HandleRPCAccept faild, IP is illegal"));
                 }
                 else
                 {
@@ -123,17 +123,17 @@ int EpollDispatcher::Dispatch()
                 // UDP 请求
                 fd_data = epoll_data_.fdmap[fd];
                 ret = handler.HandleUDPRequest(fd_data);
-                iAssertNoRet(ret, ("HandleUDPRequest fd:%d", fd));
+                iAssertNoRet(ret, ("HandleUDPRequest faild, fd:%d", fd));
             }
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
                 ret = handler.HandleRPCRequest(fd_data);
-                iAssertNoRet(ret, ("HandleRPCRequest fd:%d", fd));
+                iAssertNoRet(ret, ("HandleRPCRequest faild, fd:%d", fd));
 
                 // Keep Alive TODO
                 ret = DispatcherDel(fd_data);
-                iAssertNoRet(ret, ("DispatcherDel fd:%d", fd));
+                iAssertNoRet(ret, ("DispatcherDel faild, fd:%d", fd));
             }
         }
 

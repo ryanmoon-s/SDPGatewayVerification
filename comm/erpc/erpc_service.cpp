@@ -9,3 +9,8 @@ int ErpcService::TestFuncUdpRecv(const std::string& msg)
 {
     return erpc_def::kErrServiceNotFound;
 }
+
+int ErpcService::ControllerFuncUdpRecv(const std::string& msg)
+{
+    return erpc_def::kErrServiceNotFound;
+}

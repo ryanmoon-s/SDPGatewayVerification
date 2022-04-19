@@ -109,7 +109,12 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     if (cmdid == erpc::CMD_UDP_TEST_FUNC_RECV)
     {
         ret = service->TestFuncUdpRecv(msg_str);
+    } 
+    else if (cmdid == erpc::CMD_UDP_CONTROLLER_FUNC_RECV)
+    {
+        ret = service->ControllerFuncUdpRecv(msg_str);
     }
+
     iAssert(ret, ("TestFuncUdpRecv error ret:%d", ret));
 
     TLOG_MSG(("HandleUDPRequest success, from ip:%s, port:%d", from_ip.c_str(), from_port));

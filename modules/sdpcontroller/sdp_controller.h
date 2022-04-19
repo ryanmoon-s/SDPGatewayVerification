@@ -1,15 +1,19 @@
-#ifndef SDP_CONTROLLER_H
-#define SDP_CONTROLLER_H
+#pragma once
+
+#include "comm/commdef/comm_def.h"
+#include "comm/erpc/erpc_server.h"
+#include "sdp_controller_erpc_serviceimpl.h"
+
+class SDPController {
+public:
+    void Run();
+
+public:
+    SDPController();
 
 
 
-
-
-
-
-
-
-
-
-
-#endif
+private:
+    ErpcServer server_;
+    SDPControllerErpcServiceImpl service_;
+};

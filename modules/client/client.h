@@ -1,5 +1,4 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#pragma once
 
 #include "comm/commdef/comm_def.h"
 #include "comm/commdef/controller_def.h"
@@ -33,17 +32,3 @@ class AccessClient {
     int AccessApplication();
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif

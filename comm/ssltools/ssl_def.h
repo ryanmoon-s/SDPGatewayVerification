@@ -1,5 +1,4 @@
-#ifndef SSL_DEF_H
-#define SSL_DEF_H
+#pragma once
 
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
@@ -74,6 +73,3 @@ enum SSL_SLECT_METHOD_TYPE {
             return -1;                          \
         }                                       \
     } while(0)
-
-
-#endif

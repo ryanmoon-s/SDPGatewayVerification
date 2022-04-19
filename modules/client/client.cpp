@@ -25,7 +25,7 @@ int VerifyClient::_SPAKnocking(const spa::SPAPacket& packet, std::string ip, int
     std::string msg;
     packet.SerializeToString(&msg);
 
-    ret = ErpcClient().TestFuncUdpRecv(erpc::CMD_UDP_TEST_FUNC_RECV, msg, ip, port);
+    ret = ErpcClient().UDPFuncRequest(erpc::CMD_UDP_CONTROLLER_FUNC_RECV, msg, ip, port);
     iAssert(ret, ("TestFuncUdpRecv faild"));
 
     return 0;

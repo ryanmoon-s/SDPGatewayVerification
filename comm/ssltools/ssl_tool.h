@@ -1,5 +1,4 @@
-#ifndef SSL_TOOLS_H
-#define SSL_TOOLS_H
+#pragma once
 
 #include "ssl_def.h"
 
@@ -44,5 +43,3 @@ public:
     int RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op);
     int MD5Encrypt(std::string& to_text, std::string text);
 };
-
-#endif

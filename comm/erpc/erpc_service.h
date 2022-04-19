@@ -1,5 +1,4 @@
-#ifndef ERPC_SERVICE
-#define ERPC_SERVICE
+#pragma once
 
 #include "comm/tlog/tlog.h"
 #include "comm/proto/erpc.pb.h"
@@ -32,6 +31,7 @@ public:
 
     /***************************** CONTROLLER *****************************/
 
+    virtual int ControllerFuncUdpRecv(const std::string& msg);
 
     /***************************** APPGATEWAY *****************************/
 
@@ -40,6 +40,3 @@ public:
 public:
     ~ErpcService() {}
 };
-
-
-#endif

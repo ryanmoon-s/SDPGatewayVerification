@@ -1,5 +1,4 @@
-#ifndef ERPC_CLIENT_H
-#define ERPC_CLIENT_H
+#pragma once
 
 #include "erpc_def.h"
 #include "erpc_handler.h"
@@ -11,10 +10,16 @@ using namespace erpc_def;
 
 class ErpcClient {
 public:
-    int TestFuncReverseClient(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header);
-    int TestFuncUdpRecv(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
+    /***************************** UDP *****************************/
+    int UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
+
+    /***************************** RPC *****************************/
+
+    // Test
+    int TestFuncReverseRequest(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header);
+    
+    // Controller
+
+    // AppGateway
 
 };
-
-
-#endif

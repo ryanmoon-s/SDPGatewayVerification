@@ -1,5 +1,4 @@
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -79,7 +78,3 @@ do {                                        \
 
 #define TJ      \
     TLOG_DBG(("x"));
-
-
-#endif
-

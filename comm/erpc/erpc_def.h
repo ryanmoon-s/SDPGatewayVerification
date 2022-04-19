@@ -1,5 +1,4 @@
-#ifndef ERPC_DEF_H
-#define ERPC_DEF_H
+#pragma once
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -55,7 +54,3 @@ struct Packet {
 
 
 }
-
-
-
-#endif

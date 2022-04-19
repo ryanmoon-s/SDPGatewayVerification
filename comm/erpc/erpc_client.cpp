@@ -1,11 +1,11 @@
 #include "erpc_client.h"
 #include "comm/ssltools/ssl_def.h"
 
-int ErpcClient::TestFuncReverseClient(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header)
+int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;
-    std::shared_ptr<SSLConnector> 
+    std::shared_ptr<SSLConnector>
         connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
 
     // 变更 1
@@ -22,7 +22,7 @@ int ErpcClient::TestFuncReverseClient(const erpc::TestFuncReverseReq& req, erpc:
     return 0;
 }
 
-int ErpcClient::TestFuncUdpRecv(uint32_t cmdid, const std::string& msg, const std::string& ip, int port)
+int ErpcClient::UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port)
 {
     int ret = 0;
 

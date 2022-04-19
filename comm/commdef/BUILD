@@ -1,5 +1,5 @@
 cc_library(
-    name = "comm_def",
+    name = "comm_def_lib",
     srcs = [
         "comm_def.h",
         "controller_def.h",

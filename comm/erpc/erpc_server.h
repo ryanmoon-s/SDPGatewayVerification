@@ -1,5 +1,4 @@
-#ifndef ERPC_SERVER_H
-#define ERPC_SERVER_H
+#pragma once
 
 #include <map>
 #include "erpc_def.h"
@@ -11,16 +10,18 @@
 #include "comm/commdef/comm_def.h"
 #include "comm/tlog/tlog.h"
 
-class Server {
+class ErpcServer {
 public:
-    int Run();
-
-    // 注册服务，传入子类指针
+    // 1、注册服务，传入子类指针
     void RegisterService(ErpcService* service);
 
+    // 2、启动运行
+    int Run();
+
+
 public:
-    Server(int tcp_port, int udp_port);
-    ~Server();
+    ErpcServer(int tcp_port, int udp_port);
+    ~ErpcServer();
 
 private:
     std::map<std::string, int> ip_white_table_;
@@ -29,7 +30,3 @@ private:
     int udp_port_;
     int local_fd_ = 0;
 };
-
-
-
-#endif

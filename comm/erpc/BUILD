@@ -16,12 +16,12 @@ cc_library(
         "erpc_service.h",
     ],
     deps = [
-        "//comm/commdef:comm_def",
-        "//comm/tlog:tlog",
-        "//comm/ssltools:ssl_tools",
+        "//comm/commdef:comm_def_lib",
+        "//comm/tlog:tlog_lib",
+        "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:erpc_cc_pb",
         "//comm/proto:spa_cc_pb",
-        "//comm/spatools:spa_tools",
+        "//comm/spatools:spa_tools_lib",
     ],
     copts = [
         "-std=c++11",
@@ -47,12 +47,12 @@ cc_library(
         "erpc_service.h",
     ],
     deps = [
-        "//comm/commdef:comm_def",
-        "//comm/tlog:tlog",
-        "//comm/ssltools:ssl_tools",
+        "//comm/commdef:comm_def_lib",
+        "//comm/tlog:tlog_lib",
+        "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:erpc_cc_pb",
         "//comm/proto:spa_cc_pb",
-        "//comm/spatools:spa_tools",
+        "//comm/spatools:spa_tools_lib",
     ],
     copts = [
         "-std=c++11",

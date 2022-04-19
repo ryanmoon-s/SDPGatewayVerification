@@ -8,7 +8,8 @@ int mini_server_ssl();
 class TestErpcServiceImpl: public ErpcService {
 public:
     // rpc service
-    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp) {
+    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp) override
+    {
         std::string str = objReq.str();
         std::reverse(str.begin(), str.end());
         objRsp.set_str(str);
@@ -18,7 +19,7 @@ public:
     }
 
     // udp service
-    virtual int TestFuncUdpRecv(const std::string& msg)
+    virtual int TestFuncUdpRecv(const std::string& msg) override
     {
         int ret = 0;
         spa::SPAPacket spaPacket;
@@ -39,14 +40,9 @@ public:
     virtual ~TestErpcServiceImpl() {}
 };
 
-
-
-
-
-
 int main()
 {
-    Server server(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
+    ErpcServer server(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
 
     TestErpcServiceImpl service;
     server.RegisterService(&service);

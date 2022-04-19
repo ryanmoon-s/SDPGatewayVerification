@@ -1,5 +1,4 @@
-#ifndef COMM_DEF_H
-#define COMM_DEF_H
+#pragma once
 
 // linux sys includes
 #include <unistd.h>
@@ -26,8 +25,3 @@
 #define TCP_PORT_CONTROLLER             6002
 #define TCP_PORT_APPLICATION            6003
 #define TCP_PORT_CLIENT                 6004
-
-
-
-
-#endif

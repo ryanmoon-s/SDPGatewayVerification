@@ -1,5 +1,5 @@
 cc_library(
-    name = "tlog",
+    name = "tlog_lib",
     srcs = [
         "tlog.h",
         "tlog.cpp",
@@ -8,7 +8,7 @@ cc_library(
         "tlog.h",
     ],
     deps = [
-        "//comm/commdef:comm_def",
+        "//comm/commdef:comm_def_lib",
     ],
     copts = [
         "-std=c++11",
@@ -22,7 +22,7 @@ cc_binary(
         "tlog_test.cpp",
     ],
     deps = [
-        "//comm/tlog:tlog",
+        "//comm/tlog:tlog_lib",
         "//comm/proto:spa_cc_pb",
     ],
     copts = [

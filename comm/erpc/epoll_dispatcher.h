@@ -1,5 +1,4 @@
-#ifndef EPOLL_DISPATCHER_H
-#define EPOLL_DISPATCHER_H
+#pragma once
 
 #include <map>
 #include "erpc_def.h"
@@ -49,8 +48,3 @@ private:
     int udp_fd_ = 0;
     EpollData epoll_data_;
 };
-
-
-
-
-#endif

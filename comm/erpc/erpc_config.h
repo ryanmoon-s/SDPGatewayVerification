@@ -1,5 +1,4 @@
-#ifndef ERPC_CONFIG_H
-#define ERPC_CONFIG_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -37,8 +36,3 @@ private:
 
     static ErpcConfig* instance_;
 };
-
-
-
-
-#endif
