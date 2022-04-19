@@ -17,6 +17,7 @@ cc_binary(
         "//comm/spatools:spa_tools_lib",
         "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:spa_cc_pb",
+        "//comm/erpc:erpc_client_lib",
         "//comm/erpc:erpc_server_lib",
     ],
     copts = [

@@ -1,9 +1,29 @@
 package erpc;
 
-message TestFuncReverseReq {
+// Test
+message TestFuncReverseReq 
+{
     optional string str = 1; 
 }
 
-message TestFuncReverseRsp {
+message TestFuncReverseRsp 
+{
     optional string str = 1; 
+}
+
+// AppGateway
+
+enum WhiteListOpType 
+{
+    ListAdd = 1;
+    ListDel = 2;
+}
+
+message GateFuncWhiteListOpReq {
+    optional int32 op = 1;  // WhiteListOpType
+    optional string ip = 2;
+}
+
+message GateFuncWhiteListOpRsp {
+
 }

@@ -9,12 +9,12 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& vocher)
     ret = SPATools().EncryptVoucher(spaPacket, vocher);
     iAssert(ret, ("EncryptVoucher faild"));
 
-    // ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_CONTROLLER);
-    // iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
-    // TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
-    ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_APPGATEWAY);
-    iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
-    TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
+    ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_CONTROLLER);
+    iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
+    TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
+    // ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_APPGATEWAY);
+    // iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
+    // TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
 
     // 获取可访问的应用列表
     
@@ -28,7 +28,7 @@ int VerifyClient::_SPAKnocking(const spa::SPAPacket& packet, std::string ip, int
     std::string msg;
     packet.SerializeToString(&msg);
 
-    ret = ErpcClient().UDPFuncRequest(erpc::CMD_UDP_APPGATEWAY_FUNC_RECV, msg, ip, port);
+    ret = ErpcClient().UDPFuncRequest(erpc::CMD_UDP_CONTROLLER_FUNC_RECV, msg, ip, port);
     iAssert(ret, ("TestFuncUdpRecv faild"));
 
     return 0;

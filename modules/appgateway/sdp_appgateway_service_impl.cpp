@@ -1,6 +1,6 @@
 #include "sdp_appgateway_service_impl.h"
 
-int SDPAppGatewayErpcServiceImpl::AppGatewayFuncUdpRecv(const std::string& msg)
+int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
 {
     int ret = 0;
     spa::SPAPacket spaPacket;
@@ -19,5 +19,13 @@ int SDPAppGatewayErpcServiceImpl::AppGatewayFuncUdpRecv(const std::string& msg)
     //
 
 
+    return 0;
+}
+
+int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
+{
+
+
+    TLOG_MSG(("GateFuncWhiteListOp success, op:%d, ip:%s", objReq.op(), objReq.ip().c_str()));
     return 0;
 }

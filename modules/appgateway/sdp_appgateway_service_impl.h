@@ -7,7 +7,8 @@
 class SDPAppGatewayErpcServiceImpl: public ErpcService {
 public:
 
-    virtual int AppGatewayFuncUdpRecv(const std::string& msg) override;
+    virtual int GateFuncUdpRecv(const std::string& msg) override;
 
+    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp) override;
 
 };
