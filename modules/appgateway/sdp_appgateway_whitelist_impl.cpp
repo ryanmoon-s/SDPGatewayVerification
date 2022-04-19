@@ -1,7 +1,7 @@
-#include "sdp_controller_erpc_ipwhitelistimpl.h"
+#include "sdp_appgateway_whitelist_impl.h"
 
 // op: IP_WHITE_TABLE_OP
-void SDPControllerErpcIpWhiteListImpl::OpIpWhiteList(int op, std::string ip)
+void SDPAppGatewayErpcIpWhiteListImpl::OpIpWhiteList(int op, std::string ip)
 {
     if (op == IP_WHITE_TABLE_ADD)
     {
@@ -13,7 +13,7 @@ void SDPControllerErpcIpWhiteListImpl::OpIpWhiteList(int op, std::string ip)
     }
 }
 
-bool SDPControllerErpcIpWhiteListImpl::IsIpInWhiteList(std::string ip)
+bool SDPAppGatewayErpcIpWhiteListImpl::IsIpInWhiteList(std::string ip)
 {
     auto iter = ip_white_list_.find(ip);
     return iter != ip_white_list_.end();

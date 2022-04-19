@@ -112,6 +112,10 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     {
         ret = service->ControllerFuncUdpRecv(msg_str);
     }
+    else if (cmdid == erpc::CMD_UDP_APPGATEWAY_FUNC_RECV)
+    {
+        ret = service->AppGatewayFuncUdpRecv(msg_str);
+    }
 
     iAssert(ret, ("TestFuncUdpRecv error ret:%d", ret));
 

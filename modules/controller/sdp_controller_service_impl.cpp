@@ -1,4 +1,4 @@
-#include "sdp_controller_erpc_serviceimpl.h"
+#include "sdp_controller_service_impl.h"
 
 int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
 {

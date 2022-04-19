@@ -20,8 +20,7 @@
 
 // aliyun 服务器 开放端口
 #define UDP_PORT_CONTROLLER             6000
-#define UDP_PORT_GATEWAY_APPLICATION    6001
+#define UDP_PORT_APPGATEWAY             6001
 
 #define TCP_PORT_CONTROLLER             6002
-#define TCP_PORT_APPLICATION            6003
-#define TCP_PORT_CLIENT                 6004
+#define TCP_PORT_APPGATEWAY             6003

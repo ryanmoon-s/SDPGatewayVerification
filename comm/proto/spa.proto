@@ -23,3 +23,8 @@ message SPAPacket
     optional bytes rsa_data = 1;
     optional bytes md5_data = 2;
 }
+
+message SPATicket
+{
+    optional bytes ticket = 1;
+}

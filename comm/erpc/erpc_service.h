@@ -8,14 +8,14 @@
 namespace erpc {
     enum ServiceMapTable {
         // TEST
-        CMD_RPC_TEST_FUNC_REVERSE = 1,
-        CMD_UDP_TEST_FUNC_RECV = 2,
+        CMD_UDP_TEST_FUNC_RECV = 1,
+        CMD_RPC_TEST_FUNC_REVERSE = 2,
 
         // CONTROLLER
         CMD_UDP_CONTROLLER_FUNC_RECV = 101,
 
         // APPGATEWAY
-        CMD_TCP_APPGATEWAY_FUNC_REVERSE = 201,
+        CMD_UDP_APPGATEWAY_FUNC_RECV = 201,
     };
     
 }
@@ -35,6 +35,7 @@ public:
 
     /***************************** APPGATEWAY *****************************/
 
+    virtual int AppGatewayFuncUdpRecv(const std::string& msg);
 
 
 public:

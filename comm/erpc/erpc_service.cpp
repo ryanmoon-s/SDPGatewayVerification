@@ -14,3 +14,8 @@ int ErpcService::ControllerFuncUdpRecv(const std::string& msg)
 {
     return erpc_def::kErrServiceNotFound;
 }
+
+int ErpcService::AppGatewayFuncUdpRecv(const std::string& msg)
+{
+    return erpc_def::kErrServiceNotFound;
+}
