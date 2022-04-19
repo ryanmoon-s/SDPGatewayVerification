@@ -1,13 +1,15 @@
 cc_binary(
-    name = "sdp_controller",
+    name = "controller",
     srcs = [
-        "sdp_controller.h",
-        "sdp_controller.cpp",
-        "sdp_controller_erpc_serviceimpl.h",
-        "sdp_controller_erpc_serviceimpl.cpp",
-        "sdp_controller_tool.h",
-        "sdp_controller_tool.cpp",
-        "sdp_controller_runner.cpp",
+        "controller.h",
+        "controller.cpp",
+        "controller_erpc_serviceimpl.h",
+        "controller_erpc_serviceimpl.cpp",
+        "controller_erpc_ipwhitelistimpl.h",
+        "controller_erpc_ipwhitelistimpl.cpp",
+        "controller_tool.h",
+        "controller_tool.cpp",
+        "controller_runner.cpp",
     ],
     deps = [
         "//comm/commdef:comm_def_lib",

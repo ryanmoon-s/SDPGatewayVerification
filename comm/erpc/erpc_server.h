@@ -12,8 +12,11 @@
 
 class ErpcServer {
 public:
-    // 1、注册服务，传入子类指针
+    // 1、注册服务hadnler，传入子类指针
     void RegisterService(ErpcService* service);
+
+    // 2、注册IP白单名单handler，传入子类指针
+    void RegisterWhiteList(ErpcIpWhiteList* whitelist);
 
     // 2、启动运行
     int Run();
@@ -24,7 +27,6 @@ public:
     ~ErpcServer();
 
 private:
-    std::map<std::string, int> ip_white_table_;
     EpollDispatcher* epoll_dispatcher_;
     int tcp_port_;
     int udp_port_;

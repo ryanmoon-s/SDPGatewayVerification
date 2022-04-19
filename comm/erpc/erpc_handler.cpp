@@ -26,11 +26,9 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
     ip.assign(inet_ntoa(addr.sin_addr));
     port = addr.sin_port;
 
-    //  == reject illegal ip
+    //  ip white list
     ErpcConfig* config = ErpcConfig::GetInstance();
-    // 临时添加白名单 去掉 TODO
-    config->IpWhiteTableOp(IP_WHITE_TABLE_ADD, ip);
-    bool result = config->IsIpInWhiteTable(ip);
+    bool result = config->GetWhiteListObj()->IsIpInWhiteList(ip);
     if (!result)
     {
         TLOG_MSG(("HandleRPCAccept reject ip:%s", ip.c_str()));

@@ -30,3 +30,9 @@ void ErpcServer::RegisterService(ErpcService* service)
     ErpcConfig* config = ErpcConfig::GetInstance();
     config->SetServiceObj(service);
 }
+
+void ErpcServer::RegisterWhiteList(ErpcIpWhiteList* whitelist)
+{
+    ErpcConfig* config = ErpcConfig::GetInstance();
+    config->SetWhiteListObj(whitelist);
+}
