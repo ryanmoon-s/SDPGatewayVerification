@@ -10,6 +10,17 @@ enum RSAOP {
 struct SSL_Data {
     SSL_CTX *ctx;
     SSL   *ssl;
+    ~SSL_Data() 
+    {
+        if (ctx)
+        {
+            free(ctx);
+        }
+        if (ssl)
+        {
+            free(ssl);
+        }
+    }
 };
 
 // 用于管理一个ssl连接

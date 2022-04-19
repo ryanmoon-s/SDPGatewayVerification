@@ -3,6 +3,7 @@
 #include "comm/erpc/erpc_service.h"
 #include "comm/spatools/spa_tool.h"
 #include "sdp_appgateway_tool.h"
+#include "sdp_appgateway_config.h"
 
 class SDPAppGatewayErpcServiceImpl: public ErpcService {
 public:

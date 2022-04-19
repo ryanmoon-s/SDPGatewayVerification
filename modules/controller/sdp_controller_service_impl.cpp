@@ -22,7 +22,7 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
     erpc::GateFuncWhiteListOpReq req;
     erpc::GateFuncWhiteListOpRsp rsp;
 
-    req.set_op(erpc::ListAdd);
+    req.set_op(erpc::ListDel);
     req.set_ip("127.0.0.1"); 
 
     ret = ErpcClient().GateFuncWhiteListOpRequest(req, rsp, header);

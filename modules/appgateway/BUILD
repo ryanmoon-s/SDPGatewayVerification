@@ -7,6 +7,8 @@ cc_binary(
         "sdp_appgateway_service_impl.cpp",
         "sdp_appgateway_whitelist_impl.h",
         "sdp_appgateway_whitelist_impl.cpp",
+        "sdp_appgateway_config.h",
+        "sdp_appgateway_config.cpp",
         "sdp_appgateway_tool.h",
         "sdp_appgateway_tool.cpp",
         "sdp_appgateway_runner.cpp",

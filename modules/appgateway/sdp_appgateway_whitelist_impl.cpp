@@ -11,6 +11,7 @@ void SDPAppGatewayErpcIpWhiteListImpl::OpIpWhiteList(int op, std::string ip)
     {
         ip_white_list_.erase(ip);
     }
+    TLOG_MSG(("OpIpWhiteList, op:%d, ip:%s", op, ip.c_str()));
 }
 
 bool SDPAppGatewayErpcIpWhiteListImpl::IsIpInWhiteList(std::string ip)
