@@ -1,7 +1,6 @@
 #pragma once
 
 #include "comm/commdef/comm_def.h"
-#include "comm/commdef/controller_def.h"
 #include "comm/tlog/tlog.h"
 #include "comm/spatools/spa_tool.h"
 #include "comm/ssltools/ssl_tool.h"

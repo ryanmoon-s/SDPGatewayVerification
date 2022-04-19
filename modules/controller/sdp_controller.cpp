@@ -1,4 +1,4 @@
-#include "controller.h"
+#include "sdp_controller.h"
 
 SDPController::SDPController(): server_(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
 {

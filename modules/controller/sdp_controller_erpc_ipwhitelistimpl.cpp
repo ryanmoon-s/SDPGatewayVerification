@@ -1,4 +1,4 @@
-#include "controller_erpc_ipwhitelistimpl.h"
+#include "sdp_controller_erpc_ipwhitelistimpl.h"
 
 // op: IP_WHITE_TABLE_OP
 void SDPControllerErpcIpWhiteListImpl::OpIpWhiteList(int op, std::string ip)

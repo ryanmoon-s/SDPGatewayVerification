@@ -2,8 +2,8 @@
 
 #include "comm/commdef/comm_def.h"
 #include "comm/erpc/erpc_server.h"
-#include "controller_erpc_serviceimpl.h"
-#include "controller_erpc_ipwhitelistimpl.h"
+#include "sdp_controller_erpc_serviceimpl.h"
+#include "sdp_controller_erpc_ipwhitelistimpl.h"
 
 class SDPController {
 public:
