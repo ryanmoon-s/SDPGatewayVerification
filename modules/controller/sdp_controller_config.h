@@ -4,21 +4,21 @@
 #include <string>
 #include "comm/erpc/erpc_config.h"
 #include "comm/iptools/iptables_tool.h"
-#include "sdp_appgateway_service_impl.h"
+#include "sdp_controller_service_impl.h"
 
-class SDPAppGatewayErpcServiceImpl;
+class SDPControllerErpcServiceImpl;
 
-class SDPAppGatewayConfig {
+class SDPControllerConfig {
 public:
     IPWhiteList* GetWhiteListObj();
-    SDPAppGatewayErpcServiceImpl* GetServiceObj();
+    SDPControllerErpcServiceImpl* GetServiceObj();
 
     void set_listen_info(const std::string& ip, int tcp_port, int udp_port);
     int get_tcp_port();
 
 private:
     IPWhiteList* whitelist_;
-    SDPAppGatewayErpcServiceImpl* service_;
+    SDPControllerErpcServiceImpl* service_;
 
     std::string listen_ip_;
     int tcp_port_;
@@ -26,15 +26,15 @@ private:
 
 // 单例
 public:
-    static SDPAppGatewayConfig* GetInstance() 
+    static SDPControllerConfig* GetInstance() 
     {
         return instance_;
     }
-    ~SDPAppGatewayConfig();
+    ~SDPControllerConfig();
 
 private:
-    SDPAppGatewayConfig();
-    SDPAppGatewayConfig(const SDPAppGatewayConfig&){};
+    SDPControllerConfig();
+    SDPControllerConfig(const SDPControllerConfig&){};
 
-    static SDPAppGatewayConfig* instance_;
+    static SDPControllerConfig* instance_;
 };

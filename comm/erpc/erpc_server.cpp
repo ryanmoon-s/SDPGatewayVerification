@@ -15,9 +15,9 @@ int ErpcServer::Run()
     return 0;
 }
 
-ErpcServer::ErpcServer(int tcp_port, int udp_port): tcp_port_(tcp_port), udp_port_(udp_port) 
+ErpcServer::ErpcServer(const std::string& ip, int tcp_port, int udp_port): tcp_port_(tcp_port), udp_port_(udp_port) 
 {
-    epoll_dispatcher_ = new EpollDispatcher(tcp_port, udp_port);
+    epoll_dispatcher_ = new EpollDispatcher(ip, tcp_port, udp_port);
 }
 
 ErpcServer::~ErpcServer()
@@ -29,10 +29,4 @@ void ErpcServer::RegisterService(ErpcService* service)
 {
     ErpcConfig* config = ErpcConfig::GetInstance();
     config->SetServiceObj(service);
-}
-
-void ErpcServer::RegisterWhiteList(ErpcIpWhiteList* whitelist)
-{
-    ErpcConfig* config = ErpcConfig::GetInstance();
-    config->SetWhiteListObj(whitelist);
 }

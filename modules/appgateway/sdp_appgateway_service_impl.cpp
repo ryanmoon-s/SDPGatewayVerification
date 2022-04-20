@@ -25,7 +25,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
 int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
 {
     auto whitelist = SDPAppGatewayConfig::GetInstance()->GetWhiteListObj();
-    whitelist->OpIpWhiteList(objReq.op(), objReq.ip());
+    whitelist->OpWhiteList(objReq.op(), objReq.ip());
 
     TLOG_MSG(("GateFuncWhiteListOp success, op:%d, ip:%s", objReq.op(), objReq.ip().c_str()));
     return 0;

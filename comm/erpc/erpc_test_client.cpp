@@ -27,7 +27,7 @@ int mini_client_ssl()
     fd = socket(AF_INET, SOCK_STREAM, 0);
     addr.sin_family = AF_INET;
     addr.sin_port = htons(TCP_PORT_CONTROLLER);  
-    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER); 
+    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER_PB); 
 
     ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
     iAssert(ret, ("connect"));

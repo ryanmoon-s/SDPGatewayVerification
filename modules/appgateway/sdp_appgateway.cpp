@@ -1,14 +1,23 @@
 #include "sdp_appgateway.h"
+#include "comm/iptools/iptables_tool.h"
+#include <vector>
 
-SDPAppGateway::SDPAppGateway(): server_(TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
+SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
 {
-    auto whitelist = SDPAppGatewayConfig::GetInstance()->GetWhiteListObj();
-    auto service = SDPAppGatewayConfig::GetInstance()->GetServiceObj();
+    auto config =  SDPAppGatewayConfig::GetInstance();
+    auto whitelist = config->GetWhiteListObj();
+    auto service = config->GetServiceObj();
+
+    // 配置config
+    config->set_listen_info(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY);
+
+    // 初始化防火墙
+    std::vector<std::string> white_vec;
+    white_vec.push_back(IP_CONTROLLER_PB);
+    whitelist->InitWhiteList(white_vec, TCP_PORT_APPGATEWAY);
     
-    whitelist->OpIpWhiteList(IP_WHITE_TABLE_ADD, "127.0.0.1");
-    
+    // 注册服务
     server_.RegisterService(service);
-    server_.RegisterWhiteList(whitelist);
 }
 
 void SDPAppGateway::Run()

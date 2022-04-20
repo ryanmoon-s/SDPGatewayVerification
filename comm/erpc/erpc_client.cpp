@@ -23,7 +23,7 @@ int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& objReq, e
     objReq.SerializeToString(&PacketReq.body);
 
     // 变更 2
-    int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_CONTROLLER, TCP_PORT_CONTROLLER);
+    int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_CONTROLLER_PB, TCP_PORT_CONTROLLER);
     iAssert(ret, ("ClientRPCRequest"));
 
     objRsp.ParseFromString(PacketRsp.body);
@@ -44,7 +44,7 @@ int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& o
     objReq.SerializeToString(&PacketReq.body);
 
     // 变更 2
-    int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_CONTROLLER, TCP_PORT_APPGATEWAY);
+    int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_CONTROLLER_PB, TCP_PORT_CONTROLLER);
     iAssert(ret, ("ClientRPCRequest"));
 
     objRsp.ParseFromString(PacketRsp.body);

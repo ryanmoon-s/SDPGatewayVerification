@@ -35,14 +35,18 @@ public:
     int GenerateLocalSocket(int& wr_fd);
 
 public:
-    EpollDispatcher(int tcp_port, int udp_port);
+    EpollDispatcher(const std::string& ip, int tcp_port, int udp_port);
     ~EpollDispatcher();
 
 private:
-    int _MakeListenFd(int port);
-    int _MakeUdpFd(int port);
+    int _MakeListenFd();
+    int _MakeUdpFd();
 
 private:
+    std::string listen_ip_;
+    int tcp_port_;
+    int udp_port_;
+
     int local_fd_ = 0;
     int listen_fd_ = 0;
     int udp_fd_ = 0;

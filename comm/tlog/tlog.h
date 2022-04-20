@@ -51,7 +51,7 @@ private:
         }                                       \
     } while(0)
 
-#define iAssertNoRet(ret, Wrap)             \
+#define iAssertNoReturn(ret, Wrap)          \
 do {                                        \
     if (ret < 0) {                          \
         TLOG_ERR(Wrap);                     \
@@ -59,11 +59,11 @@ do {                                        \
 } while(0)
 
 
-#define iAssertRetNull(ret, Wrap)                      \
+#define iAssertVoidReturn(ret, Wrap)        \
 do {                                        \
     if (ret < 0) {                          \
         TLOG_ERR(Wrap);                     \
-        return;                          \
+        return;                             \
     }                                       \
 } while(0)
 

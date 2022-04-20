@@ -1,11 +1,25 @@
 #include "sdp_controller.h"
+#include "sdp_controller_config.h"
 
-SDPController::SDPController(): server_(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
+#include "comm/iptools/iptables_tool.h"
+#include <vector>
+
+SDPController::SDPController(): server_(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
 {
-    // whitelist_.OpIpWhiteList(IP_WHITE_TABLE_ADD, "127.0.0.1");
+    auto config =  SDPControllerConfig::GetInstance();
+    auto whitelist = config->GetWhiteListObj();
+    auto service = config->GetServiceObj();
 
-    server_.RegisterService(&service_);
-    server_.RegisterWhiteList(&whitelist_);
+    // 配置config
+    config->set_listen_info(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
+
+    // 初始化防火墙
+    std::vector<std::string> white_vec;
+    white_vec.push_back(IP_APPGATEWAY_PB);
+    whitelist->InitWhiteList(white_vec, TCP_PORT_CONTROLLER);
+    
+    // 注册服务
+    server_.RegisterService(service);
 }
 
 void SDPController::Run()

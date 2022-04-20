@@ -2,7 +2,7 @@
 
 SDPAppGatewayConfig* SDPAppGatewayConfig::instance_ = new SDPAppGatewayConfig();
 
-SDPAppGatewayErpcIpWhiteListImpl* SDPAppGatewayConfig::GetWhiteListObj()
+IPWhiteList* SDPAppGatewayConfig::GetWhiteListObj()
 {
     return whitelist_;
 }
@@ -12,9 +12,21 @@ SDPAppGatewayErpcServiceImpl* SDPAppGatewayConfig::GetServiceObj()
     return service_;
 }
 
+void SDPAppGatewayConfig::set_listen_info(const std::string& ip, int tcp_port, int udp_port)
+{
+    listen_ip_ = ip;
+    tcp_port_ = tcp_port;
+    udp_port_ = udp_port;
+}
+
+int SDPAppGatewayConfig::get_tcp_port()
+{
+    return tcp_port_;
+}
+
 SDPAppGatewayConfig::SDPAppGatewayConfig()
 {
-    whitelist_ = new SDPAppGatewayErpcIpWhiteListImpl();
+    whitelist_ = new IPWhiteList();
     service_ = new SDPAppGatewayErpcServiceImpl();
 }
 

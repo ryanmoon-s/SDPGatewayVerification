@@ -42,7 +42,7 @@ public:
 
 int main()
 {
-    ErpcServer server(TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
+    ErpcServer server(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
 
     TestErpcServiceImpl service;
     server.RegisterService(&service);
@@ -96,7 +96,7 @@ int mini_server_ssl()
     struct sockaddr_in addr;
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER);
+    addr.sin_addr.s_addr = inet_addr(IP_CONTROLLER_IN);
     addr.sin_port = htons(TCP_PORT_CONTROLLER);
 
     listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 

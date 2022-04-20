@@ -15,15 +15,12 @@ public:
     // 1、注册服务hadnler，传入子类指针
     void RegisterService(ErpcService* service);
 
-    // 2、注册IP白单名单handler，传入子类指针
-    void RegisterWhiteList(ErpcIpWhiteList* whitelist);
-
     // 2、启动运行
     int Run();
 
 
 public:
-    ErpcServer(int tcp_port, int udp_port);
+    ErpcServer(const std::string& ip, int tcp_port, int udp_port);
     ~ErpcServer();
 
 private:

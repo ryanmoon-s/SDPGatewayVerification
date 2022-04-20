@@ -5,8 +5,6 @@ cc_binary(
         "sdp_controller.cpp",
         "sdp_controller_service_impl.h",
         "sdp_controller_service_impl.cpp",
-        "sdp_controller_whitelist_impl.h",
-        "sdp_controller_whitelist_impl.cpp",
         "sdp_controller_tool.h",
         "sdp_controller_tool.cpp",
         "sdp_controller_runner.cpp",

@@ -1,18 +1,19 @@
 #include "epoll_dispatcher.h"
 
-EpollDispatcher::EpollDispatcher(int tcp_port, int udp_port)
+EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port, int udp_port)
+                                : listen_ip_(ip), tcp_port_(tcp_port), udp_port_(udp_port)
 {
     epoll_data_.epollfd = epoll_create1(0);
-    iAssertNoRet(epoll_data_.epollfd, ("epoll_create1 faild"));
+    iAssertNoReturn(epoll_data_.epollfd, ("epoll_create1 faild"));
 
     epoll_data_.events = (struct epoll_event*)calloc(MAXEVENTS, sizeof(struct epoll_event));
-    iAssertNoRet(epoll_data_.events, ("calloc epoll_data_.events faild"));
+    iAssertNoReturn(epoll_data_.events, ("calloc epoll_data_.events faild"));
 
-    int ret = _MakeListenFd(tcp_port);
-    iAssertNoRet(ret, ("_MakeListenFd faild"));
+    int ret = _MakeListenFd();
+    iAssertNoReturn(ret, ("_MakeListenFd faild"));
 
-    ret = _MakeUdpFd(udp_port);
-    iAssertNoRet(ret, ("_MakeUdpFd faild"));
+    ret = _MakeUdpFd();
+    iAssertNoReturn(ret, ("_MakeUdpFd faild"));
 }
 
 EpollDispatcher::~EpollDispatcher() 
@@ -76,7 +77,7 @@ int EpollDispatcher::Dispatch()
     int ret = 0, nums = 0;
     ErpcHandler handler;
     nums = epoll_wait(epoll_data_.epollfd, epoll_data_.events, MAXEVENTS, -1);
-    iAssertNoRet(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
+    iAssertNoReturn(nums, ("epoll_wait faild, epollfd:%d, errno:%d, errmsg:%s", epoll_data_.epollfd, errno, strerror(errno)));
 
     TLOG_DBG(("epoll wakeup, epollfd:%d nums:%d", epoll_data_.epollfd, nums));
 
@@ -102,7 +103,7 @@ int EpollDispatcher::Dispatch()
                 if (ret == 0)
                 {
                     ret = DispatcherAdd(fd_data);
-                    iAssertNoRet(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
+                    iAssertNoReturn(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
                 }
                 else if (ret == kIpNotInWhiteTable)
                 {
@@ -123,17 +124,17 @@ int EpollDispatcher::Dispatch()
                 // UDP 请求
                 fd_data = epoll_data_.fdmap[fd];
                 ret = handler.HandleUDPRequest(fd_data);
-                iAssertNoRet(ret, ("HandleUDPRequest faild, fd:%d", fd));
+                iAssertNoReturn(ret, ("HandleUDPRequest faild, fd:%d", fd));
             }
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
                 ret = handler.HandleRPCRequest(fd_data);
-                iAssertNoRet(ret, ("HandleRPCRequest faild, fd:%d", fd));
+                iAssertNoReturn(ret, ("HandleRPCRequest faild, fd:%d", fd));
 
                 // Keep Alive TODO
                 ret = DispatcherDel(fd_data);
-                iAssertNoRet(ret, ("DispatcherDel faild, fd:%d", fd));
+                iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
             }
         }
 
@@ -164,16 +165,17 @@ int EpollDispatcher::GenerateLocalSocket(int& wr_fd)
     return 0;
 }
 
-int EpollDispatcher::_MakeListenFd(int port)
+int EpollDispatcher::_MakeListenFd()
 {
     int ret = 0, resue = 1;
     struct sockaddr_in addr;
     FdDataType fd_data;
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr(IP_LOCAL_ADDR);
-    addr.sin_port = htons(port);
-
+    addr.sin_port = htons(tcp_port_);
+    addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
+    // addr.sin_addr.s_addr = INADDR_ANY;
+    
     listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 
     iAssert(listen_fd_, ("socket: listen_fd_:%d", listen_fd_));
 
@@ -198,7 +200,7 @@ int EpollDispatcher::_MakeListenFd(int port)
     return 0;
 }
 
-int EpollDispatcher::_MakeUdpFd(int port)
+int EpollDispatcher::_MakeUdpFd()
 {
     int ret = 0;
     FdDataType fd_data;
@@ -209,8 +211,9 @@ int EpollDispatcher::_MakeUdpFd(int port)
     struct sockaddr_in addr;
  
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(IP_LOCAL_ADDR);
+	addr.sin_port = htons(udp_port_);
+	addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
+    // addr.sin_addr.s_addr = htonl(INADDR_ANY);
  
 	ret = bind(udp_fd_, (struct sockaddr*)&addr, sizeof(addr));
     iAssert(ret, ("bind udp_fd:%d", udp_fd_));
