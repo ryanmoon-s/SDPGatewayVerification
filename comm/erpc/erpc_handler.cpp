@@ -469,5 +469,6 @@ int ErpcHandler::UDPSend(const std::string& outstr, const std::string& dest_ip, 
     ret = sendto(fd, outstr.c_str(), outstr.size(), 0, (sockaddr*)&addr, sizeof(addr));
     iAssert(ret, ("sendto faild, ip:%s, port:%d, errmsg:%s", dest_ip.c_str(), dest_port, strerror(errno)));
 
+    TLOG_DBG(("outstr size:%d, send size:%d", outstr.size(), ret));
     return 0;
 }

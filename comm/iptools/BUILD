@@ -8,6 +8,7 @@ cc_library(
     ],
     deps = [
         "//comm/commdef:comm_def_lib",
+        "//comm/tlog:tlog_lib",
     ],
     copts = [
         "-std=c++11",

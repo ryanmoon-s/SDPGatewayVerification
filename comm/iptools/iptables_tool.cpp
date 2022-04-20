@@ -36,7 +36,7 @@ int IptablesTools::_BanAll(int port)
 
     std::string cmd = "iptables -I INPUT -p tcp --dport " + s_port + " -j DROP";
     SYSTEM_EXEC_CMD
-    TLOG_DBG(("_BanAll "));
+    TLOG_DBG(("_BanAll exec"));
 
     return (ret == 0 ? 0 : -1);
 }
@@ -48,7 +48,7 @@ int IptablesTools::BanIp(const std::string& ip, int port)
 
     std::string cmd = "iptables -D INPUT -s " + ip + " -p tcp --dport " + s_port + " -j ACCEPT";
     SYSTEM_EXEC_CMD
-    TLOG_DBG(("BanIp exec"));
+    TLOG_DBG(("BanIp exec, ip:%s, port:%d", ip.c_str(), port));
 
     return (ret == 0 ? 0 : -1);
 }
@@ -59,10 +59,12 @@ int IptablesTools::UnBanIp(const std::string& ip, int port)
 
     std::string cmd = "iptables -I INPUT -s " + ip + " -p tcp --dport " + std::to_string(port) + " -j ACCEPT";
     SYSTEM_EXEC_CMD
-    TLOG_DBG(("UnBanIp exec"));
+    TLOG_DBG(("UnBanIp exec, ip:%s, port:%d", ip.c_str(), port));
 
     return (ret == 0 ? 0 : -1);
 }
+
+/***************************** White List *****************************/
 
 // op: IP_WHITE_TABLE_OP
 int IPWhiteList::OpWhiteList(int op, std::string ip, int port)
@@ -106,12 +108,12 @@ int IPWhiteList::InitWhiteList(const std::vector<std::string>& whitelist, int po
     // 同步到whitelist
     for (int i = 0; i < whitelist.size(); i++)
     {
-        ret = this->OpWhiteList(IP_WHITE_TABLE_ADD, whitelist[i], port);
-        iAssert(ret, ("iAssert faild"));
+        ip_white_list_.insert(std::make_pair(whitelist[i], 1));
     }
     
     ret = IptablesTools().IptablesInit(whitelist, TCP_PORT_APPGATEWAY);
     iAssert(ret, ("IptablesInit faild"));
 
+    TLOG_DBG(("InitWhiteList success, size:%d, port:%d", whitelist.size(), port));
     return 0;
 }

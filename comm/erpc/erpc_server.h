@@ -25,7 +25,11 @@ public:
 
 private:
     EpollDispatcher* epoll_dispatcher_;
+
+    std::string listen_ip_;
+
     int tcp_port_;
     int udp_port_;
+
     int local_fd_ = 0;
 };

@@ -9,12 +9,9 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& vocher)
     ret = SPATools().EncryptVoucher(spaPacket, vocher);
     iAssert(ret, ("EncryptVoucher faild"));
 
-    ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_CONTROLLER);
-    iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
-    TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_CONTROLLER));
-    // ret = _SPAKnocking(spaPacket, IP_CONTROLLER, UDP_PORT_APPGATEWAY);
-    // iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
-    // TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER, UDP_PORT_APPGATEWAY));
+    ret = _SPAKnocking(spaPacket, IP_CONTROLLER_PB, UDP_PORT_CONTROLLER);
+    iAssert(ret, ("SPAKnocking faild, ip:%s port:%d", IP_CONTROLLER_PB, UDP_PORT_CONTROLLER));
+    TLOG_MSG(("SPAKnocking success, ip:%s, port:%d", IP_CONTROLLER_PB, UDP_PORT_CONTROLLER));
 
     // 获取可访问的应用列表
     

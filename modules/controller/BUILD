@@ -3,6 +3,8 @@ cc_binary(
     srcs = [
         "sdp_controller.h",
         "sdp_controller.cpp",
+        "sdp_controller_config.h",
+        "sdp_controller_config.cpp",
         "sdp_controller_service_impl.h",
         "sdp_controller_service_impl.cpp",
         "sdp_controller_tool.h",
@@ -15,6 +17,7 @@ cc_binary(
         "//comm/spatools:spa_tools_lib",
         "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:spa_cc_pb",
+        "//comm/iptools:ip_tools_lib",
         "//comm/erpc:erpc_client_lib",
         "//comm/erpc:erpc_server_lib",
     ],

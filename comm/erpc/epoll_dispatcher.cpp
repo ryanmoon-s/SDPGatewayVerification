@@ -174,7 +174,6 @@ int EpollDispatcher::_MakeListenFd()
     addr.sin_family = AF_INET;
     addr.sin_port = htons(tcp_port_);
     addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
-    // addr.sin_addr.s_addr = INADDR_ANY;
     
     listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 
     iAssert(listen_fd_, ("socket: listen_fd_:%d", listen_fd_));
@@ -213,7 +212,6 @@ int EpollDispatcher::_MakeUdpFd()
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(udp_port_);
 	addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
-    // addr.sin_addr.s_addr = htonl(INADDR_ANY);
  
 	ret = bind(udp_fd_, (struct sockaddr*)&addr, sizeof(addr));
     iAssert(ret, ("bind udp_fd:%d", udp_fd_));

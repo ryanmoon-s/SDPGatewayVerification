@@ -33,7 +33,8 @@
 #define IP_APPGATEWAY_IN IP_ALIYUN_IN
 #define IP_APPGATEWAY_PB IP_ALIYUN_PB
 
-// 端口
+
+// 服务器端口开放 6000-6020
 
 #define UDP_PORT_CONTROLLER             6000
 #define UDP_PORT_APPGATEWAY             6001

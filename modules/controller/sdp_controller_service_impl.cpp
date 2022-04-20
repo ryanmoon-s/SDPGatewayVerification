@@ -21,17 +21,17 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
     system(cmd);
 
     // TEST
-    // erpc_def::Header header;
-    // erpc::GateFuncWhiteListOpReq req;
-    // erpc::GateFuncWhiteListOpRsp rsp;
+    erpc_def::Header header;
+    erpc::GateFuncWhiteListOpReq req;
+    erpc::GateFuncWhiteListOpRsp rsp;
 
-    // req.set_op(erpc::ListDel);
-    // req.set_ip("127.0.0.1"); 
+    req.set_op(erpc::ListDel);
+    req.set_ip("127.0.0.1"); 
 
-    // ret = ErpcClient().GateFuncWhiteListOpRequest(req, rsp, header);
-    // iAssert(ret, ("GateFuncWhiteListOpRequest faild"));
+    ret = ErpcClient().GateFuncWhiteListOpRequest(req, rsp, header);
+    iAssert(ret, ("GateFuncWhiteListOpRequest faild"));
 
-    // TLOG_DBG(("header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
+    TLOG_DBG(("header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
 
     return 0;
 }
