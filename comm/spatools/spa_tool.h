@@ -13,8 +13,8 @@
 class SPATools {
 public:
     // SPA凭证 -> SPA数据包
-    int EncryptVoucher(spa::SPAPacket& packet, const spa::SPAVoucher& voucher);
+    int EncryptVoucher(spa::SPAVoucherPacket& packet, const spa::SPAVoucher& voucher);
     // SPA数据包 -> SPA凭证
-    int DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAPacket& packet);
+    int DecryptVoucher(spa::SPAVoucher& voucher, const spa::SPAVoucherPacket& packet);
 };
 

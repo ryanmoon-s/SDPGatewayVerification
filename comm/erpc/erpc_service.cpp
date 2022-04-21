@@ -20,7 +20,7 @@ int ErpcService::GateFuncUdpRecv(const std::string& msg)
     return erpc_def::kErrServiceNotFound;
 }
 
-int ErpcService::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
+int ErpcService::GateFuncWhiteListOp(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
 {
     return erpc_def::kErrServiceNotFound;
 }

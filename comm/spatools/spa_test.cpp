@@ -12,7 +12,7 @@ int main() {
     voucher.set_timestamp(time(NULL));
     
     SPATools tool;
-    spa::SPAPacket packet;
+    spa::SPAVoucherPacket packet;
     tool.EncryptVoucher(packet, voucher);
 
     spa::SPAVoucher de_voucher;

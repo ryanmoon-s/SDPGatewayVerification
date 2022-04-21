@@ -16,6 +16,8 @@ public:
     void set_listen_info(const std::string& ip, int tcp_port, int udp_port);
     int get_tcp_port();
 
+    int QueryAndInsertMD5(const std::string& md5);
+
 private:
     IPWhiteList* whitelist_;
     SDPControllerErpcServiceImpl* service_;
@@ -24,7 +26,10 @@ private:
     int tcp_port_;
     int udp_port_;
 
-// 单例
+    // md5去重，防重放攻击
+    std::map<std::string, int> md5_map_;
+
+
 public:
     static SDPControllerConfig* GetInstance() 
     {

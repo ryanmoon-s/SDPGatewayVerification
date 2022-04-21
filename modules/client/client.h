@@ -22,7 +22,7 @@ public:
 
 private:
     // SPA敲门，使用UDP进行交互
-    int _SPAKnocking(const spa::SPAPacket& packet, std::string ip, int port);
+    int _SPAKnocking(const spa::SPAVoucherPacket& packet, std::string ip, int port);
 };
 
 class AccessClient {

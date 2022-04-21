@@ -22,11 +22,11 @@ public:
     virtual int TestFuncUdpRecv(const std::string& msg) override
     {
         int ret = 0;
-        spa::SPAPacket spaPacket;
+        spa::SPAVoucherPacket spaVoucherPacket;
         spa::SPAVoucher spaVoucher;
 
-        spaPacket.ParseFromString(msg);
-        ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
+        spaVoucherPacket.ParseFromString(msg);
+        ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket);
         iAssert(ret, ("DecryptVoucher faild"));
 
         std::string voucher_str;

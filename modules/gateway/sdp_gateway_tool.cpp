@@ -1,4 +1,4 @@
-#include "sdp_appgateway_tool.h"
+#include "sdp_gateway_tool.h"
 
 int SDPAppGatewayTool::CheckUserPermissions(const spa::SPAVoucher& spaVoucher)
 {

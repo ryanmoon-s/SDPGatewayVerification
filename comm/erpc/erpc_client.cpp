@@ -34,7 +34,7 @@ int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& objReq, e
     return 0;
 }
 
-int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header)
+int ErpcClient::GateFuncWhiteListOpRequest(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;

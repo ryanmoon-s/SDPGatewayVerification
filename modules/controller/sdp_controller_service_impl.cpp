@@ -4,12 +4,12 @@
 int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
 {
     int ret = 0;
-    spa::SPAPacket spaPacket;
+    spa::SPAVoucherPacket spaVoucherPacket;
     spa::SPAVoucher spaVoucher;
 
     // 解出 spaVoucher
-    spaPacket.ParseFromString(msg);
-    ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
+    spaVoucherPacket.ParseFromString(msg);
+    ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket);
     iAssert(ret, ("DecryptVoucher faild"));
 
     // 输出 spaVoucher 检查日志
@@ -22,7 +22,7 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
 
     // TEST
     erpc_def::Header header;
-    erpc::GateFuncWhiteListOpReq req;
+    gateway::GateFuncWhiteListOpReq req;
     erpc::GateFuncWhiteListOpRsp rsp;
 
     req.set_op(erpc::ListDel);

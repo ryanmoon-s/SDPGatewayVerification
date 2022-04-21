@@ -4,7 +4,7 @@
 #include <string>
 #include "comm/erpc/erpc_config.h"
 #include "comm/iptools/iptables_tool.h"
-#include "sdp_appgateway_service_impl.h"
+#include "sdp_gateway_service_impl.h"
 
 class SDPAppGatewayErpcServiceImpl;
 

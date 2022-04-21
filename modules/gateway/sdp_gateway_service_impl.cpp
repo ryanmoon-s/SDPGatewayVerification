@@ -1,14 +1,14 @@
-#include "sdp_appgateway_service_impl.h"
+#include "sdp_gateway_service_impl.h"
 
 int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
 {
     int ret = 0;
-    spa::SPAPacket spaPacket;
+    spa::SPAVoucherPacket spaVoucherPacket;
     spa::SPAVoucher spaVoucher;
 
     // 解出 spaVoucher
-    spaPacket.ParseFromString(msg);
-    ret = SPATools().DecryptVoucher(spaVoucher, spaPacket);
+    spaVoucherPacket.ParseFromString(msg);
+    ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket);
     iAssert(ret, ("DecryptVoucher faild"));
 
     // 输出 spaVoucher 检查日志
@@ -22,7 +22,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
     return 0;
 }
 
-int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
+int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
 {
     auto config = SDPAppGatewayConfig::GetInstance();
     auto whitelist = config->GetWhiteListObj();
@@ -31,3 +31,4 @@ int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteL
     TLOG_MSG(("GateFuncWhiteListOp success, op:%d, ip:%s", objReq.op(), objReq.ip().c_str()));
     return 0;
 }
+

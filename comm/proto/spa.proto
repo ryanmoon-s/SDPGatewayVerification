@@ -16,15 +16,21 @@ message SPAVoucher
     optional bool is_valid = 5[default=false];
 }
 
-// SPA数据包
-// 1 加密的SPA凭证; 2 SPA凭证摘要
-message SPAPacket
+// SPA凭证数据包 -> Controller
+// 1 加密的SPA凭证(RSA); 2 SPA凭证摘要
+message SPAVoucherPacket
 {
     optional bytes rsa_data = 1;
     optional bytes md5_data = 2;
 }
 
-message SPATicket
+// SPA 票据
+message SPATicket{
+    optional uint32 timestamp = 4;
+}
+
+// SPA票据数据包 -> AppGateway
+message SPATicketPacket
 {
     optional bytes ticket = 1;
 }

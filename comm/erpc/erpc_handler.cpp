@@ -78,7 +78,7 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     int from_port = 0;
     int fd = fd_data.fd;
     uint32_t cmdid = 0;
-    spa::SPAPacket spaPacket;
+    spa::SPAVoucherPacket spaVoucherPacket;
     spa::SPAVoucher spaVoucher;
     std::string msg;
     std::string from_ip;

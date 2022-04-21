@@ -1,4 +1,4 @@
-#include "sdp_appgateway_config.h"
+#include "sdp_gateway_config.h"
 
 SDPAppGatewayConfig* SDPAppGatewayConfig::instance_ = new SDPAppGatewayConfig();
 
