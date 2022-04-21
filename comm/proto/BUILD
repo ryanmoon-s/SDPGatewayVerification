@@ -17,37 +17,12 @@ cc_proto_library(
 proto_library(
     name = "erpc_proto",
     srcs = ["erpc.proto"],
+    # 引用其它proto在此引spa_proto
+    deps = ["spa_proto"],
 )
 
 cc_proto_library(
     name = "erpc_cc_pb",
     deps = [":erpc_proto"],
-    visibility = ["//visibility:public"],
-)
-
-############### controller ###############
-proto_library(
-    name = "controller_proto",
-    srcs = ["controller.proto"],
-)
-
-cc_proto_library(
-    name = "controller_cc_pb",
-    deps = [
-        ":controller_proto",
-        ":spa_proto",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-############### gateway ###############
-proto_library(
-    name = "gateway_proto",
-    srcs = ["gateway.proto"],
-)
-
-cc_proto_library(
-    name = "gateway_cc_pb",
-    deps = [":gateway_proto"],
     visibility = ["//visibility:public"],
 )

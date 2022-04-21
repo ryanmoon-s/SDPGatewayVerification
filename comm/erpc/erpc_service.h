@@ -38,7 +38,7 @@ public:
 
     virtual int GateFuncUdpRecv(const std::string& msg);
 
-    virtual int GateFuncWhiteListOp(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp);
+    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp);
 
 public:
     ~ErpcService() {}

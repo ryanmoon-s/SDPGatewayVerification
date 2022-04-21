@@ -22,6 +22,6 @@ public:
 
     // AppGateway
 
-    int GateFuncWhiteListOpRequest(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);
+    int GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);
 
 };

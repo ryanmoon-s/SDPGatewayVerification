@@ -1,3 +1,4 @@
+syntax = "proto2";
 package spa;
 
 message Account
@@ -25,7 +26,8 @@ message SPAVoucherPacket
 }
 
 // SPA 票据
-message SPATicket{
+message SPATicket
+{
     optional uint32 timestamp = 4;
 }
 

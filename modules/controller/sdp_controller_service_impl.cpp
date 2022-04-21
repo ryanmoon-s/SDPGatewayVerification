@@ -22,7 +22,7 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
 
     // TEST
     erpc_def::Header header;
-    gateway::GateFuncWhiteListOpReq req;
+    erpc::GateFuncWhiteListOpReq req;
     erpc::GateFuncWhiteListOpRsp rsp;
 
     req.set_op(erpc::ListDel);

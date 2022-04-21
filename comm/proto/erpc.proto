@@ -1,6 +1,10 @@
 syntax = "proto2";
 package erpc;
 
+import "comm/proto/spa.proto";
+
+/***************************** TEST FUNC *****************************/
+
 message TestFuncReverseReq 
 {
     optional string str = 1; 
@@ -9,4 +13,45 @@ message TestFuncReverseReq
 message TestFuncReverseRsp 
 {
     optional string str = 1; 
+}
+
+/***************************** CONTROLLER *****************************/
+
+message AccessList
+{
+    optional string ip = 1;
+    optional int32 udp_port = 2;
+    optional int32 tcp_port = 3;
+    optional string description = 4;
+}
+
+// 用户获取可访问列表、票据
+message ConFuncGetAccessReq 
+{
+}
+
+message ConFuncGetAccessRsp
+{
+    repeated AccessList list = 1;
+    optional spa.SPATicket ticket = 2;
+}
+
+/***************************** APPGATEWAY *****************************/
+
+enum WhiteListOpType 
+{
+    ListAdd = 1;
+    ListDel = 2;
+}
+
+// 白名单操作
+message GateFuncWhiteListOpReq 
+{
+    optional int32 op = 1;  // WhiteListOpType
+    optional string ip = 2;
+}
+
+message GateFuncWhiteListOpRsp 
+{
+
 }

@@ -22,7 +22,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
     return 0;
 }
 
-int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const gateway::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
+int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
 {
     auto config = SDPAppGatewayConfig::GetInstance();
     auto whitelist = config->GetWhiteListObj();
