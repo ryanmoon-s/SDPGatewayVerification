@@ -32,7 +32,7 @@ int mini_client_ssl()
     ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
     iAssert(ret, ("connect"));
 
-    SSLConnector connector(SSL_CRT_CLIENT, SSL_KEY_CLIENT, SSL_SELECT_CLIENT);
+    SSLConnector connector(SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER, SSL_SELECT_CLIENT);
 
     // ERROR
     ret = connector.SSLConnect(fd);

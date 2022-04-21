@@ -115,7 +115,7 @@ int mini_server_ssl()
     iAssert(ret, ("listen: listen_fd:%d", listen_fd_));
 
     // SSL
-    SSLConnector connector(SSL_CRT_SERVER, SSL_KEY_SERVER, SSL_SELECT_SERVER);
+    SSLConnector connector(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, SSL_SELECT_SERVER);
     struct sockaddr_in cli_addr;
 
     socklen_t cli_len = sizeof(cli_addr);

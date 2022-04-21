@@ -127,14 +127,14 @@ SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, 
     }
 
     // 装载证书
-    // if (is_server)
-    // {
+    if (is_server)
+    {
         ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
         if (ret < 0)
         {
             TLOG_ERR(("_SSL_LoadCertificate"));
         }
-    // }
+    }
 }
 
 SSLConnector::~SSLConnector(){
@@ -170,7 +170,7 @@ int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string ca_cert, st
 {
     int ret = 0;
 
-    #if 1
+    #if 0
     // 是否要验证对方
     SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);   
     // 若验证，则放置CA证书

@@ -9,7 +9,7 @@ int SPATools::EncryptVoucher(spa::SPAVoucherPacket& spaVoucherPacket, const spa:
 
     // rsa
     std::string rsa_en_text;
-    int ret = SSLTools().RSAEncrypt(rsa_en_text, text, RSA_PUB_KEY_PATH, PUB_ENCRYPT);
+    int ret = SSLTools().RSAEncrypt(rsa_en_text, text, RSA_PUB_KEY_CONTROLLER, PUB_ENCRYPT);
     iAssert(ret, ("RSAEncrypt faild"));
 
     // md5
@@ -35,7 +35,7 @@ int SPATools::DecryptVoucher(spa::SPAVoucher& spaVoucher, const spa::SPAVoucherP
     rsa_en_text = spaVoucherPacket.rsa_data();
     md5_en_text = spaVoucherPacket.md5_data();
     
-    int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_PATH, PUB_ENCRYPT);
+    int ret = SSLTools().RSADecrypt(rsa_de_text, rsa_en_text, RSA_PRI_KEY_CONTROLLER, PUB_ENCRYPT);
     iAssert(ret, ("RSADecrypt"));
 
     // 验证md5，防篡改。

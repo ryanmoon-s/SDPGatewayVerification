@@ -14,22 +14,23 @@
 #include "comm/commdef//comm_def.h"
 #include "comm/tlog/tlog.h"
 
-#define RSA_PUB_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/pubkey.pem"
-#define RSA_PRI_KEY_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/key.pem"
+// RSA
+
+#define RSA_PUB_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_pubkey.pem"
+#define RSA_PRI_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_key.pem"
+
+#define RSA_PUB_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_pubkey.pem"
+#define RSA_PRI_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_key.pem"
+
+// SSL
 
 #define SSL_CRT_CA "/home/shun/SDPGatewayVerification/comm/ssltools/keys/certs/ca.crt"
 
-#define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
-#define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
+#define SSL_CRT_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.crt"
+#define SSL_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.key"
 
-#define SSL_CRT_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/server/server.crt"
-#define SSL_KEY_SERVER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/server/server.key"
-
-enum CMP_CASE_TYPE {
-    CMP_TYPE_LT_0,
-    CMP_TYPE_NE_1,
-    CMP_TYPE_EQ_N,
-};
+#define SSL_CRT_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.crt"
+#define SSL_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.key"
 
 enum SSL_SLECT_METHOD_TYPE {
     SSL_SELECT_CLIENT,
