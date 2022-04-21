@@ -1,26 +1,9 @@
 #!/bin/bash
 
+# rsa keys + sign
+# 用于建立ssl连接
+
 dir_source=`pwd`
-
-# =========================
-# ========== RSA ==========
-# =========================
-
-dir_rsa="${dir_source}/rsa"
-if [ ! -d ${dir_rsa} ]; then
-    mkdir -p ${dir_rsa}
-fi
-cd ${dir_rsa}
-
-echo "# 生成密钥"
-openssl genrsa -out key.pem 1024
-echo "# 提取公钥"
-openssl rsa -in key.pem -pubout -out pubkey.pem
-echo "# == CA证书 == "
-
-# =========================
-# ========== SSL ==========
-# =========================
 
 # ----- CA -----
 

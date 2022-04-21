@@ -29,7 +29,6 @@ private:
     // md5去重，防重放攻击
     std::map<std::string, int> md5_map_;
 
-
 public:
     static SDPControllerConfig* GetInstance() 
     {

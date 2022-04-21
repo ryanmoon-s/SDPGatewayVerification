@@ -27,11 +27,13 @@ public:
 
 public:
     SSLConnector(const std::string& cert, const std::string& pri_key, int is_server);
+    ~SSLConnector();
 
 private:
     SSL_Data ssl_data_;
+    int is_server_;
 
-    int _SSL_Init(int is_server);
+    int _SSL_Init();
     int _SSL_LoadCertificate(std::string cert, std::string ca_cert, std::string pri_key);
     int _SSL_DumpCertInfo();
 };

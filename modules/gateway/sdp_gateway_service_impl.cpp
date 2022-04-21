@@ -31,4 +31,3 @@ int SDPAppGatewayErpcServiceImpl::GateFuncWhiteListOp(const erpc::GateFuncWhiteL
     TLOG_MSG(("GateFuncWhiteListOp success, op:%d, ip:%s", objReq.op(), objReq.ip().c_str()));
     return 0;
 }
-

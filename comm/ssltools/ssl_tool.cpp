@@ -118,23 +118,32 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text)
     return 0;
 }
 
-SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, int is_server) 
+SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, int is_server): is_server_(is_server)
 {
-    int ret = _SSL_Init(is_server);
+    int ret = _SSL_Init();
     if (ret < 0)
     {
         TLOG_ERR(("_SSL_Init"));
     }
 
     // 装载证书
-    ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
-    if (ret < 0)
-    {
-        TLOG_ERR(("_SSL_LoadCertificate"));
-    }
+    // if (is_server)
+    // {
+        ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
+        if (ret < 0)
+        {
+            TLOG_ERR(("_SSL_LoadCertificate"));
+        }
+    // }
 }
 
-int SSLConnector::_SSL_Init(int is_server) 
+SSLConnector::~SSLConnector(){
+    // SSL_shutdown(ssl_data_.ssl);
+    // SSL_free(ssl_data_.ssl);
+    // SSL_CTX_free(ssl_data_.ctx);
+}
+
+int SSLConnector::_SSL_Init() 
 {
     // 初始化ssl库
     OpenSSL_add_ssl_algorithms();
@@ -142,14 +151,14 @@ int SSLConnector::_SSL_Init(int is_server)
 
     // 初始化上下文ctx
     // 客户端协议(SSLv2/SSLv3/TLSv1)
-    if (is_server)
+    if (is_server_)
     {
-        const SSL_METHOD* method = SSLv2_server_method();
+        const SSL_METHOD* method = SSLv3_server_method();
         ssl_data_.ctx = SSL_CTX_new(method);
     }
     else
     {
-        const SSL_METHOD* method = SSLv2_client_method();
+        const SSL_METHOD* method = SSLv3_client_method();
         ssl_data_.ctx = SSL_CTX_new(method);
     }
     SSL_iAssert_NULL(ssl_data_.ctx, ("SSL_CTX_new"));
@@ -159,19 +168,20 @@ int SSLConnector::_SSL_Init(int is_server)
 
 int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string ca_cert, std::string pri_key) 
 {
-    
-    // 不验证客户端证书
-    SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_NONE, NULL);  
+    int ret = 0;
 
-    #if 0
-    // 验证与否，是否要验证对方
-    // SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER, NULL);   
+    #if 1
+    // 是否要验证对方
+    SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);   
     // 若验证，则放置CA证书
-    // SSL_CTX_load_verify_locations(ssl_data_.ctx, cert.c_str(),NULL); 
+    SSL_CTX_load_verify_locations(ssl_data_.ctx, ca_cert.c_str(), NULL); 
+    #else
+    // 不验证客户端证书
+    SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_NONE, NULL); 
     #endif
 
     // 加载自己的证书
-    int ret = SSL_CTX_use_certificate_file(ssl_data_.ctx, cert.c_str(), SSL_FILETYPE_PEM);
+    ret = SSL_CTX_use_certificate_file(ssl_data_.ctx, cert.c_str(), SSL_FILETYPE_PEM);
     SSL_iAssert_NE1(ret, ("SSL_CTX_use_certificate_file"));
 
     // 加载自己的私钥，以用于签名

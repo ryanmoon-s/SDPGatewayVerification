@@ -31,10 +31,10 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
     fd_data.socket_info.ip = ip;
     fd_data.socket_info.port = port;
     fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);;
-TJ
+
     ret = fd_data.connector->SSLAccept(tmp_fd);
     iAssert(ret, ("SSLAccept"));
-TJ
+
     // 非阻塞
     fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
     

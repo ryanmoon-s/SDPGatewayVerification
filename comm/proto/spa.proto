@@ -25,7 +25,7 @@ message SPAVoucherPacket
     optional bytes md5_data = 2;
 }
 
-// SPA 票据
+// SPA 票据(经Controller私钥加密)
 message SPATicket
 {
     optional uint32 timestamp = 4;

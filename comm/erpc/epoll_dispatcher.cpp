@@ -191,7 +191,7 @@ int EpollDispatcher::_MakeListenFd()
 
     fd_data.fd = listen_fd_;
     fd_data.event_type = EPOLLIN | EPOLLET;
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);
+    // fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_SERVER, SSL_KEY_SERVER, 1);
 
     ret = DispatcherAdd(fd_data);
     iAssert(ret, ("DispatcherAdd listen_fd:%d", listen_fd_));
