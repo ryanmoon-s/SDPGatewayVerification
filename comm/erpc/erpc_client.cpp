@@ -47,11 +47,13 @@ int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& o
 
     // 变更 2
     int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY);
-    iAssert(ret, ("ClientRPCRequest"));
 
+    TLOG_DBG(("ret%d", ret));
+    iAssert(ret, ("ClientRPCRequest"));
+   
     objRsp.ParseFromString(PacketRsp.body);
     header = PacketRsp.header;
-    
+
     TLOG_MSG(("Client TestFuncReverseRequest success, ip:%s, port:%d", IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY));
     return 0;
 }

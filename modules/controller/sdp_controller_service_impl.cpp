@@ -30,7 +30,7 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
 
     ret = ErpcClient().GateFuncWhiteListOpRequest(req, rsp, header);
     iAssert(ret, ("GateFuncWhiteListOpRequest faild"));
-
+    
     TLOG_DBG(("header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
 
     return 0;
