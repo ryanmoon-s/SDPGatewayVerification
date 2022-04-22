@@ -96,15 +96,15 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
     if (cmdid == erpc::CMD_UDP_TEST_FUNC_RECV)
     {
-        ret = service->TestFuncUdpRecv(msg_str);
+        ret = service->TestFuncUdpRecv(msg_str, from_ip, from_port);
     } 
     else if (cmdid == erpc::CMD_UDP_CONTROLLER_FUNC_RECV)
     {
-        ret = service->ControllerFuncUdpRecv(msg_str);
+        ret = service->ConFuncUdpRecv(msg_str, from_ip, from_port);
     }
     else if (cmdid == erpc::CMD_UDP_APPGATEWAY_FUNC_RECV)
     {
-        ret = service->GateFuncUdpRecv(msg_str);
+        ret = service->GateFuncUdpRecv(msg_str, from_ip, from_port);
     }
 
     iAssert(ret, ("HandleUDPRequest error ret:%d", ret));
@@ -203,6 +203,12 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
     {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
         RPC_CALL_FORWARD(GateFuncWhiteListOp, request, response);
+        return 0;
+    }
+    else if (cmdid == erpc::CMD_RPC_CONTROLLER_FUNC_GET_ACCESS)
+    {
+        TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
+        RPC_CALL_FORWARD(ConFunGetAccess, request, response);
         return 0;
     }
 

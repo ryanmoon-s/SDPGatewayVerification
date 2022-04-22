@@ -1,6 +1,6 @@
 #include "sdp_gateway_service_impl.h"
 
-int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg)
+int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
     int ret = 0;
     spa::SPAVoucherPacket spaVoucherPacket;

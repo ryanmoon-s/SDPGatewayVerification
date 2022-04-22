@@ -19,7 +19,7 @@ public:
     }
 
     // udp service
-    virtual int TestFuncUdpRecv(const std::string& msg) override
+    virtual int TestFuncUdpRecv(const std::string& msg, std::string ip, int port) override
     {
         int ret = 0;
         spa::SPAVoucherPacket spaVoucherPacket;

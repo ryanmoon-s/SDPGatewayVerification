@@ -11,28 +11,35 @@ message Account
 message SPAVoucher
 {
     optional Account account = 1;
-    optional string ip = 2;
+    optional string mac = 2;
     optional string address = 3;
     optional uint32 timestamp = 4;
     optional bool is_valid = 5[default=false];
 }
 
-// SPA凭证数据包 -> Controller
-// 1 加密的SPA凭证(RSA); 2 SPA凭证摘要
+// SPA凭证数据包
+// 1、加密的SPA凭证(RSA)
+// 2、SPA凭证摘要
+// 传播路径：Client (Controller公钥加密) -> Controller (Controller私钥解密)
 message SPAVoucherPacket
 {
-    optional bytes rsa_data = 1;
+    optional bytes enc_data = 1;
     optional bytes md5_data = 2;
 }
 
-// SPA 票据(经Controller私钥加密)
+// SPA 票据
 message SPATicket
 {
-    optional uint32 timestamp = 4;
+    optional string ip = 1;
+    optional uint32 timestamp = 3;
 }
 
-// SPA票据数据包 -> AppGateway
+// SPA票据数据包
+// 1、加密的SPA票据
+// 2、SPA票据摘要
+// 传播路径：Controller (Controller私钥加密) -> Client -> GateWay (Controller公钥解密)
 message SPATicketPacket
 {
-    optional bytes ticket = 1;
+    optional bytes enc_data = 1;
+    optional bytes md5_data = 2;
 }

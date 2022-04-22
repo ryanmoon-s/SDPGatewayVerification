@@ -2,6 +2,7 @@ load("@rules_cc//cc:defs.bzl", "cc_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 ############### spa ###############
+
 proto_library(
     name = "spa_proto",
     srcs = ["spa.proto"],
@@ -14,6 +15,7 @@ cc_proto_library(
 )
 
 ############### erpc ###############
+
 proto_library(
     name = "erpc_proto",
     srcs = ["erpc.proto"],

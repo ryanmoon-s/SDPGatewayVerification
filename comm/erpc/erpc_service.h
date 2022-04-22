@@ -13,6 +13,7 @@ namespace erpc {
 
         // CONTROLLER
         CMD_UDP_CONTROLLER_FUNC_RECV = 101,
+        CMD_RPC_CONTROLLER_FUNC_GET_ACCESS = 102,
 
         // APPGATEWAY
         CMD_UDP_APPGATEWAY_FUNC_RECV = 201,
@@ -26,17 +27,19 @@ public:
 
     /***************************** TEST FUNC *****************************/
 
-    virtual int TestFuncUdpRecv(const std::string& msg);
+    virtual int TestFuncUdpRecv(const std::string& msg, std::string ip, int port);
     
     virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp);
 
     /***************************** CONTROLLER *****************************/
 
-    virtual int ControllerFuncUdpRecv(const std::string& msg);
+    virtual int ConFuncUdpRecv(const std::string& msg, std::string ip, int port);
+
+    virtual int ConFunGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp);
 
     /***************************** APPGATEWAY *****************************/
 
-    virtual int GateFuncUdpRecv(const std::string& msg);
+    virtual int GateFuncUdpRecv(const std::string& msg, std::string ip, int port);
 
     virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp);
 

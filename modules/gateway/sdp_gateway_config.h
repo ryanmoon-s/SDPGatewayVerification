@@ -16,6 +16,8 @@ public:
     void set_listen_info(const std::string& ip, int tcp_port, int udp_port);
     int get_tcp_port();
 
+    int QueryAndInsertMD5(const std::string& md5);
+
 private:
     IPWhiteList* whitelist_;
     SDPAppGatewayErpcServiceImpl* service_;

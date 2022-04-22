@@ -6,7 +6,7 @@ int main() {
     spa::SPAVoucher voucher;
     voucher.mutable_account()->set_acc("arashi");
     voucher.mutable_account()->set_pwd("123321");
-    voucher.set_ip("127.0.0.1");
+    voucher.set_mac("127.0.0.1");
     voucher.set_address("ChengDu");
     voucher.set_is_valid(true);
     voucher.set_timestamp(time(NULL));

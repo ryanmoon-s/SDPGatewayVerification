@@ -1,7 +1,9 @@
-#include "sdp_controller_service_impl.h"
 #include "comm/erpc/erpc_client.h"
+#include "sdp_controller_service_impl.h"
+#include "sdp_controller_tool.h"
+#include "sdp_controller_config.h"
 
-int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
+int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
     int ret = 0;
     spa::SPAVoucherPacket spaVoucherPacket;
@@ -17,21 +19,25 @@ int SDPControllerErpcServiceImpl::ControllerFuncUdpRecv(const std::string& msg)
     spaVoucher.SerializeToString(&voucher_str);
     TLOG_DBG(("spaVoucher: %s", voucher_str.c_str()));
 
-    const char* cmd = "ls -l";
-    system(cmd);
+    // TODO iAssert
+    ret = CheckUserPermissions(spaVoucher);
+    if (ret != 0)
+    {
+        TLOG_MSG(("CheckUserPermissions faild, voucher data:%s", voucher_str.c_str()));
+        return -1;
+    }
 
-    // TEST
-    erpc_def::Header header;
-    erpc::GateFuncWhiteListOpReq req;
-    erpc::GateFuncWhiteListOpRsp rsp;
+    // 防止重放攻击
+    int repeat = QueryAndInsertMD5(spaVoucherPacket.md5_data());
+    if (repeat != 0)
+    {
+        TLOG_MSG(("QueryAndInsertMD5 repeat md5"));
+        return -1;
+    }
 
-    req.set_op(erpc::ListDel);
-    req.set_ip("127.0.0.1"); 
-
-    ret = ErpcClient().GateFuncWhiteListOpRequest(req, rsp, header);
-    iAssert(ret, ("GateFuncWhiteListOpRequest faild"));
+    // 加入白名单
+    auto config = SDPControllerConfig::GetInstance();
+    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_TABLE_ADD, ip, port);
     
-    TLOG_DBG(("header code:%d, msg:%s", header.ret_code, header.ret_msg.c_str()));
-
     return 0;
 }
