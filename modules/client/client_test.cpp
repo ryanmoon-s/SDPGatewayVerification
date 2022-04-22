@@ -3,16 +3,16 @@
 int main()
 {
     int ret = 0;
-    spa::SPAVoucher voucher;
+    spa::SPAVoucher spaVoucher;
 
-    voucher.mutable_account()->set_acc("anonymous");
-    voucher.mutable_account()->set_pwd("123456");
-    voucher.set_mac("127.0.0.1");
-    voucher.set_address("ChengDu");
-    voucher.set_is_valid(true);
-    voucher.set_timestamp(time(NULL));
+    spaVoucher.mutable_account()->set_acc("anonymous");
+    spaVoucher.mutable_account()->set_pwd("123456");
+    spaVoucher.set_mac("127.0.0.1");
+    spaVoucher.set_address("ChengDu");
+    spaVoucher.set_is_valid(true);
+    spaVoucher.set_timestamp(time(NULL));
 
-    ret = VerifyClient().GetAccessibleAppList(voucher);
+    ret = VerifyClient().GetAccessibleAppList(spaVoucher);
     iAssert(ret, ("GetAccessibleAppList"));
 
     return 0;

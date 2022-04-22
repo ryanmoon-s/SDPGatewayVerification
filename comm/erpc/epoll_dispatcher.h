@@ -6,15 +6,10 @@
 
 #define MAXEVENTS 128
 
-struct SocketInfo {
-    std::string ip;
-    int port;
-};
-
 struct FdDataType {
     int fd;
     uint32_t event_type;
-    SocketInfo socket_info;
+    erpc::SocketInfo socket_info;
     std::shared_ptr<SSLConnector> connector;
 };
 

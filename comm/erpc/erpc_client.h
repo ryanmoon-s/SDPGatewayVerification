@@ -6,7 +6,7 @@
 
 #include "comm/proto/erpc.pb.h"
 
-using namespace erpc_def;
+using namespace erpc;
 
 class ErpcClient {
 public:
@@ -19,7 +19,7 @@ public:
     int TestFuncReverseRequest(const erpc::TestFuncReverseReq& req, erpc::TestFuncReverseRsp& rsp, Header& header);
 
     // Controller
-    int ConFunGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp);
+    int ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, Header& header);
 
     // AppGateway
     int GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);

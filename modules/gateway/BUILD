@@ -13,6 +13,7 @@ cc_binary(
     ],
     deps = [
         "//comm/commdef:comm_def_lib",
+        "//comm/commdef:comm_tool_lib",
         "//comm/tlog:tlog_lib",
         "//comm/spatools:spa_tools_lib",
         "//comm/ssltools:ssl_tools_lib",

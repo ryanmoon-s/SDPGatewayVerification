@@ -4,6 +4,7 @@
 #include "comm/proto/erpc.pb.h"
 #include "comm/proto/spa.pb.h"
 #include "erpc_def.h"
+#include "epoll_dispatcher.h"
 
 namespace erpc {
     enum ServiceMapTable {
@@ -14,6 +15,7 @@ namespace erpc {
         // CONTROLLER
         CMD_UDP_CONTROLLER_FUNC_RECV = 101,
         CMD_RPC_CONTROLLER_FUNC_GET_ACCESS = 102,
+        CMD_RPC_CONTROLLER_FUNC_REGISTER_APP = 103,
 
         // APPGATEWAY
         CMD_UDP_APPGATEWAY_FUNC_RECV = 201,
@@ -29,19 +31,21 @@ public:
 
     virtual int TestFuncUdpRecv(const std::string& msg, std::string ip, int port);
     
-    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp);
+    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp, const erpc::Extra& extra);
 
     /***************************** CONTROLLER *****************************/
 
     virtual int ConFuncUdpRecv(const std::string& msg, std::string ip, int port);
 
-    virtual int ConFunGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp);
+    virtual int ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra);
+    
+    virtual int ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra);
 
     /***************************** APPGATEWAY *****************************/
 
     virtual int GateFuncUdpRecv(const std::string& msg, std::string ip, int port);
 
-    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp);
+    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, const erpc::Extra& extra);
 
 public:
     ~ErpcService() {}

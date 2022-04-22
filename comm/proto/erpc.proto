@@ -17,23 +17,39 @@ message TestFuncReverseRsp
 
 /***************************** CONTROLLER *****************************/
 
-message AccessList
+message AppItem
 {
-    optional string ip = 1;
-    optional int32 udp_port = 2;
-    optional int32 tcp_port = 3;
+    optional int32 udp_port = 1;
+    optional int32 tcp_port = 2;
+    optional string appname = 3;
     optional string description = 4;
 }
 
-// 用户获取可访问列表、票据
+message AccessItem
+{
+    optional string ip = 1;
+    optional AppItem app = 2;
+}
+
+// Client 获取可访问列表、票据
 message ConFuncGetAccessReq 
 {
 }
 
 message ConFuncGetAccessRsp
 {
-    repeated AccessList list = 1;
-    optional spa.SPATicket ticket = 2;
+    repeated AccessItem access_list = 1;
+    optional spa.SPATicketPacket ticket_packet = 2;
+}
+
+// Gateway 注册应用
+message ConFuncRegisterAppReq
+{
+    repeated AppItem app_list = 1;
+}
+
+message ConFuncRegisterAppRsp
+{
 }
 
 /***************************** APPGATEWAY *****************************/

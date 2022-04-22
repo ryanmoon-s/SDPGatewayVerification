@@ -1,15 +1,15 @@
 #include "erpc_handler.h"
 #include "comm/ssltools/ssl_def.h"
 
-using namespace erpc_def;
+using namespace erpc;
 
-#define RPC_CALL_FORWARD(FUNC, request, response)                           \
+#define RPC_CALL_FORWARD(FUNC, request, response, extra)                    \
     do {                                                                    \
         erpc::FUNC##Req req;                                                \
         erpc::FUNC##Rsp rsp;                                                \
         req.ParseFromString(request);                                       \
         ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();  \
-        ret = service->FUNC(req, rsp);                                      \
+        ret = service->FUNC(req, rsp, extra);                               \
         rsp.SerializeToString(&response);                                   \
     } while(0)
 
@@ -37,7 +37,7 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
 
     // 非阻塞
     fcntl(tmp_fd, F_SETFL, fcntl(tmp_fd, F_GETFL, 0) | O_NONBLOCK);
-    
+
     TLOG_MSG(("HandleRPCAccept success fd:%d, ip:%s, port:%d", tmp_fd, ip.c_str(), port));
     return 0;
 }
@@ -46,6 +46,8 @@ int ErpcHandler::HandleRPCRequest(const FdDataType& fd_data)
 {
     int fd = fd_data.fd;
     auto connector = fd_data.connector;
+    erpc::Extra extra;
+    extra.socket_info = fd_data.socket_info;
     
     std::string PacketReq;
     std::string PacketRsp;
@@ -62,7 +64,7 @@ int ErpcHandler::HandleRPCRequest(const FdDataType& fd_data)
         return ret;
     }
 
-    ret = _ParseRequestAndForward(PacketReq, PacketRsp);
+    ret = _ParseRequestAndForward(PacketReq, PacketRsp, extra);
     iAssert(ret, ("_ParseRequestAndForward"));
 
     ret = HandleWrite(PacketRsp, connector);
@@ -164,7 +166,7 @@ int ErpcHandler::ClientUDPRequest(uint32_t cmdid, const std::string& msg, const 
     return 0;
 }
 
-int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr)
+int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr, const erpc::Extra& extra)
 {
     int ret = 0;
     Packet packet;
@@ -173,7 +175,7 @@ int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::s
     ret = _ParseDataFromString(packet, PacketReqStr, 0);
     iAssert(ret, ("Parse faild"));
 
-    ret = _RequestForwardWithCmd(packet.cmdid, packet.body, response);
+    ret = _RequestForwardWithCmd(packet.cmdid, packet.body, response, extra);
     packet.header.ret_code = ret;
     if (ret == 0) {
         packet.header.ret_msg = "Request OK";
@@ -190,29 +192,35 @@ int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::s
     return ret;
 }
 
-int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& request, std::string& response)
+int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& request, std::string& response, const erpc::Extra& extra)
 {
     int ret = 0;
 
     if (cmdid == erpc::CMD_RPC_TEST_FUNC_REVERSE) {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
-        RPC_CALL_FORWARD(TestFuncReverse, request, response);
+        RPC_CALL_FORWARD(TestFuncReverse, request, response, extra);
         return 0;
     }
     else if (cmdid == erpc::CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP)
     {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
-        RPC_CALL_FORWARD(GateFuncWhiteListOp, request, response);
+        RPC_CALL_FORWARD(GateFuncWhiteListOp, request, response, extra);
         return 0;
     }
     else if (cmdid == erpc::CMD_RPC_CONTROLLER_FUNC_GET_ACCESS)
     {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
-        RPC_CALL_FORWARD(ConFunGetAccess, request, response);
+        RPC_CALL_FORWARD(ConFuncGetAccess, request, response, extra);
+        return 0;
+    }
+    else if (cmdid == erpc::CMD_RPC_CONTROLLER_FUNC_REGISTER_APP)
+    {
+        TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
+        RPC_CALL_FORWARD(ConFuncRegisterApp, request, response, extra);
         return 0;
     }
 
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
 
 int ErpcHandler::_ParseDataFromString(Packet& Packet, const std::string& str, int is_with_header)

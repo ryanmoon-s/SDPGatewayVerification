@@ -9,7 +9,7 @@
 #include "comm/proto/spa.pb.h"
 #include "comm/spatools/spa_tool.h"
 
-using namespace erpc_def;
+using namespace erpc;
 struct FdDataType;
 
 // 5M
@@ -45,9 +45,9 @@ public:
 
 private:
     // 解包网络请求
-    int _ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr);
+    int _ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr, const erpc::Extra& extra);
     // 转发网络请求至具体服务
-    int _RequestForwardWithCmd(int32_t cmdid, const std::string& request, std::string& response);
+    int _RequestForwardWithCmd(int32_t cmdid, const std::string& request, std::string& response, const erpc::Extra& extra);
 
     // Packet 解包与打包
     // is_with_header: 是否处理Header 0 or 1

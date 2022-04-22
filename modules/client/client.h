@@ -4,7 +4,6 @@
 #include "comm/tlog/tlog.h"
 #include "comm/spatools/spa_tool.h"
 #include "comm/ssltools/ssl_tool.h"
-#include "comm/erpc/erpc_client.h"
 
 #include <vector>
 
@@ -18,11 +17,11 @@ class VerifyClient {
 public:
     // 与SDPController交互
     // 获取可访问的应用列表: {<IP, PORT>}
-    int GetAccessibleAppList( /*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher& vocher);
+    int GetAccessibleAppList( /*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher& spaVoucher);
 
 private:
     // SPA敲门，使用UDP进行交互
-    int _SPAKnocking(const spa::SPAVoucherPacket& packet, std::string ip, int port);
+    int _SPAKnockingController(const spa::SPAVoucher& spaVoucher, std::string ip, int port);
 };
 
 class AccessClient {

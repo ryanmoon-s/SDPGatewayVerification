@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 // linux sys includes
 #include <unistd.h>
 #include <stdlib.h>
@@ -9,8 +11,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/ioctl.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <net/if.h>
 #include <errno.h>
 #include <error.h>
 #include <string.h>

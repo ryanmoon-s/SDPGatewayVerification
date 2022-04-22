@@ -10,6 +10,6 @@ public:
 
     virtual int GateFuncUdpRecv(const std::string& msg, std::string ip, int port) override;
 
-    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp) override;
+    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, const erpc::Extra& extra) override;
 
 };

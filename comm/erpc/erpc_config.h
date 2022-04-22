@@ -4,6 +4,8 @@
 #include <string>
 #include "erpc_service.h"
 
+class ErpcService;
+
 class ErpcConfig {
 public:
     // service

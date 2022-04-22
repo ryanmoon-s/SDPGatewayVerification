@@ -8,7 +8,7 @@ int mini_server_ssl();
 class TestErpcServiceImpl: public ErpcService {
 public:
     // rpc service
-    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp) override
+    virtual int TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp, const erpc::Extra& extra) override
     {
         std::string str = objReq.str();
         std::reverse(str.begin(), str.end());

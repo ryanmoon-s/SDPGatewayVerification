@@ -22,7 +22,7 @@
 #include "comm/tlog/tlog.h"
 #include "comm/ssltools/ssl_tool.h"
 
-namespace erpc_def 
+namespace erpc
 {
 
 enum SERVER_RET_ERR_DEF {
@@ -51,6 +51,19 @@ struct Packet {
     Header header;      // 二进制
     std::string body;   // 原string
 };
+
+struct SocketInfo {
+    std::string ip;
+    int port;
+};
+
+// 附加给service
+struct Extra {
+    SocketInfo socket_info;
+};
+
+
+
 
 
 }

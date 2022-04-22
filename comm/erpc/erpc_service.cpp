@@ -2,36 +2,41 @@
 
 /***************************** TEST FUNC *****************************/
 
-int ErpcService::TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp)
+int ErpcService::TestFuncReverse(const erpc::TestFuncReverseReq& objReq, erpc::TestFuncReverseRsp& objRsp, const erpc::Extra& extra)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
 
 int ErpcService::TestFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
 
 /***************************** CONTROLLER *****************************/
 
 int ErpcService::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
 
-int ErpcService::ConFunGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp)
+int ErpcService::ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
+}
+
+int ErpcService::ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra)
+{
+    return erpc::kErrServiceNotFound;
 }
 
 /***************************** APPGATEWAY *****************************/
 
 int ErpcService::GateFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
 
-int ErpcService::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp)
+int ErpcService::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, const erpc::Extra& extra)
 {
-    return erpc_def::kErrServiceNotFound;
+    return erpc::kErrServiceNotFound;
 }
