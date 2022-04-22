@@ -49,6 +49,7 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
 {
     int ret = 0;
     erpc::SocketInfo socket_info = extra.socket_info;
+    auto config = SDPControllerConfig::GetInstance();
 
     // 派发 ticket
     spa::SPATicket spaTicket;
@@ -62,12 +63,45 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
     objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
 
     // 添加 Access List
-    
+    // 目前全添加 
+    // TODO 根据可访问List添加
+    auto app_map = config->GetAppMap();
+    for (auto app : *app_map)
+    {
+        std::string ip = app.first;
+        auto app_vec = app.second;
+        for (int i = 0; i < app_vec.size(); i++)
+        {
+            erpc::AccessItem* item = objRsp.add_access_list();
+            item->set_ip(ip);
+            item->mutable_app()->CopyFrom(app_vec[i]);
+        }
+    }
+
+    objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
 
     return 0;
 }
 
 int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra)
 {
-    
+    if (objReq.app_list_size() == 0)
+    {
+        return -1;
+    }
+
+    int ret = 0;
+    erpc::SocketInfo socket_info = extra.socket_info;
+    std::string ip = socket_info.ip;
+    auto config = SDPControllerConfig::GetInstance();
+
+    std::vector<erpc::AppItem> app_vec;
+    for (int i = 0; i < objReq.app_list_size(); i++)
+    {
+        app_vec.push_back(objReq.app_list(i));
+    }
+
+    config->RegisterApp(ip, app_vec);
+
+    return 0;
 }

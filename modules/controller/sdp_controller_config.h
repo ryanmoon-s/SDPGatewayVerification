@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 #include "comm/erpc/erpc_config.h"
 #include "comm/iptools/iptables_tool.h"
 #include "sdp_controller_service_impl.h"
@@ -17,6 +18,10 @@ public:
     int get_tcp_port();
 
     int QueryAndInsertMD5(const std::string& md5);
+    
+    // feature
+    void RegisterApp(const std::string& ip, const std::vector<erpc::AppItem>& app_list);
+    std::map<std::string, std::vector<erpc::AppItem>>* GetAppMap();
 
 private:
     IPWhiteList* whitelist_;
@@ -29,8 +34,10 @@ private:
     // md5去重，防重放攻击
     std::map<std::string, int> md5_map_;
 
-    // 应用管理
-    
+    // 应用管理 gateway ip -> app_list
+    std::map<std::string, std::vector<erpc::AppItem>> app_map_;
+    // 用户可访问列表 user ip -> app : 127.0.0.1:80
+    // std::map<std::string, std::string> permission_map_;
 
 public:
     static SDPControllerConfig* GetInstance() 

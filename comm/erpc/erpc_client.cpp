@@ -60,7 +60,7 @@ int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& o
     return 0;
 }
 
-int ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, Header& header)
+int ErpcClient::ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;
@@ -86,7 +86,7 @@ int ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFu
     return 0;
 }
 
-int ConFuncRegisterAppRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, Header& header)
+int ErpcClient::ConFuncRegisterAppRequest(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;

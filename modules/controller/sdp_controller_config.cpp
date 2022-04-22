@@ -53,3 +53,15 @@ int SDPControllerConfig::QueryAndInsertMD5(const std::string& md5)
     return 0;
 }
 
+void SDPControllerConfig::RegisterApp(const std::string& ip, const std::vector<erpc::AppItem>& app_list)
+{
+    if (!app_list.empty())
+    {
+        app_map_[ip] = app_list;
+    }
+}
+
+std::map<std::string, std::vector<erpc::AppItem>>* SDPControllerConfig::GetAppMap()
+{
+    return &app_map_;
+}

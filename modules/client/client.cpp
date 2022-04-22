@@ -16,8 +16,18 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     ret = ErpcClient().ConFuncGetAccessRequest(req, rsp, header);
     iAssert(ret, ("ConFuncGetAccessRequest faild"));
 
-    // 票据、Access List
-    
+    // 处理: 票据
+    spa::SPATicketPacket spaTicketPacket;
+    spaTicketPacket.CopyFrom(rsp.ticket_packet());
+
+    // 处理: Access List
+    for (int i = 0; i < rsp.access_list_size(); i++)
+    {
+        erpc::AccessItem item = rsp.access_list(i);
+        std::string str;
+        item.SerializeToString(&str);
+        TLOG_DBG(("Access List --- %s", str));
+    }
     
     return 0;
 }
