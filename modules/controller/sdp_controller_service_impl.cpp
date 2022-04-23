@@ -17,21 +17,19 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     spa::SPAVoucher spaVoucher;
     auto config = SDPControllerConfig::GetInstance();
 
-    // 解出 spaVoucher
+    // 1、解出 spaVoucher
+    // 2、验证md5是否匹配(未被修改)
     spaVoucherPacket.ParseFromString(msg);
     ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket, RSA_PRI_KEY_CONTROLLER);
     iAssert(ret, ("DecryptVoucher faild"));
-
-    // 输出 spaVoucher 检查日志
-    std::string voucher_str;
-    spaVoucher.SerializeToString(&voucher_str);
-    TLOG_DBG(("spaVoucher: %s", voucher_str.c_str()));
+    DBG_PROTO(spaVoucher);
 
     // TODO iAssert
     ret = SDPControllerTool().CheckUserPermissions(spaVoucher);
     if (ret != 0)
     {
-        TLOG_MSG(("CheckUserPermissions faild, spaVoucher data:%s", voucher_str.c_str()));
+        TLOG_MSG(("CheckUserPermissions faild, spaVoucher data:"));
+        MSG_PROTO(spaVoucher);
         return -1;
     }
 

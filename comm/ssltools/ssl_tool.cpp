@@ -32,13 +32,12 @@ int SSLTools::RSAEncrypt(std::string& to_text, const std::string& text, const st
     /* 
      * 数据拆分加密 
      *
-     * RSA_PKCS1_PADDING 模式下，加密时：
-     * 每轮输入数据大小不能超过rsa_size - 11，超过时要拆分
+     * RSA_PKCS1_OAEP_PADDING 模式下，加密时：
+     * 每轮输入数据大小不能超过rsa_size - 42，超过时要拆分
      * 每轮输出大小都是rsa_size
      * 
-     * 由于私钥签名不支持 RSA_PKCS1_OAEP_PADDING 为了统一 所以未使用它
     */
-    int limit_size = rsa_size - 11;
+    int limit_size = rsa_size - 42;
     while (!src.empty())
     {
         int split_size = std::min(static_cast<int>(src.size()), limit_size); 
@@ -83,18 +82,17 @@ int SSLTools::RSADecrypt(std::string& to_text, const std::string& text, const st
     // RSA_print_fp(stdout, rsa, 0);
 
     int rsa_size = RSA_size(rsa);
-    int limit_size = rsa_size - 11;
+    int limit_size = rsa_size - 42;
     char *to = (char*)malloc(limit_size);
     memset(to, 0, limit_size);
 
     /* 
      * 数据拆分解密 
      *
-     * RSA_PKCS1_PADDING 模式下，解密时：
+     * RSA_PKCS1_OAEP_PADDING 模式下，解密时：
      * 每轮输入数据大小都是rsa_size，超过时要拆分
-     * 每轮输出大小都不超过rsa_size - 11
+     * 每轮输出大小都不超过rsa_size - 42
      * 
-     * 由于私钥签名不支持 RSA_PKCS1_OAEP_PADDING 为了统一 所以未使用它
     */
     int left_size = src.size();
     while (!src.empty()) 
@@ -111,23 +109,6 @@ int SSLTools::RSADecrypt(std::string& to_text, const std::string& text, const st
     RSA_free(rsa);
     fclose(fp);
 
-    return 0;
-}
-
-int SSLTools::MD5Encrypt(std::string& to_text, const std::string& text) 
-{
-    MD5_CTX ctx;
-    char md5_result[BUFSIZ];
-    int ret = MD5_Init(&ctx);
-    SSL_iAssert_LT0(ret, ("MD5_Init"));
-
-    ret = MD5_Update(&ctx, text.c_str(), text.size());
-    SSL_iAssert_LT0(ret, ("MD5_Update"));
-
-    ret = MD5_Final((unsigned char*)md5_result, &ctx);
-    SSL_iAssert_LT0(ret, ("MD5_Final"));
-
-    to_text = std::string(md5_result, ret);
     return 0;
 }
 
@@ -174,10 +155,8 @@ int SSLTools::RSASign(std::string& sig_text, const std::string& text, const std:
     {
         int to_size = 0;
         int split_size = std::min(static_cast<int>(src.size()), limit_size); 
-        int ret = RSA_sign(NID_sha1, (unsigned char*)src.c_str(), split_size, 
+        RSA_sign(NID_sha1, (unsigned char*)src.c_str(), split_size, 
             (unsigned char*)to, (unsigned int*)&to_size, rsa);
-
-        TLOG_DBG(("to_size:%d, ret:%d", to_size, ret));
         SSL_iAssert_LT0(to_size, ("RSA_sign"));
 
         // 必须传入to_size，防止数据缺失
@@ -256,6 +235,23 @@ int SSLTools::RSAVerify(const std::string& sig_text, const std::string& src_text
     fclose(fp);
 
     return success ? 0 : -1;
+}
+
+int SSLTools::MD5Encrypt(std::string& to_text, const std::string& text) 
+{
+    MD5_CTX ctx;
+    char md5_result[BUFSIZ];
+    int ret = MD5_Init(&ctx);
+    SSL_iAssert_LT0(ret, ("MD5_Init"));
+
+    ret = MD5_Update(&ctx, text.c_str(), text.size());
+    SSL_iAssert_LT0(ret, ("MD5_Update"));
+
+    ret = MD5_Final((unsigned char*)md5_result, &ctx);
+    SSL_iAssert_LT0(ret, ("MD5_Final"));
+
+    to_text = std::string(md5_result, ret);
+    return 0;
 }
 
 SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, int is_server): is_server_(is_server)

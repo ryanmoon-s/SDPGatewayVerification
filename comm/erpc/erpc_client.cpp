@@ -7,8 +7,7 @@ int ErpcClient::UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std
 
     ret = ErpcHandler().ClientUDPRequest(cmdid, msg, ip, port);
     iAssert(ret, ("ClientUDPRequest faild"));
-
-    TLOG_MSG(("Client UDPFuncRequest success, ip:%s, port:%d", ip.c_str(), port));
+    
     return 0;
 }
 

@@ -9,11 +9,14 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     int ret = 0;
     spa::SPATicketPacket spaTicketPacket;
 
-    // 解出 Ticket 验证签名
+    // 验证签名是否来自 Controller
     spaTicketPacket.ParseFromString(msg);
     ret = SPATools().VerifyTicket(spaTicketPacket, RSA_PUB_KEY_CONTROLLER);
     iAssert(ret, ("DecryptVoucher faild"));
     MSG_PROTO(spaTicketPacket);
+
+    // 票据ip 与 请求者ip 是否相同
+
 
     // 防止重放、加入白名单 TODO
 
