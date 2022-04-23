@@ -25,13 +25,20 @@ SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, U
     erpc::ConFuncRegisterAppReq req;
     erpc::ConFuncRegisterAppRsp rsp;
     erpc::Header header;
-    // 暂时添加一个
+
     // TODO添加更多可扩展的应用 基于id管理
     erpc::AppItem* item = req.add_app_list();
     item->set_udp_port(UDP_PORT_APPGATEWAY);
     item->set_tcp_port(TCP_PORT_APPGATEWAY);
     item->set_appname("reverse");
     item->set_description("reverse your string");
+
+    item = req.add_app_list();
+    item->set_udp_port(UDP_PORT_APPGATEWAY);
+    item->set_tcp_port(TCP_PORT_APPGATEWAY);
+    item->set_appname("add");
+    item->set_description("add your two number");
+
     ret = ErpcClient().ConFuncRegisterAppRequest(req, rsp, header);
     iAssertNoReturn(ret, ("ConFuncRegisterAppRequest faild"));
 }

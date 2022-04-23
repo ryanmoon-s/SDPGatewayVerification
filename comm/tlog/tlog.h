@@ -45,11 +45,6 @@ private:
 #define TLOG_WARN(Wrap)                         \
     TLOG(WARN, Wrap)
 
-#define M_TOSTR(STR) #STR
-#define TLOG_PROTO(Proto)                       \
-    TLOG_MSG((M_TOSTR(Proto)":%s", Proto2Json(Proto).c_str()));
-
-
 // Assert
 
 #define iAssert(ret, Wrap)                      \

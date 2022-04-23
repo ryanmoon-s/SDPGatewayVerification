@@ -1,10 +1,9 @@
 #pragma once
 
 #include "comm/commdef/comm_def.h"
-#include "comm/tlog/tlog.h"
 #include "comm/spatools/spa_tool.h"
 #include "comm/ssltools/ssl_tool.h"
-
+#include "comm/proto/erpc.pb.h"
 #include <vector>
 
 using std::pair;
@@ -18,7 +17,7 @@ class VerifyClient
 public:
     // 与SDPController交互
     // 获取可访问的应用列表: {<IP, PORT>}
-    int GetAccessibleAppList(/*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher &spaVoucher);
+    int GetAccessibleAppList(const spa::SPAVoucher &spaVoucher);
 
 private:
     // SPA敲门，使用UDP进行交互

@@ -2,5 +2,5 @@
 
 int SDPControllerTool::CheckUserPermissions(const spa::SPAVoucher& spaVoucher)
 {
-    
+    return 0;
 }

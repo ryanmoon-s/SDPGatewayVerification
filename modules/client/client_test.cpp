@@ -12,6 +12,8 @@ int main()
     spaVoucher.set_is_valid(true);
     spaVoucher.set_timestamp(time(NULL));
 
+    vector<erpc::AccessItem> list;
+
     ret = VerifyClient().GetAccessibleAppList(spaVoucher);
     iAssert(ret, ("GetAccessibleAppList"));
 

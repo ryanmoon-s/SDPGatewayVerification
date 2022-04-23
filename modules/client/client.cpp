@@ -1,9 +1,11 @@
 #include "client.h"
 #include "comm/erpc/erpc_client.h"
+#include "comm/commdef/comm_tool.h"
 
 int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
 {
     int ret = 0;
+    vector<erpc::AccessItem> list;
     
     // SPA单包认证
     ret = _SPAKnockingController(spaVoucher, IP_CONTROLLER_PB, UDP_PORT_CONTROLLER);
@@ -24,9 +26,7 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     for (int i = 0; i < rsp.access_list_size(); i++)
     {
         erpc::AccessItem item = rsp.access_list(i);
-        std::string str;
-        item.SerializeToString(&str);
-        TLOG_DBG(("Access List --- %s", str.c_str()));
+        list.push_back(item);
 
         std::string ip = item.ip();
         std::string appname = item.mutable_app()->appname();
@@ -34,15 +34,19 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
         int tcp_port = item.mutable_app()->tcp_port();
         int udp_port = item.mutable_app()->udp_port();
 
-        ret = _SPAKnockingGateway(spaTicketPacket, ip, udp_port);
-        iAssert(ret, ("_SPAKnockingGateway faild"));
-
-        TLOG_MSG(("Access -  - - Get access list begin - - -"));
+        TLOG_MSG(("Access ===== Get access list beg ====="));
         TLOG_MSG(("Access - ip:%s", ip.c_str()));
         TLOG_MSG(("Access - port:%d", tcp_port));
         TLOG_MSG(("Access - appname:%s", appname.c_str()));
         TLOG_MSG(("Access - description:%s", description.c_str()));
-        TLOG_MSG(("Access - - - - Get access list end   - - -"));
+        TLOG_MSG(("Access ===== Get access list end ====="));
+    }
+
+    // 全部敲门
+    for (auto item : list)
+    {
+        ret = _SPAKnockingGateway(spaTicketPacket, item.ip(), item.mutable_app()->udp_port());
+        iAssert(ret, ("_SPAKnockingGateway faild"));
     }
     
     return 0;

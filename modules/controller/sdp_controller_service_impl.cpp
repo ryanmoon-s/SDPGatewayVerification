@@ -11,6 +11,7 @@ using namespace commtool;
 
 int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
+    TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
     int ret = 0;
     spa::SPAVoucherPacket spaVoucherPacket;
     spa::SPAVoucher spaVoucher;
@@ -50,7 +51,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
 
 int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra)
 {
-    TLOG_PROTO(objReq);
+    MSG_PROTO(objReq);
 
     int ret = 0;
     erpc::SocketInfo socket_info = extra.socket_info;
@@ -85,13 +86,13 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
 
     objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
 
-    TLOG_PROTO(objRsp);
+    MSG_PROTO(objRsp);
     return 0;
 }
 
 int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra)
 {
-    TLOG_PROTO(objReq);
+    MSG_PROTO(objReq);
 
     if (objReq.app_list_size() == 0)
     {
@@ -111,6 +112,6 @@ int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegister
 
     config->RegisterApp(ip, app_vec);
 
-    TLOG_PROTO(objRsp);
+    MSG_PROTO(objRsp);
     return 0;
 }
