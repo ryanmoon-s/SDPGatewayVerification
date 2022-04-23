@@ -2,11 +2,6 @@
 
 #include "ssl_def.h"
 
-enum RSAOP {
-    PUB_ENCRYPT, // 公钥加密，私钥解密
-    PRI_ENCRYPT, // 私钥加密，公钥解密
-};
-
 struct SSL_Data {
     SSL_CTX *ctx;
     SSL   *ssl;
@@ -41,7 +36,11 @@ private:
 class SSLTools {
 public:
     // 加解密方法
-    int RSAEncrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op); 
-    int RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op);
-    int MD5Encrypt(std::string& to_text, std::string text);
+    int RSAEncrypt(std::string& to_text, const std::string& text, const std::string& key);
+    int RSADecrypt(std::string& to_text, const std::string& text, const std::string& key);
+    
+    int RSASign(std::string& sig_text, const std::string& text, const std::string& key);
+    int RSAVerify(const std::string& sig_text, const std::string& src_text, const std::string& key);
+
+    int MD5Encrypt(std::string& to_text, const std::string& text);
 };

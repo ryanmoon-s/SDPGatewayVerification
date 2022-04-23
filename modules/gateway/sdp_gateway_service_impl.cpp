@@ -8,13 +8,12 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
     int ret = 0;
     spa::SPATicketPacket spaTicketPacket;
-    spa::SPATicket spaTicket;
 
-    // 解出 spaVoucher
+    // 解出 Ticket 验证签名
     spaTicketPacket.ParseFromString(msg);
-    ret = SPATools().DecryptVoucher(spaTicket, spaTicketPacket);
+    ret = SPATools().VerifyTicket(spaTicketPacket, RSA_PUB_KEY_CONTROLLER);
     iAssert(ret, ("DecryptVoucher faild"));
-    MSG_PROTO(spaTicket);
+    MSG_PROTO(spaTicketPacket);
 
     // 防止重放、加入白名单 TODO
 

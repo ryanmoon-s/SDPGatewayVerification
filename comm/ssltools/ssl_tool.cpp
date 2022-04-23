@@ -1,23 +1,28 @@
 #include "ssl_tool.h"
+#include <functional>
 
-int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) 
+int SSLTools::RSAEncrypt(std::string& to_text, const std::string& text, const std::string& key) 
 { 
     to_text.clear();
+    std::string src = text;
+    RSA *rsa = NULL;
+    FILE *fp = NULL;
 
-    FILE *fp = fopen(key_path.c_str(), "r");
+    fp = fopen(key.c_str(), "r");
     if (fp == NULL) 
     {
-        TLOG_ERR(("fopen error:%s, key_path:%s", strerror(errno), key_path.c_str()));
+        TLOG_ERR(("fopen error:%s, key:%s", strerror(errno), key.c_str()));
         return -1;
     }
 
-    // -----BEGIN RSA PUBLIC KEY-----
-    // RSA *rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
+    // -----BEGIN RSA PUBLIC KEY----- 格式
+    // rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
     
-    // -----BEGIN PUBLIC KEY-----
-    RSA *rsa = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
-    SSL_iAssert_NULL(rsa, ("PEM_read_RSAPublicKey"));
+    // -----BEGIN PUBLIC KEY----- 格式
+    rsa = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
+    SSL_iAssert_NULL(rsa, ("RSA read key faild"));
 
+    // 打印密钥
     // RSA_print_fp(stdout, rsa, 0);
 
     int rsa_size = RSA_size(rsa);
@@ -27,25 +32,27 @@ int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key
     /* 
      * 数据拆分加密 
      *
-     * RSA_PKCS1_OAEP_PADDING模式下，加密时：
-     * 每轮输入数据大小不能超过rsa_size - 42，超过时要拆分
+     * RSA_PKCS1_PADDING 模式下，加密时：
+     * 每轮输入数据大小不能超过rsa_size - 11，超过时要拆分
      * 每轮输出大小都是rsa_size
+     * 
+     * 由于私钥签名不支持 RSA_PKCS1_OAEP_PADDING 为了统一 所以未使用它
     */
-    int limit_size = rsa_size - 42;
-    while (!text.empty()) 
+    int limit_size = rsa_size - 11;
+    while (!src.empty())
     {
-        int split_size = std::min(static_cast<int>(text.size()), limit_size); 
-        int to_size = RSA_public_encrypt(split_size, (unsigned char*)text.c_str(), 
-                (unsigned char*)to, rsa, RSA_PKCS1_OAEP_PADDING); 
+        int split_size = std::min(static_cast<int>(src.size()), limit_size); 
+        int to_size = RSA_public_encrypt(split_size, (unsigned char*)src.c_str(), 
+                (unsigned char*)to, rsa, RSA_PKCS1_PADDING); 
         SSL_iAssert_LT0(to_size, ("RSA_public_encrypt"));
 
         // 必须传入to_size，防止数据缺失
         to_text.append(std::string(to, to_size));
-        if (text.size() <= limit_size) 
+        if (src.size() <= limit_size) 
         {
             break;
         }
-        text = text.substr(limit_size);
+        src = src.substr(limit_size);
     }
 
     free(to);
@@ -55,43 +62,49 @@ int SSLTools::RSAEncrypt(std::string& to_text, std::string text, std::string key
     return 0;
 }
 
-int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key_path, RSAOP op) 
+int SSLTools::RSADecrypt(std::string& to_text, const std::string& text, const std::string& key) 
 {
     to_text.clear();
+    std::string src = text;
+    RSA *rsa = NULL;
+    FILE *fp = NULL;
 
-    FILE *fp = fopen(key_path.c_str(), "r");
+    fp = fopen(key.c_str(), "r");
     if (fp == NULL) 
     {
-        TLOG_ERR(("fopen error:%s, key_path:%s", strerror(errno), key_path.c_str()));
+        TLOG_ERR(("fopen error:%s, key:%s", strerror(errno), key.c_str()));
         return -1;
     }
 
-    RSA *rsa = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
-    SSL_iAssert_NULL(rsa, ("PEM_read_RSAPrivateKey"));
+    rsa = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
+    SSL_iAssert_NULL(rsa, ("RSA read key faild"));
 
+    // 打印密钥
     // RSA_print_fp(stdout, rsa, 0);
 
     int rsa_size = RSA_size(rsa);
-    int limit_size = rsa_size - 42;
+    int limit_size = rsa_size - 11;
     char *to = (char*)malloc(limit_size);
     memset(to, 0, limit_size);
 
     /* 
      * 数据拆分解密 
      *
-     * RSA_PKCS1_OAEP_PADDING模式下，解密时：
+     * RSA_PKCS1_PADDING 模式下，解密时：
      * 每轮输入数据大小都是rsa_size，超过时要拆分
-     * 每轮输出大小都不超过rsa_size - 42
+     * 每轮输出大小都不超过rsa_size - 11
+     * 
+     * 由于私钥签名不支持 RSA_PKCS1_OAEP_PADDING 为了统一 所以未使用它
     */
-    int left_size = text.size();
-    while (!text.empty()) 
+    int left_size = src.size();
+    while (!src.empty()) 
     {
-        int to_size = RSA_private_decrypt(rsa_size, (unsigned char*)text.c_str(), (unsigned char*)to, rsa, RSA_PKCS1_OAEP_PADDING);
+        int to_size = RSA_private_decrypt(rsa_size, (unsigned char*)src.c_str(), (unsigned char*)to, rsa, RSA_PKCS1_PADDING);
         SSL_iAssert_LT0(to_size, ("RSA_private_decrypt"));
 
         // 必须传入to_size，防止数据缺失
         to_text.append(std::string(to, to_size));
-        text = text.substr(rsa_size);
+        src = src.substr(rsa_size);
     }
 
     free(to);
@@ -101,7 +114,7 @@ int SSLTools::RSADecrypt(std::string& to_text, std::string text, std::string key
     return 0;
 }
 
-int SSLTools::MD5Encrypt(std::string& to_text, std::string text) 
+int SSLTools::MD5Encrypt(std::string& to_text, const std::string& text) 
 {
     MD5_CTX ctx;
     char md5_result[BUFSIZ];
@@ -116,6 +129,133 @@ int SSLTools::MD5Encrypt(std::string& to_text, std::string text)
 
     to_text = std::string(md5_result, ret);
     return 0;
+}
+
+int SSLTools::RSASign(std::string& sig_text, const std::string& text, const std::string& key)
+{
+    sig_text.clear();
+    std::string src = text;
+    RSA *rsa = NULL;
+    FILE *fp = NULL;
+
+    fp = fopen(key.c_str(), "r");
+    if (fp == NULL) 
+    {
+        TLOG_ERR(("fopen error:%s, key:%s", strerror(errno), key.c_str()));
+        return -1;
+    }
+
+    // -----BEGIN RSA PUBLIC KEY----- 格式
+    // rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
+    
+    // -----BEGIN PUBLIC KEY----- 格式
+    rsa = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
+    SSL_iAssert_NULL(rsa, ("RSA read key faild"));
+
+    // 打印密钥
+    // RSA_print_fp(stdout, rsa, 0);
+
+    int rsa_size = RSA_size(rsa);
+    char *to = (char*)malloc(rsa_size);
+    memset(to, 0, rsa_size);
+
+    /* 
+     * 数据拆分签名 
+     *
+     * 签名仅支持 PKCS #1 v2.0; RSA_PKCS1_OAEP_PADDING; RSA_size(rsa) - 42
+     *
+     * RSA_PKCS1_OAEP_PADDING 模式下，签名时：
+     * 每轮输入数据大小不能超过rsa_size - 42，超过时要拆分
+     * 每轮输出签名大小都是rsa_size
+     * 
+    */
+    int limit_size = rsa_size - 42;
+    while (!src.empty())
+    {
+        int to_size = 0;
+        int split_size = std::min(static_cast<int>(src.size()), limit_size); 
+        int ret = RSA_sign(NID_sha1, (unsigned char*)src.c_str(), split_size, 
+            (unsigned char*)to, (unsigned int*)&to_size, rsa);
+
+        TLOG_DBG(("to_size:%d, ret:%d", to_size, ret));
+        SSL_iAssert_LT0(to_size, ("RSA_sign"));
+
+        // 必须传入to_size，防止数据缺失
+        sig_text.append(std::string(to, to_size));
+        if (src.size() <= limit_size) 
+        {
+            break;
+        }
+        src = src.substr(limit_size);
+    }
+
+    free(to);
+    RSA_free(rsa);
+    fclose(fp);
+
+    return 0;
+}
+
+int SSLTools::RSAVerify(const std::string& sig_text, const std::string& src_text, const std::string& key)
+{
+    std::string src = src_text;
+    std::string sig = sig_text;
+    RSA *rsa = NULL;
+    FILE *fp = NULL;
+
+    fp = fopen(key.c_str(), "r");
+    if (fp == NULL) 
+    {
+        TLOG_ERR(("fopen error:%s, key:%s", strerror(errno), key.c_str()));
+        return -1;
+    }
+
+    rsa = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
+    SSL_iAssert_NULL(rsa, ("RSA read key faild"));
+
+    // 打印密钥
+    // RSA_print_fp(stdout, rsa, 0);
+
+    int rsa_size = RSA_size(rsa);
+    int limit_size = rsa_size - 42;
+
+    /* 
+     * 数据拆分验证
+     * 
+     * 签名仅支持 PKCS #1 v2.0; RSA_PKCS1_OAEP_PADDING; RSA_size(rsa) - 42
+     *
+     * RSA_PKCS1_OAEP_PADDING 模式下，验证时：
+     * 每轮签名数据大小都是 rsa_size
+     * 每轮原数据大小都不超过 rsa_size - 42
+     * 
+    */
+    int success = 1;
+    while (!src.empty()) 
+    {
+        int split_size = std::min(static_cast<int>(src.size()), limit_size);
+        int ret = RSA_verify(NID_sha1, (unsigned char*)src.c_str(), split_size, (unsigned char*)sig.c_str(), rsa_size, rsa);
+        TLOG_DBG(("ret:%d", ret));
+
+        if (ret == 0)
+        {
+            TLOG_ERR(("RSA Verify faild"));
+            success = 0;
+            break;
+        }
+
+        if (sig.size() == rsa_size)
+        {
+            break;
+        }
+
+        src = src.substr(limit_size);
+        sig = sig.substr(rsa_size);
+    }
+
+    RSA_free(rsa);
+    fclose(fp);
+
+    return success ? 0 : -1;
 }
 
 SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, int is_server): is_server_(is_server)
@@ -135,9 +275,9 @@ SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, 
 }
 
 SSLConnector::~SSLConnector(){
-    // SSL_shutdown(ssl_data_.ssl);
-    // SSL_free(ssl_data_.ssl);
-    // SSL_CTX_free(ssl_data_.ctx);
+    SSL_shutdown(ssl_data_.ssl);
+    SSL_free(ssl_data_.ssl);
+    SSL_CTX_free(ssl_data_.ctx);
 }
 
 int SSLConnector::_SSL_Init() 
@@ -168,7 +308,7 @@ int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string ca_cert, st
     int ret = 0;
 
     #if 1
-    // 是否要验证对方
+    // 是否要验证对方，双向验证
     SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);   
     // 若验证，则放置CA证书
     SSL_CTX_load_verify_locations(ssl_data_.ctx, ca_cert.c_str(), NULL); 

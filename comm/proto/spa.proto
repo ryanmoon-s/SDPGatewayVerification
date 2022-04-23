@@ -35,11 +35,11 @@ message SPATicket
 }
 
 // SPA票据数据包
-// 1、加密的SPA票据
-// 2、SPA票据摘要
-// 传播路径：Controller (Controller私钥加密) -> Client -> GateWay (Controller公钥解密)
+// 1、SPA票据
+// 2、SPA票据签名
+// 传播路径：Controller (Controller签名) -> Client -> GateWay (Controller验证签名)
 message SPATicketPacket
 {
-    optional bytes enc_data = 1;
-    optional bytes md5_data = 2;
+    optional SPATicket ticket = 1;
+    optional bytes sign_data = 2;
 }

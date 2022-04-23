@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # rsa keys 
-# 用于SPA敲门使用
+# 用于SPA敲门
 
 dir_source=`pwd`
 
@@ -11,14 +11,14 @@ if [ ! -d ${dir_rsa} ]; then
 fi
 cd ${dir_rsa}
 
-# controller
+# ----- controller -----
 
 echo "# 生成密钥"
 openssl genrsa -out controller_key.pem 1024
 echo "# 提取公钥"
 openssl rsa -in controller_key.pem -pubout -out controller_pubkey.pem
 
-# gateway
+# ----- gateway -----
 
 echo "# 生成密钥"
 openssl genrsa -out gateway_key.pem 1024

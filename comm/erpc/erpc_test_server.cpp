@@ -26,7 +26,7 @@ public:
         spa::SPAVoucher spaVoucher;
 
         spaVoucherPacket.ParseFromString(msg);
-        ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket);
+        ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket, RSA_PUB_KEY_CONTROLLER, RSA_PUB_ENCRYPT);
         iAssert(ret, ("DecryptVoucher faild"));
 
         std::string voucher_str;

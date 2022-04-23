@@ -19,7 +19,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
 
     // 解出 spaVoucher
     spaVoucherPacket.ParseFromString(msg);
-    ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket);
+    ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket, RSA_PRI_KEY_CONTROLLER);
     iAssert(ret, ("DecryptVoucher faild"));
 
     // 输出 spaVoucher 检查日志
@@ -57,13 +57,13 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
     erpc::SocketInfo socket_info = extra.socket_info;
     auto config = SDPControllerConfig::GetInstance();
 
-    // 派发 ticket
+    // 签名 派发 Ticket
     spa::SPATicket spaTicket;
     spaTicket.set_ip(socket_info.ip.c_str());
     spaTicket.set_timestamp(time(NULL));
 
     spa::SPATicketPacket spaTicketPacket;
-    ret = SPATools().EncryptVoucher(spaTicketPacket, spaTicket);
+    ret = SPATools().SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
     iAssert(ret, ("EncryptVoucher faild"));
 
     objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);

@@ -3,7 +3,9 @@
 # rsa keys + sign
 # 用于建立ssl连接
 
-# Comm Name 必须全部都是不一样的
+# 注意：
+# 1、Comm Name 必须全部都是不一样的
+# 2、使用openssl 3.0 以上版本生成密钥
 
 dir_source=`pwd`
 

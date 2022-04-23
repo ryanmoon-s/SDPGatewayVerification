@@ -57,7 +57,7 @@ int VerifyClient::_SPAKnockingController(const spa::SPAVoucher& spaVoucher, std:
     std::string msg;
     spa::SPAVoucherPacket spaVoucherPacket;
     
-    ret = SPATools().EncryptVoucher(spaVoucherPacket, spaVoucher);
+    ret = SPATools().EncryptVoucher(spaVoucherPacket, spaVoucher, RSA_PUB_KEY_CONTROLLER);
     iAssert(ret, ("EncryptVoucher faild"));
 
     spaVoucherPacket.SerializeToString(&msg);
