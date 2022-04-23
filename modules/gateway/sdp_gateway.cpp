@@ -17,7 +17,7 @@ SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, U
     std::vector<std::string> white_vec;
     white_vec.push_back(IP_CONTROLLER_PB);
     whitelist->InitWhiteList(white_vec, TCP_PORT_APPGATEWAY);
-    
+
     // 注册服务
     server_.RegisterService(service);
 

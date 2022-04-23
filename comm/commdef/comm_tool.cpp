@@ -1,6 +1,7 @@
 #include "comm_tool.h"
 #include "comm/tlog/tlog.h"
 
+
 int commtool::GetMacAddress(std::string& mac_address)
 {
     char mac[32];
@@ -26,4 +27,10 @@ int commtool::GetMacAddress(std::string& mac_address)
     mac_address.assign(mac, ret);
 
     return 0;
+}
+
+std::string commtool::Proto2Json(const google::protobuf::Message& proto) {
+    std::string json;
+    google::protobuf::util::MessageToJsonString(proto, &json);
+    return json;
 }

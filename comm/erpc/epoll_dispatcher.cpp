@@ -93,7 +93,8 @@ int EpollDispatcher::Dispatch()
 
         if (type & EPOLLIN) 
         {
-            TLOG_DBG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
+            TLOG_MSG(("=== ===  === Event Beg === === ==="));
+            TLOG_MSG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
             FdDataType fd_data;
 
             if (fd == listen_fd_)
@@ -136,6 +137,7 @@ int EpollDispatcher::Dispatch()
                 ret = DispatcherDel(fd_data);
                 iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
             }
+            TLOG_MSG(("=== ===  === Event End === === ==="));
         }
 
         if (type & EPOLLOUT) 

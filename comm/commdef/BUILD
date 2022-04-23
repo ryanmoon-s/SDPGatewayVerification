@@ -24,6 +24,7 @@ cc_library(
     deps = [
         "//comm/tlog:tlog_lib",
         "//comm/commdef:comm_def_lib",
+        "//comm/proto:spa_cc_pb",
     ],
     copts = [
         "-std=c++11",

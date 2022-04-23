@@ -1,10 +1,13 @@
 #include "comm/erpc/erpc_client.h"
 #include "comm/proto/spa.pb.h"
 #include "comm/proto/erpc.pb.h"
+#include "comm/commdef/comm_tool.h"
 
 #include "sdp_controller_service_impl.h"
 #include "sdp_controller_tool.h"
 #include "sdp_controller_config.h"
+
+using namespace commtool;
 
 int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
@@ -47,6 +50,8 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
 
 int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra)
 {
+    TLOG_PROTO(objReq);
+
     int ret = 0;
     erpc::SocketInfo socket_info = extra.socket_info;
     auto config = SDPControllerConfig::GetInstance();
@@ -80,11 +85,14 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
 
     objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
 
+    TLOG_PROTO(objRsp);
     return 0;
 }
 
 int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra)
 {
+    TLOG_PROTO(objReq);
+
     if (objReq.app_list_size() == 0)
     {
         return -1;
@@ -103,5 +111,6 @@ int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegister
 
     config->RegisterApp(ip, app_vec);
 
+    TLOG_PROTO(objRsp);
     return 0;
 }

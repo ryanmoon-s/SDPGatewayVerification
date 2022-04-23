@@ -7,26 +7,28 @@
 
 #include <vector>
 
-using std::vector;
 using std::pair;
+using std::vector;
 
 // SPA敲门后 进行TLS连接 等待时长
 #define SPA_WAIT_TIME 3
 
-class VerifyClient {
+class VerifyClient
+{
 public:
     // 与SDPController交互
     // 获取可访问的应用列表: {<IP, PORT>}
-    int GetAccessibleAppList( /*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher& spaVoucher);
+    int GetAccessibleAppList(/*vector<pair<std::string, int>>& list, */ const spa::SPAVoucher &spaVoucher);
 
 private:
     // SPA敲门，使用UDP进行交互
-    int _SPAKnockingController(const spa::SPAVoucher& spaVoucher, std::string ip, int port);
+    int _SPAKnockingController(const spa::SPAVoucher &spaVoucher, std::string ip, int port);
+    int _SPAKnockingGateway(const spa::SPATicketPacket &spaTicketPacket, std::string ip, int port);
 };
 
-class AccessClient {
+class AccessClient
+{
     // 与AppGateway交互
     // 访问应用
     int AccessApplication();
-
 };
