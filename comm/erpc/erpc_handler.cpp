@@ -30,7 +30,7 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
     fd_data.event_type = EPOLLIN | EPOLLET;
     fd_data.socket_info.ip = ip;
     fd_data.socket_info.port = port;
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, 1);;
+    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, 1);
 
     ret = fd_data.connector->SSLAccept(tmp_fd);
     iAssert(ret, ("SSLAccept"));

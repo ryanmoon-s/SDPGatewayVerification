@@ -127,13 +127,10 @@ SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, 
     }
 
     // 装载证书
-    if (is_server)
+    ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
+    if (ret < 0)
     {
-        ret = _SSL_LoadCertificate(cert, SSL_CRT_CA, pri_key);
-        if (ret < 0)
-        {
-            TLOG_ERR(("_SSL_LoadCertificate"));
-        }
+        TLOG_ERR(("_SSL_LoadCertificate"));
     }
 }
 
@@ -153,12 +150,12 @@ int SSLConnector::_SSL_Init()
     // 客户端协议(SSLv2/SSLv3/TLSv1)
     if (is_server_)
     {
-        const SSL_METHOD* method = SSLv3_server_method();
+        const SSL_METHOD* method = TLSv1_server_method();
         ssl_data_.ctx = SSL_CTX_new(method);
     }
     else
     {
-        const SSL_METHOD* method = SSLv3_client_method();
+        const SSL_METHOD* method = TLSv1_client_method();
         ssl_data_.ctx = SSL_CTX_new(method);
     }
     SSL_iAssert_NULL(ssl_data_.ctx, ("SSL_CTX_new"));
@@ -170,7 +167,7 @@ int SSLConnector::_SSL_LoadCertificate(std::string cert, std::string ca_cert, st
 {
     int ret = 0;
 
-    #if 0
+    #if 1
     // 是否要验证对方
     SSL_CTX_set_verify(ssl_data_.ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);   
     // 若验证，则放置CA证书
