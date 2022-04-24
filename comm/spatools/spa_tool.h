@@ -11,7 +11,7 @@ class SPATools {
 public:
     // SPA数据包 <- SPA凭证
     int EncryptVoucher(spa::SPAVoucherPacket& spaVoucherPacket, const spa::SPAVoucher& spaVoucher, const std::string& key);
-    
+
     // SPA凭证 <- SPA数据包  <包含验证>
     int DecryptVoucher(spa::SPAVoucher& spaVoucher, const spa::SPAVoucherPacket& spaVoucherPacket, const std::string& key);
 

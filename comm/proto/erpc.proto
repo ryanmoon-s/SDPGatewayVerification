@@ -29,6 +29,7 @@ message AccessItem
 {
     optional string ip = 1;
     optional AppItem app = 2;
+    optional spa.SPATicketPacket ticket_packet = 3;
 }
 
 // Client 获取可访问列表、票据
@@ -37,9 +38,8 @@ message ConFuncGetAccessReq
 }
 
 message ConFuncGetAccessRsp
-{
+{   
     repeated AccessItem access_list = 1;
-    optional spa.SPATicketPacket ticket_packet = 2;
 }
 
 // Gateway 注册应用

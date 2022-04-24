@@ -31,7 +31,9 @@ message SPAVoucherPacket
 message SPATicket
 {
     optional string ip = 1;
-    optional uint32 timestamp = 3;
+    optional uint32 timestamp = 2;
+    optional uint32 random = 3;     // 让每次生成的签名不同
+    optional uint32 valid_seconds = 4;
 }
 
 // SPA票据数据包

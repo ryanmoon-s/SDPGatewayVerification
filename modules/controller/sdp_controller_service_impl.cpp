@@ -8,6 +8,7 @@
 #include "sdp_controller_config.h"
 
 using namespace commtool;
+#define GET_RANDOM (rand()%1000000000+1000000000)
 
 int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
 {
@@ -55,17 +56,6 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
     erpc::SocketInfo socket_info = extra.socket_info;
     auto config = SDPControllerConfig::GetInstance();
 
-    // 签名 派发 Ticket
-    spa::SPATicket spaTicket;
-    spaTicket.set_ip(socket_info.ip.c_str());
-    spaTicket.set_timestamp(time(NULL));
-
-    spa::SPATicketPacket spaTicketPacket;
-    ret = SPATools().SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
-    iAssert(ret, ("EncryptVoucher faild"));
-
-    objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
-
     // 添加 Access List
     // 目前全添加 
     // TODO 根据可访问List添加
@@ -79,6 +69,21 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
             erpc::AccessItem* item = objRsp.add_access_list();
             item->set_ip(ip);
             item->mutable_app()->CopyFrom(app_vec[i]);
+
+            // Ticket 构造
+            // 一个item -> 一个app -> 一个ticket
+            spa::SPATicket spaTicket;
+            spaTicket.set_ip(socket_info.ip.c_str());
+            spaTicket.set_timestamp(time(NULL));
+            spaTicket.set_random(GET_RANDOM);
+            spaTicket.set_valid_seconds(30);
+
+            // Ticket 签名
+            spa::SPATicketPacket spaTicketPacket;
+            ret = SPATools().SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
+            iAssert(ret, ("EncryptVoucher faild"));
+
+            item->mutable_ticket_packet()->CopyFrom(spaTicketPacket);
         }
     }
 

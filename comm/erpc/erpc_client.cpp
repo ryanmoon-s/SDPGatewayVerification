@@ -63,7 +63,6 @@ int ErpcClient::ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq,
     Packet PacketRsp;
     std::shared_ptr<SSLConnector>
         connector = std::make_shared<SSLConnector>(cert_, key_, 0);
-    // TODO 加载自己的证书
 
     // 变更 1 cmdid
     PacketReq.cmdid = erpc::CMD_RPC_CONTROLLER_FUNC_GET_ACCESS;

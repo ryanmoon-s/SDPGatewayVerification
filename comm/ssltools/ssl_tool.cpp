@@ -271,9 +271,15 @@ SSLConnector::SSLConnector(const std::string& cert, const std::string& pri_key, 
 }
 
 SSLConnector::~SSLConnector(){
-    SSL_shutdown(ssl_data_.ssl);
-    SSL_free(ssl_data_.ssl);
-    SSL_CTX_free(ssl_data_.ctx);
+    if (conn_status)
+    {
+        SSL_shutdown(ssl_data_.ssl);
+        SSL_free(ssl_data_.ssl);
+    }
+    if (ssl_data_.ctx)
+    {
+        SSL_CTX_free(ssl_data_.ctx);
+    }
 }
 
 int SSLConnector::_SSL_Init() 
@@ -360,6 +366,7 @@ int SSLConnector::SSLConnect(int fd)
     ret = SSL_connect(ssl_data_.ssl);
     SSL_iAssert_NE1(ret, ("SSL_connect fd:%d", fd));
 
+    conn_status = 1;
     return 0;
 }
 
@@ -373,7 +380,8 @@ int SSLConnector::SSLAccept(int fd)
 
     ret = SSL_accept(ssl_data_.ssl);
     SSL_iAssert_NE1(ret, ("SSL_accept fd:%d", fd));
-    
+
+    conn_status = 1;
     return 0;
 }
 

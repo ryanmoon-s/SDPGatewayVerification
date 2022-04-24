@@ -17,10 +17,6 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     ret = erpc_client_.ConFuncGetAccessRequest(req, rsp, header);
     iAssert(ret, ("ConFuncGetAccessRequest faild"));
 
-    // 处理: 票据
-    spa::SPATicketPacket spaTicketPacket;
-    spaTicketPacket.CopyFrom(rsp.ticket_packet());
-
     // 处理: Access List
     for (int i = 0; i < rsp.access_list_size(); i++)
     {
@@ -44,6 +40,11 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     // 全部敲门
     for (auto item : list)
     {
+        // 处理: 票据
+        spa::SPATicketPacket spaTicketPacket;
+        spaTicketPacket.CopyFrom(item.ticket_packet());
+        MSG_PROTO(spaTicketPacket);
+        
         ret = _SPAKnockingGateway(spaTicketPacket, item.ip(), item.mutable_app()->udp_port());
         iAssert(ret, ("_SPAKnockingGateway faild"));
     }

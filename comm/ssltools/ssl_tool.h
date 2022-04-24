@@ -27,6 +27,7 @@ public:
 private:
     SSL_Data ssl_data_;
     int is_server_;
+    int conn_status = 0;  // 0 连接未成功 1 成功
 
     int _SSL_Init();
     int _SSL_LoadCertificate(std::string cert, std::string ca_cert, std::string pri_key);

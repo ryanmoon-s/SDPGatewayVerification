@@ -20,6 +20,9 @@ SDPController::SDPController(): server_(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, U
     
     // 注册服务
     server_.RegisterService(service, SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER);
+
+    // 初始化随机数种子
+    srand(time(NULL));
 }
 
 void SDPController::Run()

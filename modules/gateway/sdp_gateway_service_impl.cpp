@@ -10,18 +10,25 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     spa::SPATicketPacket spaTicketPacket;
     auto config = SDPAppGatewayConfig::GetInstance();
 
-    // 验证签名是否来自 Controller
+    // 验票、验证签名是否来自 Controller
     spaTicketPacket.ParseFromString(msg);
     ret = SPATools().VerifyTicket(spaTicketPacket, RSA_PUB_KEY_CONTROLLER);
     iAssert(ret, ("DecryptVoucher faild"));
     MSG_PROTO(spaTicketPacket);
 
     // 票据ip 与 请求者ip 是否相同
-    std::string tick_ip = spaTicketPacket.ticket().ip();
+    spa::SPATicket spaTicket = spaTicketPacket.ticket();
     std::string sign_data = spaTicketPacket.sign_data();
-    if (tick_ip != ip)
+    if (spaTicket.ip() != ip)
     {
-        TLOG_MSG(("Verify faild: IP mismatch"));
+        TLOG_MSG(("Ticket Verify faild: IP mismatch"));
+        return -1;
+    }
+
+    // 票据是否过期
+    if (spaTicket.timestamp() + spaTicket.valid_seconds() < time(NULL))
+    {
+        TLOG_MSG(("Ticket Verify faild: Ticket expired"));
         return -1;
     }
 
@@ -29,7 +36,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     ret = config->QueryAndInsertMD5(sign_data);
     if (ret != 0)
     {
-        TLOG_MSG(("Verify faild: MD5 repeat"));
+        TLOG_MSG(("Ticket Verify faild: MD5 repeat"));
         return -1;
     }
 
