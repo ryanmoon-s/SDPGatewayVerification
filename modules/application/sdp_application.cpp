@@ -1,8 +1,8 @@
 #include "sdp_application.h"
 #include "sdp_application_config.h"
 
-SDPController::SDPController()
-    : server_(ID_APPLICATION, IP_APPLICATION_IN, TCP_PORT_APPLICATION)
+SDPApplication::SDPApplication()
+    : server_(erpc::ID_APPLICATION, IP_APPLICATION_IN, TCP_PORT_APPLICATION)
 {
     auto config =  SDPApplicationConfig::GetInstance();
     auto service = config->GetServiceObj();
@@ -11,7 +11,7 @@ SDPController::SDPController()
     server_.RegisterService(service, SSL_CRT_APPLICATION, SSL_KEY_APPLICATION);
 }
 
-void SDPController::Run()
+void SDPApplication::Run()
 {
     server_.Run();
 }

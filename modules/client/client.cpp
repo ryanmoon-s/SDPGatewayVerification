@@ -1,7 +1,7 @@
 #include "client.h"
 #include "comm/commdef/comm_tool.h"
 
-int VerifyClient::GetAccessibleAppList(std::vector<erpc::AccessItem> list, const spa::SPAVoucher& spaVoucher)
+int VerifyClient::GetAccessibleAppList(std::vector<erpc::AccessItem>& list, const spa::SPAVoucher& spaVoucher)
 {
     int ret = 0;
     
@@ -108,6 +108,9 @@ int AccessClient::AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& l
 
     ret = erpc_client_.AppFuncHttpsRequest(request, response);
     iAssert(ret, ("AppFuncHttpsRequest faild"));
+
+    TLOG_MSG(("HTTPS Response:"));
+    TLOG_MSG(("%s", response.c_str()));
 
     return 0;
 }

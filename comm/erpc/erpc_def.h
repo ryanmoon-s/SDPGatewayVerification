@@ -25,13 +25,20 @@
 namespace erpc
 {
 
+// 错误码
 enum SERVER_RET_ERR_DEF {
     kErrServiceNotFound = -501,
 };
-
-enum SIMPLE_ERROR {
+enum SIMPLE_ERROR_DEF {
     kPacketLengthErr = -1001,
     kIpNotInWhiteTable = -1002,
+};
+
+// 服务端身份识别
+enum SERVER_Identification {
+    ID_CONTROLLER = 1,
+    ID_GATEWAY = 2,
+    ID_APPLICATION = 3,
 };
 
 /*

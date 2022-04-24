@@ -9,7 +9,7 @@
 struct FdDataType {
     int fd;
     uint32_t event_type;
-    erpc::SocketInfo socket_info;
+    erpc::SocketInfo socket_info;  // client
     std::shared_ptr<SSLConnector> connector;
 };
 
@@ -30,9 +30,9 @@ public:
 public:
     EpollDispatcher();
     // controller gateway
-    EpollDispatcher(const std::string& ip, int tcp_port, int udp_port);
+    EpollDispatcher(int id, const std::string& ip, int tcp_port, int udp_port);
     // application
-    EpollDispatcher(const std::string& ip, int tcp_port);
+    EpollDispatcher(int id, const std::string& ip, int tcp_port);
 
     ~EpollDispatcher();
 
@@ -50,7 +50,7 @@ private:
     // gateway:udp
     int udp_fd_;
 
-    int application_port_;
-    
+    int id_;  // SERVER_Identification
+
     EpollData epoll_data_;
 };

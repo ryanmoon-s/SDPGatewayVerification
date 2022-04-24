@@ -5,7 +5,7 @@
 #include <vector>
 
 SDPController::SDPController()
-    : server_(ID_CONTROLLER, IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
+    : server_(erpc::ID_CONTROLLER, IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
 {
     auto config =  SDPControllerConfig::GetInstance();
     auto whitelist = config->GetWhiteListObj();

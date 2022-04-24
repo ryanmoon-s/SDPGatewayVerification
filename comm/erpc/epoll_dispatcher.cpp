@@ -8,10 +8,12 @@ EpollDispatcher::EpollDispatcher()
 }
 
 // controller gateway
-EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port, int udp_port)
+EpollDispatcher::EpollDispatcher(int id, const std::string& ip, int tcp_port, int udp_port)
     : EpollDispatcher()
 {
     int ret = 0;
+    id_ = id;
+
     ret = _MakeListenFd(listen_fd_, ip, tcp_port);
     iAssertNoReturn(ret, ("_MakeListenFd faild"));
 
@@ -20,11 +22,13 @@ EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port, int udp_po
 }
 
 // application
-EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port)
+EpollDispatcher::EpollDispatcher(int id, const std::string& ip, int tcp_port)
     : EpollDispatcher()
 {
-    application_port_ = tcp_port;
-    int ret = _MakeListenFd(listen_fd_, ip, tcp_port);
+    int ret = 0;
+    id_ = id;
+    
+    ret = _MakeListenFd(listen_fd_, ip, tcp_port);
     iAssertNoReturn(ret, ("_MakeListenFd faild"));
 }
 
@@ -156,7 +160,7 @@ int EpollDispatcher::Dispatch()
                 int port = fd_data.socket_info.port;
 
                 // Application
-                if (port == application_port_)
+                if (id_ == erpc::ID_APPLICATION)
                 {
                     ret = handler.HandleApplicationRequest(fd_data);
                     iAssertNoReturn(ret, ("HandleApplicationRequest faild, fd:%d", fd));

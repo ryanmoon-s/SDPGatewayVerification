@@ -14,7 +14,10 @@ int main()
 
     std::vector<erpc::AccessItem> list;
     ret = VerifyClient().GetAccessibleAppList(list, spaVoucher);
-    iAssert(ret, ("GetAccessibleAppList"));
+    iAssert(ret, ("GetAccessibleAppList faild"));
+
+    ret = AccessClient().AccessApplication_HTTPS(list);
+    iAssert(ret, ("AccessApplication_HTTPS faild"));
 
     return 0;
 }

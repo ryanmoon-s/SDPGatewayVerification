@@ -10,13 +10,6 @@
 #include "comm/commdef/comm_def.h"
 #include "comm/tlog/tlog.h"
 
-// 服务端身份识别
-enum SERVER_Identification {
-    ID_CONTROLLER = 1,
-    ID_GATEWAY = 2,
-    ID_APPLICATION = 3,
-};
-
 class ErpcServer {
 public:
     // 1、注册服务
@@ -37,7 +30,7 @@ public:
 
 private:
     EpollDispatcher* epoll_dispatcher_;
-    int id;  // SERVER_Identification
+    int id_;  // SERVER_Identification
 
     std::string listen_ip_;
 

@@ -17,7 +17,7 @@ public:
 public:
     // 1、从Controller获取可访问的应用列表: <IP, UDP_PORT, TCP_PORT, APP, -Ticket->
     // 2、对APP进行敲门
-    int GetAccessibleAppList(std::vector<erpc::AccessItem> list, const spa::SPAVoucher &spaVoucher);
+    int GetAccessibleAppList(std::vector<erpc::AccessItem>& list, const spa::SPAVoucher &spaVoucher);
 
 private:
     // SPA敲门，使用UDP进行交互

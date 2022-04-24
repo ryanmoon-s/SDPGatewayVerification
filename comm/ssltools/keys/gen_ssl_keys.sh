@@ -65,6 +65,26 @@ openssl rsa -in gateway.key -out gateway.key
 echo "# 生成证书签署请求文件"
 openssl req -new -key gateway.key -out gateway.csr
 
+# ----- application -----
+
+cd ${dir_source}
+dir_application="${dir_source}/application"
+if [ ! -d ${dir_application} ]; then
+    mkdir -p ${dir_application}
+fi
+cd ${dir_application}
+
+echo "# == Application == "
+
+echo "# 生成私钥"
+openssl genrsa -des3 -out application.key 1024 
+
+echo "# 去除key文件口令"
+openssl rsa -in application.key -out application.key
+
+echo "# 生成证书签署请求文件"
+openssl req -new -key application.key -out application.csr
+
 # ----- client -----
 
 cd ${dir_source}
@@ -93,4 +113,5 @@ cd ${dir_source}
 
 sh sign.sh ${dir_controller} controller.csr
 sh sign.sh ${dir_gateway} gateway.csr
+sh sign.sh ${dir_application} application.csr
 sh sign.sh ${dir_client} client.csr

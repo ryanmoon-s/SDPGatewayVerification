@@ -4,7 +4,7 @@
 #include <vector>
 
 SDPAppGateway::SDPAppGateway()
-        : server_(ID_GATEWAY, IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
+        : server_(erpc::ID_GATEWAY, IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
 {
     int ret = 0;
     auto config =  SDPAppGatewayConfig::GetInstance();
