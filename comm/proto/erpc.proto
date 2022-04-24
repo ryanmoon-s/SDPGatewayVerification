@@ -19,8 +19,8 @@ message TestFuncReverseRsp
 
 message AppItem
 {
-    optional int32 udp_port = 1;
-    optional int32 tcp_port = 2;
+    optional int32 udp_port = 1;        // appgateway knocking
+    optional int32 tcp_port = 2;        // application tcp port
     optional string appname = 3;
     optional string description = 4;
 }

@@ -25,8 +25,8 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     iAssert(ret, ("DecryptVoucher faild"));
     DBG_PROTO(spaVoucher);
 
-    // TODO iAssert
-    ret = SDPControllerTool().CheckUserPermissions(spaVoucher);
+    // 检查权限
+    // ret = config->CheckUserPermissions(spaVoucher.account().acc());
     if (ret != 0)
     {
         TLOG_MSG(("CheckUserPermissions faild, spaVoucher data:"));
@@ -39,6 +39,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     if (repeat != 0)
     {
         TLOG_MSG(("QueryAndInsertMD5 repeat md5"));
+        MSG_PROTO(spaVoucherPacket);
         return -1;
     }
 
@@ -106,12 +107,27 @@ int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegister
     auto config = SDPControllerConfig::GetInstance();
 
     std::vector<erpc::AppItem> app_vec;
+    std::vector<std::string> perssion_vec;
     for (int i = 0; i < objReq.app_list_size(); i++)
     {
-        app_vec.push_back(objReq.app_list(i));
+        erpc::AppItem item  = objReq.app_list(i);
+        app_vec.push_back(item);
+
+        // 权限列表
+        std::string dst = ip + ":" + std::to_string(item.tcp_port());
+        perssion_vec.push_back(dst);
     }
 
+    // 注册到config
     config->RegisterApp(ip, app_vec);
+
+    // 用户授权
+    for (int i = 0; i < perssion_vec.size(); i++)
+    {
+        config->UpdatePerssionMap("xiaoming", perssion_vec[i]);
+        config->UpdatePerssionMap("xiaohong", perssion_vec[i]);
+        config->UpdatePerssionMap("xiaobai", perssion_vec[i]);
+    }
 
     MSG_PROTO(objRsp);
     return 0;

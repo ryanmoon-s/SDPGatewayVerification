@@ -65,3 +65,44 @@ std::map<std::string, std::vector<erpc::AppItem>>* SDPControllerConfig::GetAppMa
 {
     return &app_map_;
 }
+
+int SDPControllerConfig::UpdatePerssionMap_Add(const std::string& account, const std::string& dst)
+{
+    auto iter = permission_map_.find(account);
+
+    // 已经存在的情况下，不更新
+    if (iter != permission_map_.end())
+    {
+        auto& m_list = iter->second;
+        for (auto it = m_list.begin(); it != m_list.end(); it++)
+        {
+            if (*it == dst)
+            {
+                // 已经存在，未更新
+                return -1;
+            }
+        }
+    }
+
+    // 否则，更新
+    permission_map_[account].push_back(dst);
+    return 0;
+}
+
+int SDPControllerConfig::UpdatePerssionMap_Del(const std::string& account, const std::string& dst)
+{
+    auto iter = permission_map_.find(account);
+    if (iter != permission_map_.end())
+    {
+
+    }
+}
+
+int SDPControllerConfig::CheckUserPermission(const std::string& account, const std::string& dst)
+{
+    auto iter = permission_map_.find(account);
+    if (iter != permission_map_.end())
+    {
+
+    }
+}

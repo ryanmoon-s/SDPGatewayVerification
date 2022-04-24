@@ -98,7 +98,7 @@ int AccessClient::AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& l
             break;
         }
     }
-    iAssert(has_https, ("No Application"));
+    iAssert(has_https, ("No HTTPS Application"));
 
     // 访问应用
     std::string ip = item.ip();
@@ -106,7 +106,7 @@ int AccessClient::AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& l
     std::string request("https request");
     std::string response;
 
-    ret = erpc_client_.AppFuncHttpsRequest(request, response);
+    ret = erpc_client_.AppFuncHttpsRequest(request, response, ip, tcp_port);
     iAssert(ret, ("AppFuncHttpsRequest faild"));
 
     TLOG_MSG(("HTTPS Response:"));

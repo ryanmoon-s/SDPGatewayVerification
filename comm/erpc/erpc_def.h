@@ -31,7 +31,6 @@ enum SERVER_RET_ERR_DEF {
 };
 enum SIMPLE_ERROR_DEF {
     kPacketLengthErr = -1001,
-    kIpNotInWhiteTable = -1002,
 };
 
 // 服务端身份识别

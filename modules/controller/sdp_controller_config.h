@@ -3,11 +3,17 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <list>
 #include "comm/erpc/erpc_config.h"
 #include "comm/iptools/iptables_tool.h"
 #include "sdp_controller_service_impl.h"
 
 class SDPControllerErpcServiceImpl;
+
+enum PerssionMapOp {
+    PERSSION_ADD = 1,
+    PERSSION_DEL = 2,
+};
 
 class SDPControllerConfig {
 public:
@@ -19,9 +25,14 @@ public:
 
     int QueryAndInsertMD5(const std::string& md5);
     
-    // feature
+    // 管理应用
     void RegisterApp(const std::string& ip, const std::vector<erpc::AppItem>& app_list);
     std::map<std::string, std::vector<erpc::AppItem>>* GetAppMap();
+
+    // 管理权限
+    int UpdatePerssionMap_Add(const std::string& account, const std::string& dst);
+    int UpdatePerssionMap_Del(const std::string& account, const std::string& dst);
+    int CheckUserPermission(const std::string& account, const std::string& dst);
 
 private:
     IPWhiteList* whitelist_;
@@ -36,8 +47,8 @@ private:
 
     // 应用管理 gateway ip -> app_list
     std::map<std::string, std::vector<erpc::AppItem>> app_map_;
-    // 用户可访问列表 user ip -> app : 127.0.0.1:80
-    // std::map<std::string, std::string> permission_map_;
+    // 用户可访问列表 user account -> app -> 127.0.0.1:80
+    std::map<std::string, std::list<std::string>> permission_map_;
 
 public:
     static SDPControllerConfig* GetInstance() 

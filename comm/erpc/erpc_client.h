@@ -31,7 +31,7 @@ public:
     /***************************** TCP *****************************/
 
     // Application
-    int AppFuncHttpsRequest(const std::string& request, std::string& response);
+    int AppFuncHttpsRequest(const std::string& request, std::string& response, const std::string& ip, int port);
 
 private:
     // 证书、私钥

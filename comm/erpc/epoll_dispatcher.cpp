@@ -135,22 +135,11 @@ int EpollDispatcher::Dispatch()
             // TCP Accept
             else if (fd == listen_fd_)
             {
-                
                 ret = handler.HandleRPCAccept(listen_fd_, fd_data);
+                iAssertNoReturn(ret, ("HandleRPCAccept faild"));
                 
-                if (ret == 0)
-                {
-                    ret = DispatcherAdd(fd_data);
-                    iAssertNoReturn(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
-                }
-                else if (ret == kIpNotInWhiteTable)
-                {
-                    TLOG_MSG(("HandleRPCAccept faild, IP is illegal"));
-                }
-                else
-                {
-                    TLOG_ERR(("HandleRPCAccept faild"));
-                }
+                ret = DispatcherAdd(fd_data);
+                iAssertNoReturn(ret, ("DispatcherAdd new_fd:%d", fd_data.fd));
             }
 
             // TCP READ

@@ -103,12 +103,12 @@ int ErpcClient::ConFuncRegisterAppRequest(const erpc::ConFuncRegisterAppReq& obj
     return 0;
 }
 
-int ErpcClient::AppFuncHttpsRequest(const std::string& request, std::string& response)
+int ErpcClient::AppFuncHttpsRequest(const std::string& request, std::string& response, const std::string& ip, int port)
 {
     std::shared_ptr<SSLConnector>
         connector = std::make_shared<SSLConnector>(cert_, key_, 0);
 
-    int ret = ErpcHandler().ClientTCPRequest(request, response, connector, IP_APPLICATION_PB, TCP_PORT_APPLICATION);
+    int ret = ErpcHandler().ClientTCPRequest(request, response, connector, ip.c_str(), port);
     iAssert(ret, ("ClientRPCRequest"));
 
     return 0;
