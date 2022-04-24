@@ -21,30 +21,36 @@ struct EpollData {
 
 class EpollDispatcher {
 public:
+    int DispatcherInit();
     int DispatcherAdd(const FdDataType& fd_data);
     int DispatcherDel(const FdDataType& fd_data);
     int DispatcherMod(const FdDataType& fd_data);
     int Dispatch();
 
-    // 产生一对本地套接字，一个添加到Epoll，一个用于本地通信。
-    int GenerateLocalSocket(int& wr_fd);
-
 public:
+    EpollDispatcher();
+    // controller gateway
     EpollDispatcher(const std::string& ip, int tcp_port, int udp_port);
+    // application
+    EpollDispatcher(const std::string& ip, int tcp_port);
+
     ~EpollDispatcher();
 
 private:
-    int _MakeListenFd();
-    int _MakeUdpFd();
+    int _MakeListenFd(int& fd, const std::string& ip, int port);
+    int _MakeUdpFd(int& fd, const std::string& ip, int port);
 
 private:
-    std::string listen_ip_;
-    int tcp_port_;
-    int udp_port_;
+    // controller:rpc
+    // gateway:rpc
+    // application:tcp
+    int listen_fd_; 
 
-    int local_fd_ = 0;
-    int listen_fd_ = 0;
-    int udp_fd_ = 0;
+    // controller:udp
+    // gateway:udp
+    int udp_fd_;
+
+    int application_port_;
     
     EpollData epoll_data_;
 };

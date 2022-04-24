@@ -13,7 +13,7 @@ using namespace erpc;
 struct FdDataType;
 
 // 5M
-#define RD_BUF_SIZE 1024*1024*5 
+#define RD_BUF_SIZE 5*1024*1024
 
 class ErpcHandler {
 public:
@@ -24,9 +24,13 @@ public:
     // 服务端UDP入口
     int HandleUDPRequest(const FdDataType& fd_data);
 
+    // 应用TCP入口
+    int HandleApplicationRequest(const FdDataType& fd_data);
+
     // 客户端发送请求
     int ClientRPCRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port);
     int ClientUDPRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
+    int ClientTCPRequest(const std::string& request, std::string& response, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port);
 
 public:
     // 读取与发送数据包

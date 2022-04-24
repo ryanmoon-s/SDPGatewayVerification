@@ -10,15 +10,14 @@
 // SPA敲门后 进行TLS连接 等待时长
 #define SPA_WAIT_TIME 3
 
-class VerifyClient
-{
+class VerifyClient {
 public:
-    VerifyClient():erpc_client_(SSL_CRT_CLIENT, SSL_KEY_CLIENT) {}
+    VerifyClient() :erpc_client_(SSL_CRT_CLIENT, SSL_KEY_CLIENT) {}
 
 public:
-    // 与SDPController交互
-    // 获取可访问的应用列表: {<IP, PORT>}
-    int GetAccessibleAppList(const spa::SPAVoucher &spaVoucher);
+    // 1、从Controller获取可访问的应用列表: <IP, UDP_PORT, TCP_PORT, APP, -Ticket->
+    // 2、对APP进行敲门
+    int GetAccessibleAppList(std::vector<erpc::AccessItem> list, const spa::SPAVoucher &spaVoucher);
 
 private:
     // SPA敲门，使用UDP进行交互
@@ -29,9 +28,16 @@ private:
     ErpcClient erpc_client_;
 };
 
-class AccessClient
-{
-    // 与AppGateway交互
+
+
+class AccessClient {
+public:
+    AccessClient() :erpc_client_(SSL_CRT_CLIENT, SSL_KEY_CLIENT) {}
+
+public:
     // 访问应用
-    int AccessApplication();
+    int AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& list);
+
+private:
+    ErpcClient erpc_client_;
 };

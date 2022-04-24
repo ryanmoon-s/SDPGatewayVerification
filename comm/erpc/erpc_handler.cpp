@@ -122,6 +122,38 @@ int ErpcHandler::HandleUDPRequest(const FdDataType& fd_data)
     return 0;
 }
 
+int ErpcHandler::HandleApplicationRequest(const FdDataType& fd_data)
+{
+    int fd = fd_data.fd;
+    auto connector = fd_data.connector;
+    erpc::Extra extra;
+    extra.socket_info = fd_data.socket_info;
+    std::string request;
+    std::string response;
+
+    int ret = HandleRead(request, connector);
+    if (ret == 0)
+    {
+        TLOG_MSG(("HandleRead 0 bytes, can't handle"));
+        return 0;
+    }
+    else if (ret < 0)
+    {
+        TLOG_ERR(("HandleRead error"));
+        return ret;
+    }
+
+    // 转发服务
+    ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
+    ret = service->AppFuncHttps(request, response);
+    iAssert(ret, ("AppFuncHttps faild"));
+
+    ret = HandleWrite(response, connector);
+    iAssert(ret, ("HandleWrite"));
+
+    return 0;
+}
+
 int ErpcHandler::ClientRPCRequest(const Packet& PacketReq, Packet& PacketRsp, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
 {
     // Generate socket
@@ -170,6 +202,33 @@ int ErpcHandler::ClientUDPRequest(uint32_t cmdid, const std::string& msg, const 
     iAssert(ret, ("sendto ret:%d, ip:%s port:%d", ret, ip.c_str(), port));
 
     return 0;
+}
+
+int ClientTCPRequest(const std::string& request, std::string& response, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
+{
+    // Generate socket
+    int fd = 0, ret = 0;
+    struct sockaddr_in addr;
+
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);  
+    addr.sin_addr.s_addr = inet_addr(ip.c_str()); 
+
+    ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
+    iAssert(ret, ("connect"));
+
+    ret = connector->SSLConnect(fd);
+    iAssert(ret, ("SSLConnect"));
+
+    ret = HandleWrite(request, connector);
+    if (ret != request.size()) 
+    {
+        TLOG_ERR(("Write faild, write:%d/%d", ret, PacketReqStr.size()));
+    }
+
+    ret = HandleRead(response, connector);
+    iAssert(ret, ("Wait for response faild"));
 }
 
 int ErpcHandler::_ParseRequestAndForward(const std::string& PacketReqStr, std::string& PacketRspStr, const erpc::Extra& extra)

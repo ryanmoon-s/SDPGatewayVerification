@@ -102,3 +102,14 @@ int ErpcClient::ConFuncRegisterAppRequest(const erpc::ConFuncRegisterAppReq& obj
     TLOG_MSG(("Client ConFuncRegisterAppRequest success, ip:%s, port:%d", IP_CONTROLLER_PB, TCP_PORT_CONTROLLER));
     return 0;
 }
+
+int ErpcClient::AppFuncHttpsRequest(const std::string& request, std::string& response)
+{
+    std::shared_ptr<SSLConnector>
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
+
+    int ret = ErpcHandler().ClientTCPRequest(request, response, connector, IP_APPLICATION_PB, TCP_PORT_APPLICATION);
+    iAssert(ret, ("ClientRPCRequest"));
+
+    return 0;
+}

@@ -1,7 +1,7 @@
 #include "client.h"
 #include "comm/commdef/comm_tool.h"
 
-int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
+int VerifyClient::GetAccessibleAppList(std::vector<erpc::AccessItem> list, const spa::SPAVoucher& spaVoucher)
 {
     int ret = 0;
     std::vector<erpc::AccessItem> list;
@@ -21,8 +21,21 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     for (int i = 0; i < rsp.access_list_size(); i++)
     {
         erpc::AccessItem item = rsp.access_list(i);
-        list.push_back(item);
 
+        // 带上票据 knocking gateway
+        spa::SPATicketPacket spaTicketPacket;
+        spaTicketPacket.CopyFrom(item.ticket_packet());
+        DBG_PROTO(spaTicketPacket);
+        
+        ret = _SPAKnockingGateway(spaTicketPacket, item.ip(), item.mutable_app()->udp_port());
+        iAssert(ret, ("_SPAKnockingGateway faild"));
+
+        list.push_back(item);
+    }
+
+    // 输出可访问列表
+    for (auto item : list)
+    {
         std::string ip = item.ip();
         std::string appname = item.app().appname();
         std::string description = item.app().description();
@@ -35,18 +48,6 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
         TLOG_MSG(("Access - appname:%s", appname.c_str()));
         TLOG_MSG(("Access - description:%s", description.c_str()));
         TLOG_MSG(("Access ===== Get access list end ====="));
-    }
-
-    // 全部敲门
-    for (auto item : list)
-    {
-        // 处理: 票据
-        spa::SPATicketPacket spaTicketPacket;
-        spaTicketPacket.CopyFrom(item.ticket_packet());
-        MSG_PROTO(spaTicketPacket);
-        
-        ret = _SPAKnockingGateway(spaTicketPacket, item.ip(), item.mutable_app()->udp_port());
-        iAssert(ret, ("_SPAKnockingGateway faild"));
     }
     
     return 0;
@@ -81,8 +82,33 @@ int VerifyClient::_SPAKnockingGateway(const spa::SPATicketPacket &spaTicketPacke
     return 0;
 }
 
+int AccessClient::AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& list) 
+{
+    int ret = 0;
+    int has_https = -1;
+    erpc::AccessItem item;
 
+    // 查找是否有HTTPS应用
+    for (auto it : list)
+    {
+        std::string appname = it.app().appname();
+        if (appname == "HTTPS")
+        {
+            item = it;
+            has_https = 1;
+            break;
+        }
+    }
+    iAssert(has_https, ("No Application"));
 
-int AccessClient::AccessApplication() {
+    // 访问应用
+    std::string ip = item.ip();
+    int tcp_port = item.app().tcp_port();
+    std::string request("https request");
+    std::string response;
 
+    ret = erpc_client_.AppFuncHttpsRequest(request, response);
+    iAssert(ret, ("AppFuncHttpsRequest faild"));
+
+    return 0;
 }

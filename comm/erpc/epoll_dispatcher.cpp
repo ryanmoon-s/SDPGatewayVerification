@@ -1,19 +1,31 @@
 #include "epoll_dispatcher.h"
 
-EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port, int udp_port)
-                                : listen_ip_(ip), tcp_port_(tcp_port), udp_port_(udp_port)
+EpollDispatcher::EpollDispatcher()
 {
-    epoll_data_.epollfd = epoll_create1(0);
-    iAssertNoReturn(epoll_data_.epollfd, ("epoll_create1 faild"));
+    int ret = 0;
+    ret = DispatcherInit();
+    iAssertNoReturn(ret, ("DispatcherInit faild"));
+}
 
-    epoll_data_.events = (struct epoll_event*)calloc(MAXEVENTS, sizeof(struct epoll_event));
-    iAssertNoReturn(epoll_data_.events, ("calloc epoll_data_.events faild"));
-
-    int ret = _MakeListenFd();
+// controller gateway
+EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port, int udp_port)
+    : EpollDispatcher()
+{
+    int ret = 0;
+    ret = _MakeListenFd(listen_fd_, ip, tcp_port);
     iAssertNoReturn(ret, ("_MakeListenFd faild"));
 
-    ret = _MakeUdpFd();
+    ret = _MakeUdpFd(udp_fd_, ip, udp_port);
     iAssertNoReturn(ret, ("_MakeUdpFd faild"));
+}
+
+// application
+EpollDispatcher::EpollDispatcher(const std::string& ip, int tcp_port)
+    : EpollDispatcher()
+{
+    application_port_ = tcp_port;
+    int ret = _MakeListenFd(listen_fd_, ip, tcp_port);
+    iAssertNoReturn(ret, ("_MakeListenFd faild"));
 }
 
 EpollDispatcher::~EpollDispatcher() 
@@ -21,6 +33,17 @@ EpollDispatcher::~EpollDispatcher()
     free(epoll_data_.events);
     close(epoll_data_.epollfd);
     epoll_data_.fdmap.clear();
+}
+
+int EpollDispatcher::DispatcherInit()
+{
+    epoll_data_.epollfd = epoll_create1(0);
+    iAssert(epoll_data_.epollfd, ("epoll_create1 faild"));
+
+    epoll_data_.events = (struct epoll_event*)calloc(MAXEVENTS, sizeof(struct epoll_event));
+    iAssertNull(epoll_data_.events, ("calloc epoll_data_.events faild"));
+
+    return 0;
 }
 
 int EpollDispatcher::DispatcherAdd(const FdDataType& fd_data) 
@@ -97,8 +120,18 @@ int EpollDispatcher::Dispatch()
             TLOG_MSG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
             FdDataType fd_data;
 
-            if (fd == listen_fd_)
+            // UDP READ
+            if (fd == udp_fd_)
             {
+                fd_data = epoll_data_.fdmap[fd];
+                ret = handler.HandleUDPRequest(fd_data);
+                iAssertNoReturn(ret, ("HandleUDPRequest faild, fd:%d", fd));
+            }
+
+            // TCP Accept
+            else if (fd == listen_fd_)
+            {
+                
                 ret = handler.HandleRPCAccept(listen_fd_, fd_data);
                 
                 if (ret == 0)
@@ -115,28 +148,31 @@ int EpollDispatcher::Dispatch()
                     TLOG_ERR(("HandleRPCAccept faild"));
                 }
             }
-            else if (fd == local_fd_)
-            {
-                // 暂未使用
-                // 使用前提：this->GenerateLocalSocket();
-            }
-            else if (fd == udp_fd_)
-            {
-                // UDP 请求
-                fd_data = epoll_data_.fdmap[fd];
-                ret = handler.HandleUDPRequest(fd_data);
-                iAssertNoReturn(ret, ("HandleUDPRequest faild, fd:%d", fd));
-            }
+
+            // TCP READ
             else
             {
                 fd_data = epoll_data_.fdmap[fd];
-                ret = handler.HandleRPCRequest(fd_data);
-                iAssertNoReturn(ret, ("HandleRPCRequest faild, fd:%d", fd));
+                int port = fd_data.socket_info.port;
 
-                // Keep Alive TODO
-                ret = DispatcherDel(fd_data);
-                iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
+                // Application
+                if (port == application_port_)
+                {
+                    ret = handler.HandleApplicationRequest(fd_data);
+                    iAssertNoReturn(ret, ("HandleApplicationRequest faild, fd:%d", fd));
+                }
+                // RPC
+                else 
+                {
+                    ret = handler.HandleRPCRequest(fd_data);
+                    iAssertNoReturn(ret, ("HandleRPCRequest faild, fd:%d", fd));
+
+                    // Keep Alive TODO
+                    ret = DispatcherDel(fd_data);
+                    iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
+                }
             }
+
             TLOG_MSG(("=== ===  === Event End === === ==="));
         }
 
@@ -149,78 +185,62 @@ int EpollDispatcher::Dispatch()
     return 0;
 }
 
-int EpollDispatcher::GenerateLocalSocket(int& wr_fd)
-{
-    int sock_pair[2], ret = 0;
-    FdDataType fd_data;
-
-    ret = socketpair(AF_UNIX, SOCK_STREAM, 0, sock_pair);
-    iAssert(ret, ("socketpair faild"));
-
-    local_fd_ = sock_pair[0];
-    wr_fd = sock_pair[1];
-
-    fd_data.fd = local_fd_;
-    fd_data.event_type = EPOLLIN;
-    this->DispatcherAdd(fd_data);
-
-    return 0;
-}
-
-int EpollDispatcher::_MakeListenFd()
+int EpollDispatcher::_MakeListenFd(int& fd, const std::string& ip, int port)
 {
     int ret = 0, resue = 1;
+    int fd;
     struct sockaddr_in addr;
     FdDataType fd_data;
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(tcp_port_);
-    addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
+    addr.sin_port = htons(port);
+    addr.sin_addr.s_addr = inet_addr(ip.c_str());
     
-    listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); 
-    iAssert(listen_fd_, ("socket: listen_fd_:%d", listen_fd_));
+    fd = socket(AF_INET, SOCK_STREAM, 0); 
+    iAssert(fd, ("socket: listen_fd:%d", fd));
 
-    ret = setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR, (const void *)&resue, sizeof(int));
-    iAssert(ret, ("setsockopt: listen_fd_:%d", listen_fd_));
+    ret = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&resue, sizeof(int));
+    iAssert(ret, ("setsockopt: listen_fd:%d", fd));
 
-    ret = bind(listen_fd_, (struct sockaddr*)&addr, sizeof(addr));
-    iAssert(ret, ("bind: listen_fd_:%d", listen_fd_));
+    ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    iAssert(ret, ("bind: listen_fd:%d", fd));
 
-    ret = listen(listen_fd_, 1024);
-    iAssert(ret, ("listen: listen_fd_:%d", listen_fd_));
+    ret = listen(fd, 1024);
+    iAssert(ret, ("listen: listen_fd:%d", fd));
 
-    fcntl(listen_fd_, F_SETFL, fcntl(listen_fd_, F_GETFL, 0) | O_NONBLOCK); 
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK); 
 
-    fd_data.fd = listen_fd_;
+    fd_data.fd = fd;
     fd_data.event_type = EPOLLIN | EPOLLET;
-    // fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, 1);
 
     ret = DispatcherAdd(fd_data);
-    iAssert(ret, ("DispatcherAdd listen_fd:%d", listen_fd_));
+    iAssert(ret, ("DispatcherAdd fd:%d", fd));
 
     return 0;
 }
 
-int EpollDispatcher::_MakeUdpFd()
+int EpollDispatcher::_MakeUdpFd(int& fd, const std::string& ip, int port)
 {
     int ret = 0;
     FdDataType fd_data;
 
-    udp_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
-    iAssert(udp_fd_, ("socket udp_fd:%d", udp_fd_));
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    iAssert(fd, ("socket udp_fd:%d", fd));
 
     struct sockaddr_in addr;
  
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(udp_port_);
-	addr.sin_addr.s_addr = inet_addr(listen_ip_.c_str());
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = inet_addr(ip.c_str());
  
-	ret = bind(udp_fd_, (struct sockaddr*)&addr, sizeof(addr));
-    iAssert(ret, ("bind udp_fd:%d", udp_fd_));
+	ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    iAssert(ret, ("bind udp_fd:%d", fd));
 
-    fd_data.fd = udp_fd_;
+    fd_data.fd = fd;
     fd_data.event_type = EPOLLIN | EPOLLET;
 
     ret = DispatcherAdd(fd_data);
-    iAssert(ret, ("DispatcherAdd udp_fd:%d", udp_fd_));
+    iAssert(ret, ("DispatcherAdd udp_fd:%d", fd));
+
+    return 0;
 }

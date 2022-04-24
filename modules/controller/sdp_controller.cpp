@@ -4,7 +4,8 @@
 #include "comm/iptools/iptables_tool.h"
 #include <vector>
 
-SDPController::SDPController(): server_(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
+SDPController::SDPController()
+    : server_(ID_CONTROLLER, IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER)
 {
     auto config =  SDPControllerConfig::GetInstance();
     auto whitelist = config->GetWhiteListObj();

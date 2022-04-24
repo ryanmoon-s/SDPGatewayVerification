@@ -24,12 +24,9 @@
     双向TLS连接，访问具体应用 <IP, TCP_PORT, APP, -Ticket->
 
     访问app流程：
-    // application是一个服务，只监听本机来自gateway的请求。
-    // gateway负责转发请求
-    //
-    // 请求：client -> gateway -> application
-    // 回包：client <- gateway <- application
-    //
+    // 一个appgateway对应一个服务
+    // 请求: client -> gateway -> service
+    // 回包: client <- gateway <- service
 
 七：控制器动态控制用户权限
     可随时切断用户访问应用(让应用网关对Client去白)

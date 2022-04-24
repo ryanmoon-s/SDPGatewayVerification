@@ -32,6 +32,9 @@
 #define SSL_CRT_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.crt"
 #define SSL_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.key"
 
+#define SSL_CRT_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.crt"
+#define SSL_KEY_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.key"
+
 #define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
 #define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
 

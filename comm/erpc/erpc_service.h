@@ -20,6 +20,9 @@ namespace erpc {
         // APPGATEWAY
         CMD_UDP_APPGATEWAY_FUNC_RECV = 201,
         CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP = 202,
+
+        // APPLICATION
+        CMD_TCP_APPLICATION_FUNC_HTTPS = 301,
     };
     
 }
@@ -46,6 +49,10 @@ public:
     virtual int GateFuncUdpRecv(const std::string& msg, std::string ip, int port);
 
     virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, const erpc::Extra& extra);
+
+    /***************************** APPGATEWAY *****************************/
+
+    virtual int AppFuncHttps(const std::string& request, std::string& response);
 
 public:
     ~ErpcService() {}

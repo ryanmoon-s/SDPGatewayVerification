@@ -10,6 +10,13 @@
 #include "comm/commdef/comm_def.h"
 #include "comm/tlog/tlog.h"
 
+// 服务端身份识别
+enum SERVER_Identification {
+    ID_CONTROLLER = 1,
+    ID_GATEWAY = 2,
+    ID_APPLICATION = 3,
+};
+
 class ErpcServer {
 public:
     // 1、注册服务
@@ -21,16 +28,19 @@ public:
 
 
 public:
-    ErpcServer(const std::string& ip, int tcp_port, int udp_port);
+    // controller gateway
+    ErpcServer(int id, const std::string& ip, int tcp_port, int udp_port);
+    // application
+    ErpcServer(int id, const std::string& ip, int tcp_port);
+
     ~ErpcServer();
 
 private:
     EpollDispatcher* epoll_dispatcher_;
+    int id;  // SERVER_Identification
 
     std::string listen_ip_;
 
     int tcp_port_;
     int udp_port_;
-
-    int local_fd_ = 0;
 };

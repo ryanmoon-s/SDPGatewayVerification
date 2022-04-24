@@ -40,3 +40,10 @@ int ErpcService::GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq,
 {
     return erpc::kErrServiceNotFound;
 }
+
+/***************************** APPGATEWAY *****************************/
+
+int ErpcService::AppFuncHttps(const std::string& request, std::string& response)
+{
+    return erpc::kErrServiceNotFound;
+}

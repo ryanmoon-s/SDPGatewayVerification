@@ -28,6 +28,11 @@ public:
     // AppGateway
     int GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);
 
+    /***************************** TCP *****************************/
+
+    // Application
+    int AppFuncHttpsRequest(const std::string& request, std::string& response);
+
 private:
     // 证书、私钥
     std::string cert_;

@@ -3,7 +3,8 @@
 #include "comm/erpc/erpc_client.h"
 #include <vector>
 
-SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
+SDPAppGateway::SDPAppGateway()
+        : server_(ID_GATEWAY, IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY)
 {
     int ret = 0;
     auto config =  SDPAppGatewayConfig::GetInstance();
@@ -29,15 +30,9 @@ SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, U
     // TODO添加更多可扩展的应用 基于id管理
     erpc::AppItem* item = req.add_app_list();
     item->set_udp_port(UDP_PORT_APPGATEWAY);
-    item->set_tcp_port(TCP_PORT_APPGATEWAY);
-    item->set_appname("reverse");
-    item->set_description("reverse your string");
-
-    item = req.add_app_list();
-    item->set_udp_port(UDP_PORT_APPGATEWAY);
-    item->set_tcp_port(TCP_PORT_APPGATEWAY);
-    item->set_appname("add");
-    item->set_description("add your two number");
+    item->set_tcp_port(TCP_PORT_APPLICATION);
+    item->set_appname("HTTPS");
+    item->set_description("Http over tls");
 
     ret = ErpcClient(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY).ConFuncRegisterAppRequest(req, rsp, header);
     iAssertNoReturn(ret, ("ConFuncRegisterAppRequest faild"));
