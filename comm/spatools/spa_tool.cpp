@@ -77,7 +77,7 @@ int SPATools::VerifyTicket(spa::SPATicketPacket& spaTicketPacket, const std::str
     std::string text;
     std::string sign_text;
 
-    spaTicketPacket.mutable_ticket()->SerializeToString(&text);
+    spaTicketPacket.ticket().SerializeToString(&text);
     sign_text = spaTicketPacket.sign_data();
 
     ret = SSLTools().RSAVerify(sign_text, text, key);

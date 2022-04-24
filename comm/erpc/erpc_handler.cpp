@@ -17,9 +17,15 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
 {
     int ret = 0, port = 0;
     std::string ip;
+    socklen_t len;
     struct sockaddr_in addr;
-    socklen_t len = sizeof(addr);
+    std::string cert, key;
 
+    auto config = ErpcConfig::GetInstance();
+    cert = config->GetServerCert();
+    key = config->GetServerKey();
+    
+    len = sizeof(addr);
     int tmp_fd = accept(listen_fd, (struct sockaddr*)&addr, &len);
     iAssert(tmp_fd, ("accept listen_fd:%d, errno:%d, errmsg:%s", listen_fd, errno, strerror(errno)));
     
@@ -30,7 +36,7 @@ int ErpcHandler::HandleRPCAccept(int listen_fd, FdDataType& fd_data)
     fd_data.event_type = EPOLLIN | EPOLLET;
     fd_data.socket_info.ip = ip;
     fd_data.socket_info.port = port;
-    fd_data.connector = std::make_shared<SSLConnector>(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, 1);
+    fd_data.connector = std::make_shared<SSLConnector>(cert, key, 1);
 
     ret = fd_data.connector->SSLAccept(tmp_fd);
     iAssert(ret, ("SSLAccept"));

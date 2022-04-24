@@ -26,6 +26,9 @@ private:
     int tcp_port_;
     int udp_port_;
 
+    // md5去重，防重放攻击
+    std::map<std::string, int> md5_map_;
+
 // 单例
 public:
     static SDPAppGatewayConfig* GetInstance() 

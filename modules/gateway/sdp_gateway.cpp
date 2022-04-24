@@ -19,7 +19,7 @@ SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, U
     whitelist->InitWhiteList(white_vec, TCP_PORT_APPGATEWAY);
 
     // 注册服务
-    server_.RegisterService(service);
+    server_.RegisterService(service, SSL_CRT_GATEWAY, SSL_KEY_GATEWAY);
 
     // 向 Controller 注册应用
     erpc::ConFuncRegisterAppReq req;
@@ -39,7 +39,7 @@ SDPAppGateway::SDPAppGateway(): server_(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, U
     item->set_appname("add");
     item->set_description("add your two number");
 
-    ret = ErpcClient().ConFuncRegisterAppRequest(req, rsp, header);
+    ret = ErpcClient(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY).ConFuncRegisterAppRequest(req, rsp, header);
     iAssertNoReturn(ret, ("ConFuncRegisterAppRequest faild"));
 }
 

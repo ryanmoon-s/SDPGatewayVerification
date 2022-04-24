@@ -8,6 +8,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
     int ret = 0;
     spa::SPATicketPacket spaTicketPacket;
+    auto config = SDPAppGatewayConfig::GetInstance();
 
     // 验证签名是否来自 Controller
     spaTicketPacket.ParseFromString(msg);
@@ -16,10 +17,24 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     MSG_PROTO(spaTicketPacket);
 
     // 票据ip 与 请求者ip 是否相同
+    std::string tick_ip = spaTicketPacket.ticket().ip();
+    std::string sign_data = spaTicketPacket.sign_data();
+    if (tick_ip != ip)
+    {
+        TLOG_MSG(("Verify faild: IP mismatch"));
+        return -1;
+    }
 
+    // 防止重放攻击
+    ret = config->QueryAndInsertMD5(sign_data);
+    if (ret != 0)
+    {
+        TLOG_MSG(("Verify faild: MD5 repeat"));
+        return -1;
+    }
 
-    // 防止重放、加入白名单 TODO
-
+    // 加入白名单
+    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, ip, port);
 
     return 0;
 }

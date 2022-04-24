@@ -35,10 +35,6 @@
 #define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
 #define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
 
-enum SSL_SLECT_METHOD_TYPE {
-    SSL_SELECT_CLIENT,
-    SSL_SELECT_SERVER,
-};
 
 #define SSL_ERR_TLOG()                                      \
     do {                                                    \

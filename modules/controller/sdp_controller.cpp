@@ -19,7 +19,7 @@ SDPController::SDPController(): server_(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, U
     whitelist->InitWhiteList(white_vec, TCP_PORT_CONTROLLER);
     
     // 注册服务
-    server_.RegisterService(service);
+    server_.RegisterService(service, SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER);
 }
 
 void SDPController::Run()

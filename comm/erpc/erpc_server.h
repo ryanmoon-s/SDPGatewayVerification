@@ -12,8 +12,9 @@
 
 class ErpcServer {
 public:
-    // 1、注册服务hadnler，传入子类指针
-    void RegisterService(ErpcService* service);
+    // 1、注册服务
+    // 传入子类指针、证书、私钥
+    void RegisterService(ErpcService* service, const std::string& cert, const std::string& key);
 
     // 2、启动运行
     int Run();

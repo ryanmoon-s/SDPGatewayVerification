@@ -66,26 +66,26 @@ int IptablesTools::UnBanIp(const std::string& ip, int port)
 
 /***************************** White List *****************************/
 
-// op: IP_WHITE_TABLE_OP
+// op: IP_WHITE_LIST_OP
 int IPWhiteList::OpWhiteList(int op, std::string ip, int port)
 {
     IptablesTools iptool;
     int ret = 0;
 
-    if (op == IP_WHITE_TABLE_ADD)
+    if (op == IP_WHITE_LIST_ADD)
     {
         ip_white_list_.insert(std::make_pair(ip, 1));
         ret = iptool.UnBanIp(ip, port);
         iAssert(ret, ("UnBanIp faild"));
     }
-    else if (op == IP_WHITE_TABLE_DEL)
+    else if (op == IP_WHITE_LIST_DEL)
     {
         ip_white_list_.erase(ip);
         iptool.BanIp(ip, port);
         iAssert(ret, ("BanIp faild"));
     }
 
-    TLOG_MSG(("OpWhiteList, op:%d, ip:%s", op, ip.c_str()));
+    TLOG_MSG(("OpWhiteList success, op:%d, ip:%s", op, ip.c_str()));
 }
 
 bool IPWhiteList::IsIPInWhiteList(std::string ip, int port)

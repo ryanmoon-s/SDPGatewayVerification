@@ -1,11 +1,10 @@
 #include "client.h"
-#include "comm/erpc/erpc_client.h"
 #include "comm/commdef/comm_tool.h"
 
 int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
 {
     int ret = 0;
-    vector<erpc::AccessItem> list;
+    std::vector<erpc::AccessItem> list;
     
     // SPA单包认证
     ret = _SPAKnockingController(spaVoucher, IP_CONTROLLER_PB, UDP_PORT_CONTROLLER);
@@ -15,7 +14,7 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
     erpc::ConFuncGetAccessReq req;
     erpc::ConFuncGetAccessRsp rsp;
     erpc::Header header;
-    ret = ErpcClient().ConFuncGetAccessRequest(req, rsp, header);
+    ret = erpc_client_.ConFuncGetAccessRequest(req, rsp, header);
     iAssert(ret, ("ConFuncGetAccessRequest faild"));
 
     // 处理: 票据
@@ -29,10 +28,10 @@ int VerifyClient::GetAccessibleAppList(const spa::SPAVoucher& spaVoucher)
         list.push_back(item);
 
         std::string ip = item.ip();
-        std::string appname = item.mutable_app()->appname();
-        std::string description = item.mutable_app()->description();
-        int tcp_port = item.mutable_app()->tcp_port();
-        int udp_port = item.mutable_app()->udp_port();
+        std::string appname = item.app().appname();
+        std::string description = item.app().description();
+        int tcp_port = item.app().tcp_port();
+        int udp_port = item.app().udp_port();
 
         TLOG_MSG(("Access ===== Get access list beg ====="));
         TLOG_MSG(("Access - ip:%s", ip.c_str()));
@@ -61,7 +60,7 @@ int VerifyClient::_SPAKnockingController(const spa::SPAVoucher& spaVoucher, std:
     iAssert(ret, ("EncryptVoucher faild"));
 
     spaVoucherPacket.SerializeToString(&msg);
-    ret = ErpcClient().UDPFuncRequest(erpc::CMD_UDP_CONTROLLER_FUNC_RECV, msg, ip, port);
+    ret = erpc_client_.UDPFuncRequest(erpc::CMD_UDP_CONTROLLER_FUNC_RECV, msg, ip, port);
     iAssert(ret, ("TestFuncUdpRecv faild"));
 
     TLOG_MSG(("SPA Knocking controller success, ip:%s, port:%d", ip.c_str(), port));
@@ -74,7 +73,7 @@ int VerifyClient::_SPAKnockingGateway(const spa::SPATicketPacket &spaTicketPacke
     std::string msg;
 
     spaTicketPacket.SerializeToString(&msg);
-    ret = ErpcClient().UDPFuncRequest(erpc::CMD_UDP_APPGATEWAY_FUNC_RECV, msg, ip, port);
+    ret = erpc_client_.UDPFuncRequest(erpc::CMD_UDP_APPGATEWAY_FUNC_RECV, msg, ip, port);
     iAssert(ret, ("UDPFuncRequest faild"));
 
     TLOG_MSG(("SPA Knocking gateway success, ip:%s, port:%d", ip.c_str(), port));

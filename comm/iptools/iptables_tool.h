@@ -19,9 +19,9 @@ private:
 
 #include <map>
 
-enum IP_WHITE_TABLE_OP {
-    IP_WHITE_TABLE_ADD = 1,
-    IP_WHITE_TABLE_DEL = 2,
+enum IP_WHITE_LIST_OP {
+    IP_WHITE_LIST_ADD = 1,
+    IP_WHITE_LIST_DEL = 2,
 };
 
 // 与iptables同步

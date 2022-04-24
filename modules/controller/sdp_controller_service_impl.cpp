@@ -42,7 +42,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     }
 
     // 加入白名单
-    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_TABLE_ADD, ip, port);
+    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, ip, port);
     
     return 0;
 }
@@ -81,8 +81,6 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
             item->mutable_app()->CopyFrom(app_vec[i]);
         }
     }
-
-    objRsp.mutable_ticket_packet()->CopyFrom(spaTicketPacket);
 
     MSG_PROTO(objRsp);
     return 0;

@@ -26,7 +26,7 @@ public:
         spa::SPAVoucher spaVoucher;
 
         spaVoucherPacket.ParseFromString(msg);
-        ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket, RSA_PUB_KEY_CONTROLLER, RSA_PUB_ENCRYPT);
+        ret = SPATools().DecryptVoucher(spaVoucher, spaVoucherPacket, RSA_PUB_KEY_CONTROLLER);
         iAssert(ret, ("DecryptVoucher faild"));
 
         std::string voucher_str;
@@ -45,7 +45,7 @@ int main()
     ErpcServer server(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
 
     TestErpcServiceImpl service;
-    server.RegisterService(&service);
+    server.RegisterService(&service, SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER);
 
     server.Run();
 }
@@ -115,7 +115,7 @@ int mini_server_ssl()
     iAssert(ret, ("listen: listen_fd:%d", listen_fd_));
 
     // SSL
-    SSLConnector connector(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, SSL_SELECT_SERVER);
+    SSLConnector connector(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY, 1);
     struct sockaddr_in cli_addr;
 
     socklen_t cli_len = sizeof(cli_addr);

@@ -16,7 +16,7 @@ int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& objReq, e
     Packet PacketReq;
     Packet PacketRsp;
     std::shared_ptr<SSLConnector>
-        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
 
     // 变更 1 cmdid
     PacketReq.cmdid = erpc::CMD_RPC_TEST_FUNC_REVERSE;
@@ -39,7 +39,7 @@ int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& o
     Packet PacketReq;
     Packet PacketRsp;
     std::shared_ptr<SSLConnector>
-        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
 
     // 变更 1 cmdid
     PacketReq.cmdid = erpc::CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP;
@@ -62,7 +62,7 @@ int ErpcClient::ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq,
     Packet PacketReq;
     Packet PacketRsp;
     std::shared_ptr<SSLConnector>
-        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
     // TODO 加载自己的证书
 
     // 变更 1 cmdid
@@ -86,7 +86,7 @@ int ErpcClient::ConFuncRegisterAppRequest(const erpc::ConFuncRegisterAppReq& obj
     Packet PacketReq;
     Packet PacketRsp;
     std::shared_ptr<SSLConnector>
-        connector = std::make_shared<SSLConnector>(SSL_CRT_CLIENT, SSL_KEY_CLIENT, 0);
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
 
     // 变更 1 cmdid
     PacketReq.cmdid = erpc::CMD_RPC_CONTROLLER_FUNC_REGISTER_APP;

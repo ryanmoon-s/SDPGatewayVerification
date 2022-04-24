@@ -25,8 +25,9 @@ ErpcServer::~ErpcServer()
     delete epoll_dispatcher_;
 }
 
-void ErpcServer::RegisterService(ErpcService* service)
+void ErpcServer::RegisterService(ErpcService* service, const std::string& cert, const std::string& key)
 {
     ErpcConfig* config = ErpcConfig::GetInstance();
     config->SetServiceObj(service);
+    config->SetServerCert(cert, key);
 }

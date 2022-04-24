@@ -10,6 +10,9 @@ using namespace erpc;
 
 class ErpcClient {
 public:
+    ErpcClient(const std::string& cert, const std::string& key): cert_(cert), key_(key) {}
+
+public:
     /***************************** UDP *****************************/
     int UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
 
@@ -25,4 +28,8 @@ public:
     // AppGateway
     int GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);
 
+private:
+    // 证书、私钥
+    std::string cert_;
+    std::string key_;
 };

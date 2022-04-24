@@ -10,7 +10,7 @@ int main()
     Header header;
 
     req.set_str("hello world");
-    ret = ErpcClient().TestFuncReverseRequest(req, rsp, header);
+    ret = ErpcClient(SSL_CRT_CLIENT, SSL_KEY_CLIENT).TestFuncReverseRequest(req, rsp, header);
     iAssert(ret, ("TestFuncReverseRequest"));
     
     TLOG_MSG(("TestFuncReverse Sucess: req.str:%s, rsp.str:%s", req.str().c_str(), rsp.str().c_str()));
@@ -18,6 +18,9 @@ int main()
 
     return 0;
 }
+
+
+// TEST
 
 int mini_client_ssl()
 {
@@ -32,7 +35,7 @@ int mini_client_ssl()
     ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
     iAssert(ret, ("connect"));
 
-    SSLConnector connector(SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER, SSL_SELECT_CLIENT);
+    SSLConnector connector(SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER, 0);
 
     // ERROR
     ret = connector.SSLConnect(fd);

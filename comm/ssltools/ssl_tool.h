@@ -16,7 +16,7 @@ public:
     // for server
     int SSLAccept(int fd);
 
-    // data trans
+    // 数据透传
     int SSLWrite(const char* buf, int size);
     int SSLRead(char* buf, int size);
 
@@ -35,12 +35,14 @@ private:
 
 class SSLTools {
 public:
-    // 加解密方法
+    // 公钥加密、私钥解密
     int RSAEncrypt(std::string& to_text, const std::string& text, const std::string& key);
     int RSADecrypt(std::string& to_text, const std::string& text, const std::string& key);
     
+    // 私钥签名、公钥验证
     int RSASign(std::string& sig_text, const std::string& text, const std::string& key);
     int RSAVerify(const std::string& sig_text, const std::string& src_text, const std::string& key);
 
+    // MD5摘要
     int MD5Encrypt(std::string& to_text, const std::string& text);
 };
