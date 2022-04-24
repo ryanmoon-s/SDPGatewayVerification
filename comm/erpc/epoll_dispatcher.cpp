@@ -188,7 +188,6 @@ int EpollDispatcher::Dispatch()
 int EpollDispatcher::_MakeListenFd(int& fd, const std::string& ip, int port)
 {
     int ret = 0, resue = 1;
-    int fd;
     struct sockaddr_in addr;
     FdDataType fd_data;
 

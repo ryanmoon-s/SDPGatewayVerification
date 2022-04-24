@@ -4,7 +4,6 @@
 int VerifyClient::GetAccessibleAppList(std::vector<erpc::AccessItem> list, const spa::SPAVoucher& spaVoucher)
 {
     int ret = 0;
-    std::vector<erpc::AccessItem> list;
     
     // SPA单包认证
     ret = _SPAKnockingController(spaVoucher, IP_CONTROLLER_PB, UDP_PORT_CONTROLLER);

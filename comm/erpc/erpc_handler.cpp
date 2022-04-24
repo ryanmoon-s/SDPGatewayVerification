@@ -204,7 +204,7 @@ int ErpcHandler::ClientUDPRequest(uint32_t cmdid, const std::string& msg, const 
     return 0;
 }
 
-int ClientTCPRequest(const std::string& request, std::string& response, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
+int ErpcHandler::ClientTCPRequest(const std::string& request, std::string& response, std::shared_ptr<SSLConnector> connector, const std::string& ip, int port)
 {
     // Generate socket
     int fd = 0, ret = 0;
@@ -224,7 +224,7 @@ int ClientTCPRequest(const std::string& request, std::string& response, std::sha
     ret = HandleWrite(request, connector);
     if (ret != request.size()) 
     {
-        TLOG_ERR(("Write faild, write:%d/%d", ret, PacketReqStr.size()));
+        TLOG_ERR(("Write faild, write:%d/%d", ret, request.size()));
     }
 
     ret = HandleRead(response, connector);
