@@ -2,19 +2,27 @@
 #include "comm/tlog/tlog.h"
 
 
-int commtool::GetMacAddress(std::string& mac_address)
+std::string commtool::GetMacAddress()
 {
     char mac[32];
     struct ifreq ifreq;
     int sock, ret = 0;
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    iAssert(sock, ("socket"));
+    if (sock < 0)
+    {
+        TLOG_ERR(("socket"));
+        return "";
+    }
 
     strcpy(ifreq.ifr_name, "eth0");
 
     ret = ioctl(sock, SIOCGIFHWADDR, &ifreq);
-    iAssert(ret, ("ioctl"));
+    if (ret < 0)
+    {
+        TLOG_ERR(("socket"));
+        return "";
+    }
 
     ret = snprintf(mac, sizeof(mac), "%02X:%02X:%02X:%02X:%02X:%02X", 
         (unsigned char) ifreq.ifr_hwaddr.sa_data[0],
@@ -24,9 +32,7 @@ int commtool::GetMacAddress(std::string& mac_address)
         (unsigned char) ifreq.ifr_hwaddr.sa_data[4],
         (unsigned char) ifreq.ifr_hwaddr.sa_data[5]);
 
-    mac_address.assign(mac, ret);
-
-    return 0;
+    return std::string(mac, ret);
 }
 
 std::string commtool::Proto2Json(const google::protobuf::Message& proto) {

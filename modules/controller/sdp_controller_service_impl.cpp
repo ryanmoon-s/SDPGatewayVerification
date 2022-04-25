@@ -8,9 +8,8 @@
 #include "sdp_controller_config.h"
 
 using namespace commtool;
-#define GET_RANDOM (rand()%1000000000+1000000000)
 
-int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string ip, int port)
+int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port)
 {
     TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
     int ret = 0;
@@ -25,14 +24,17 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     iAssert(ret, ("DecryptVoucher faild"));
     DBG_PROTO(spaVoucher);
 
-    // 检查权限
-    // ret = config->CheckUserPermissions(spaVoucher.account().acc());
-    if (ret != 0)
-    {
-        TLOG_MSG(("CheckUserPermissions faild, spaVoucher data:"));
-        MSG_PROTO(spaVoucher);
-        return -1;
-    }
+    // 用户鉴权
+    // 1、账号密码正确
+    spa::Account account = spaVoucher.account();
+    ret = config->CheckUserPasswd(account.acc(), account.pwd());
+    iAssert(ret, ("CheckUserPasswd faild"));
+    // 2、有可访问的应用列表
+    ret = config->CheckUserPermission_Exists(spaVoucher.account().acc());
+    iAssert(ret, ("CheckUserPermission_Exists faild"));
+    // 3、ip 地址
+    // 4、mac 地址
+    // 5、address
 
     // 防止重放攻击
     int repeat = config->QueryAndInsertMD5(spaVoucherPacket.md5_data());
@@ -43,8 +45,8 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
         return -1;
     }
 
-    // 加入白名单
-    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, ip, port);
+    // 加入白名单 CONTROLLER
+    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, from_ip, TCP_PORT_CONTROLLER);
     
     return 0;
 }
@@ -55,26 +57,37 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
 
     int ret = 0;
     erpc::SocketInfo socket_info = extra.socket_info;
+    spa::Account user_account = objReq.account();
     auto config = SDPControllerConfig::GetInstance();
 
     // 添加 Access List
-    // 目前全添加 
-    // TODO 根据可访问List添加
     auto app_map = config->GetAppMap();
     for (auto app : *app_map)
     {
-        std::string ip = app.first;
+        std::string gateway_ip = app.first;
         auto app_vec = app.second;
         for (int i = 0; i < app_vec.size(); i++)
         {
-            erpc::AccessItem* item = objRsp.add_access_list();
-            item->set_ip(ip);
-            item->mutable_app()->CopyFrom(app_vec[i]);
+            erpc::AppItem app_item = app_vec[i];
+
+            // 用户鉴权
+            std::string dst = gateway_ip + ":" + std::to_string(app_item.app_tcp_port());
+            ret = config->CheckUserPermission_Allowed(user_account.acc(), dst);  // 用户是否可访问此app
+            if (ret != 0)
+            {
+                TLOG_DBG(("User not allowed to access, skip"));
+                TLOG_DBG(("User: acc:%s, dst:%s", user_account.acc().c_str(), dst.c_str()));
+                continue;
+            }
+
+            // 添加app_item
+            erpc::AccessItem* acc_item = objRsp.add_access_list();
+            acc_item->set_ip(gateway_ip);
+            acc_item->mutable_app()->CopyFrom(app_item);
 
             // Ticket 构造
-            // 一个item -> 一个app -> 一个ticket
             spa::SPATicket spaTicket;
-            spaTicket.set_ip(socket_info.ip.c_str());
+            spaTicket.set_ip(socket_info.ip.c_str());  // 用户ip
             spaTicket.set_timestamp(time(NULL));
             spaTicket.set_random(GET_RANDOM);
             spaTicket.set_valid_seconds(30);
@@ -83,8 +96,7 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
             spa::SPATicketPacket spaTicketPacket;
             ret = SPATools().SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
             iAssert(ret, ("EncryptVoucher faild"));
-
-            item->mutable_ticket_packet()->CopyFrom(spaTicketPacket);
+            acc_item->mutable_ticket_packet()->CopyFrom(spaTicketPacket);
         }
     }
 
@@ -114,7 +126,7 @@ int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegister
         app_vec.push_back(item);
 
         // 权限列表
-        std::string dst = ip + ":" + std::to_string(item.tcp_port());
+        std::string dst = ip + ":" + std::to_string(item.app_tcp_port());
         perssion_vec.push_back(dst);
     }
 
@@ -124,9 +136,12 @@ int SDPControllerErpcServiceImpl::ConFuncRegisterApp(const erpc::ConFuncRegister
     // 用户授权
     for (int i = 0; i < perssion_vec.size(); i++)
     {
-        config->UpdatePerssionMap("xiaoming", perssion_vec[i]);
-        config->UpdatePerssionMap("xiaohong", perssion_vec[i]);
-        config->UpdatePerssionMap("xiaobai", perssion_vec[i]);
+        std::string per = perssion_vec[i];
+        config->UpdateUserPerssion_Add("xiaoming", per);
+        config->UpdateUserPerssion_Add("xiaohong", per);
+        config->UpdateUserPerssion_Add("xiaobai", per);
+
+        TLOG_DBG(("add permission:%s", per.c_str()));
     }
 
     MSG_PROTO(objRsp);

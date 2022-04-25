@@ -11,10 +11,11 @@
 #define DBG_PROTO(Proto)                       \
     TLOG_DBG((M_TOSTR(Proto)":%s", commtool::Proto2Json(Proto).c_str()));
 
+#define GET_RANDOM (rand()%1000000000+1000000000)
 
 namespace commtool
 {
-    int GetMacAddress(std::string& mac_address);
+    std::string GetMacAddress();
     std::string Proto2Json(const google::protobuf::Message& proto);
 
     

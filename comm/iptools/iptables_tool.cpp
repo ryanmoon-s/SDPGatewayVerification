@@ -74,7 +74,7 @@ int IPWhiteList::OpWhiteList(int op, std::string ip, int port)
 
     if (op == IP_WHITE_LIST_ADD)
     {
-        ip_white_list_.insert(std::make_pair(ip, 1));
+        ip_white_list_.insert(std::make_pair(ip, port));
         ret = iptool.UnBanIp(ip, port);
         iAssert(ret, ("UnBanIp faild"));
     }
@@ -86,17 +86,15 @@ int IPWhiteList::OpWhiteList(int op, std::string ip, int port)
     }
 
     TLOG_MSG(("OpWhiteList success, op:%d, ip:%s", op, ip.c_str()));
+    return 0;
 }
 
 bool IPWhiteList::IsIPInWhiteList(std::string ip, int port)
 {
     auto iter = ip_white_list_.find(ip);
-    if (iter != ip_white_list_.end())
+    if (iter != ip_white_list_.end() && iter->second == port)
     {
-        if (iter->second == port)
-        {
-            return true;
-        }
+        return true;
     }
     return false;
 }

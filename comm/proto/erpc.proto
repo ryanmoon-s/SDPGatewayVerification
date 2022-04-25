@@ -19,8 +19,8 @@ message TestFuncReverseRsp
 
 message AppItem
 {
-    optional int32 udp_port = 1;        // appgateway knocking
-    optional int32 tcp_port = 2;        // application tcp port
+    optional int32 gate_udp_port = 1;        // appgateway knocking
+    optional int32 app_tcp_port = 2;        // application tcp port
     optional string appname = 3;
     optional string description = 4;
 }
@@ -35,6 +35,7 @@ message AccessItem
 // Client 获取可访问列表、票据
 message ConFuncGetAccessReq 
 {
+    optional spa.Account account = 1;
 }
 
 message ConFuncGetAccessRsp
@@ -54,20 +55,14 @@ message ConFuncRegisterAppRsp
 
 /***************************** APPGATEWAY *****************************/
 
-enum WhiteListOpType 
-{
-    ListAdd = 1;
-    ListDel = 2;
-}
-
-// 白名单操作
-message GateFuncWhiteListOpReq 
+// Controller调用 黑名单操作
+message GateFuncBlackListOpReq 
 {
     optional int32 op = 1;  // WhiteListOpType
     optional string ip = 2;
 }
 
-message GateFuncWhiteListOpRsp 
+message GateFuncBlackListOpRsp 
 {
 
 }

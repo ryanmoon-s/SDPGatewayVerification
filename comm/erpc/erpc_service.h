@@ -38,7 +38,7 @@ public:
 
     /***************************** CONTROLLER *****************************/
 
-    virtual int ConFuncUdpRecv(const std::string& msg, std::string ip, int port);
+    virtual int ConFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port);
 
     virtual int ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra);
     
@@ -46,9 +46,9 @@ public:
 
     /***************************** APPGATEWAY *****************************/
 
-    virtual int GateFuncUdpRecv(const std::string& msg, std::string ip, int port);
+    virtual int GateFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port);
 
-    virtual int GateFuncWhiteListOp(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, const erpc::Extra& extra);
+    virtual int GateFuncBlackListOp(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, const erpc::Extra& extra);
 
     /***************************** APPGATEWAY *****************************/
 

@@ -13,8 +13,8 @@ message SPAVoucher
     optional Account account = 1;
     optional string mac = 2;
     optional string address = 3;
-    optional uint32 timestamp = 4;
-    optional bool is_valid = 5[default=false];
+    optional uint32 timestamp = 4;    // 让每次生成的md5不同
+    optional uint32 random = 5;       // 让每次生成的md5不同
 }
 
 // SPA凭证数据包
@@ -31,8 +31,8 @@ message SPAVoucherPacket
 message SPATicket
 {
     optional string ip = 1;
-    optional uint32 timestamp = 2;
-    optional uint32 random = 3;     // 让每次生成的签名不同
+    optional uint32 timestamp = 2;       // 让每次生成的签名不同
+    optional uint32 random = 3;          // 让每次生成的签名不同
     optional uint32 valid_seconds = 4;
 }
 

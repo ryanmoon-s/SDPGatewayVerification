@@ -1,11 +1,11 @@
 #include "erpc_client.h"
 #include "comm/ssltools/ssl_def.h"
 
-int ErpcClient::UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port)
+int ErpcClient::UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& from_ip, int from_port)
 {
     int ret = 0;
 
-    ret = ErpcHandler().ClientUDPRequest(cmdid, msg, ip, port);
+    ret = ErpcHandler().ClientUDPRequest(cmdid, msg, from_ip, from_port);
     iAssert(ret, ("ClientUDPRequest faild"));
     
     return 0;
@@ -34,7 +34,7 @@ int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& objReq, e
     return 0;
 }
 
-int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header)
+int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;

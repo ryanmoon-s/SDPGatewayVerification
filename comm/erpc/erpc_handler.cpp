@@ -269,7 +269,7 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
     else if (cmdid == erpc::CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP)
     {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
-        RPC_CALL_FORWARD(GateFuncWhiteListOp, request, response, extra);
+        RPC_CALL_FORWARD(GateFuncBlackListOp, request, response, extra);
         return 0;
     }
     else if (cmdid == erpc::CMD_RPC_CONTROLLER_FUNC_GET_ACCESS)

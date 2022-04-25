@@ -1,10 +1,10 @@
 cc_library(
-    name = "client_lib",
+    name = "sdp_verify_client_lib",
     srcs = [
-        "client.cpp",
+        "sdp_verify_client.cpp",
     ],
     hdrs = [
-        "client.h",
+        "sdp_verify_client.h",
     ],
     deps = [
         "//comm/commdef:comm_def_lib",
@@ -22,13 +22,33 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-cc_binary(
-    name = "client_test",
+cc_library(
+    name = "sdp_access_client_lib",
     srcs = [
-        "client_test.cpp",
+        "sdp_access_client.cpp",
+    ],
+    hdrs = [
+        "sdp_access_client.h",
     ],
     deps = [
-        ":client_lib",
+        "//comm/tlog:tlog_lib",
+        "//comm/proto:erpc_cc_pb",
+        "//comm/erpc:erpc_client_lib",
+    ],
+    copts = [
+        "-std=c++11",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_binary(
+    name = "test_client",
+    srcs = [
+        "test_client.cpp",
+    ],
+    deps = [
+        ":sdp_verify_client_lib",
+        ":sdp_access_client_lib",
     ],
     copts = [
         "-std=c++11",

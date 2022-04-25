@@ -14,7 +14,7 @@ public:
 
 public:
     /***************************** UDP *****************************/
-    int UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& ip, int port);
+    int UDPFuncRequest(uint32_t cmdid, const std::string& msg, const std::string& from_ip, int from_port);
 
     /***************************** RPC *****************************/
 
@@ -26,7 +26,7 @@ public:
     int ConFuncRegisterAppRequest(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, Header& header);
 
     // AppGateway
-    int GateFuncWhiteListOpRequest(const erpc::GateFuncWhiteListOpReq& objReq, erpc::GateFuncWhiteListOpRsp& objRsp, Header& header);
+    int GateFuncWhiteListOpRequest(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, Header& header);
 
     /***************************** TCP *****************************/
 
