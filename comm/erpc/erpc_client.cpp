@@ -34,7 +34,7 @@ int ErpcClient::TestFuncReverseRequest(const erpc::TestFuncReverseReq& objReq, e
     return 0;
 }
 
-int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, Header& header)
+int ErpcClient::GateFuncBlackListOpRequest(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, Header& header)
 {
     Packet PacketReq;
     Packet PacketRsp;
@@ -53,7 +53,7 @@ int ErpcClient::GateFuncWhiteListOpRequest(const erpc::GateFuncBlackListOpReq& o
     header = PacketRsp.header;
 
     // 变更 3 name ip port
-    TLOG_MSG(("Client GateFuncWhiteListOpRequest success, ip:%s, port:%d", IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY));
+    TLOG_MSG(("Client GateFuncBlackListOpRequest success, ip:%s, port:%d", IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY));
     return 0;
 }
 
