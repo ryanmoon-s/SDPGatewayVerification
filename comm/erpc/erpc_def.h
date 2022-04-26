@@ -38,6 +38,7 @@ enum SERVER_Identification {
     ID_CONTROLLER = 1,
     ID_GATEWAY = 2,
     ID_APPLICATION = 3,
+    ID_TESTSERVER = 4,
 };
 
 /*

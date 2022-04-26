@@ -42,7 +42,7 @@ public:
 
 int main()
 {
-    ErpcServer server(IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
+    ErpcServer server(ID_TESTSERVER, IP_CONTROLLER_IN, TCP_PORT_CONTROLLER, UDP_PORT_CONTROLLER);
 
     TestErpcServiceImpl service;
     server.RegisterService(&service, SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER);
