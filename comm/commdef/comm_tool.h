@@ -17,7 +17,7 @@ namespace commtool
 {
     std::string GetMacAddress();
     std::string Proto2Json(const google::protobuf::Message& proto);
-
+    time_t TimeNow_Min();
     
 }
 

@@ -41,9 +41,15 @@ int ErpcService::GateFuncBlackListOp(const erpc::GateFuncBlackListOpReq& objReq,
     return erpc::kErrServiceNotFound;
 }
 
-/***************************** APPGATEWAY *****************************/
-
-int ErpcService::AppFuncHttps(const std::string& request, std::string& response)
+int ErpcService::GateFuncNotice(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, const erpc::Extra& extra)
 {
     return erpc::kErrServiceNotFound;
 }
+
+/***************************** APPLICATION *****************************/
+
+int ErpcService::AppFuncHttps(const std::string& request, std::string& response, const erpc::Extra& extra)
+{
+    return erpc::kErrServiceNotFound;
+}
+

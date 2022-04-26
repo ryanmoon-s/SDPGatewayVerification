@@ -145,7 +145,7 @@ int ErpcHandler::HandleApplicationRequest(const FdDataType& fd_data)
 
     // 转发服务
     ErpcService* service = ErpcConfig::GetInstance()->GetServiceObj();
-    ret = service->AppFuncHttps(request, response);
+    ret = service->AppFuncHttps(request, response, extra);
     iAssert(ret, ("AppFuncHttps faild"));
 
     ret = HandleWrite(response, connector);
@@ -282,6 +282,12 @@ int ErpcHandler::_RequestForwardWithCmd(int32_t cmdid, const std::string& reques
     {
         TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
         RPC_CALL_FORWARD(ConFuncRegisterApp, request, response, extra);
+        return 0;
+    }
+    else if (cmdid == erpc::CMD_RPC_APPGATEWAY_FUNC_NOTICE)
+    {
+        TLOG_MSG(("RPC forward to cmdid:%d", cmdid));
+        RPC_CALL_FORWARD(GateFuncNotice, request, response, extra);
         return 0;
     }
 

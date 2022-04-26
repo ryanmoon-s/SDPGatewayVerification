@@ -67,3 +67,21 @@ message GateFuncBlackListOpRsp
 {
 
 }
+
+enum NoticeOp
+{
+    APP_NOTICE_CLOSE_PORT_FOR_IP = 1;
+}
+
+// 通知 应用调用
+message GateFuncNoticeReq
+{
+    optional int32 op = 1;
+    optional string op_ip = 2;
+}
+
+message GateFuncNoticeRsp
+{
+}
+
+

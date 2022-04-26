@@ -57,6 +57,30 @@ int ErpcClient::GateFuncBlackListOpRequest(const erpc::GateFuncBlackListOpReq& o
     return 0;
 }
 
+int ErpcClient::GateFuncNoticeRequest(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, Header& header)
+{
+    Packet PacketReq;
+    Packet PacketRsp;
+    std::shared_ptr<SSLConnector>
+        connector = std::make_shared<SSLConnector>(cert_, key_, 0);
+
+    // 变更 1 cmdid
+    PacketReq.cmdid = erpc::CMD_RPC_APPGATEWAY_FUNC_NOTICE;
+    objReq.SerializeToString(&PacketReq.body);
+
+    // 变更 2 ip port
+    int ret = ErpcHandler().ClientRPCRequest(PacketReq, PacketRsp, connector, IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY);
+    iAssert(ret, ("ClientRPCRequest"));
+   
+    objRsp.ParseFromString(PacketRsp.body);
+    header = PacketRsp.header;
+
+    // 变更 3 name ip port
+    TLOG_MSG(("Client GateFuncNoticeRequest success, ip:%s, port:%d", IP_APPGATEWAY_PB, TCP_PORT_APPGATEWAY));
+    return 0;
+}
+
+
 int ErpcClient::ConFuncGetAccessRequest(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, Header& header)
 {
     Packet PacketReq;

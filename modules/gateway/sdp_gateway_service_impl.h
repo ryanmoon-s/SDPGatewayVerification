@@ -12,4 +12,6 @@ public:
 
     virtual int GateFuncBlackListOp(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, const erpc::Extra& extra) override;
 
+    virtual int GateFuncNotice(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, const erpc::Extra& extra) override;
+
 };

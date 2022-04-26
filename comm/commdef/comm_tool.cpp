@@ -40,3 +40,12 @@ std::string commtool::Proto2Json(const google::protobuf::Message& proto) {
     google::protobuf::util::MessageToJsonString(proto, &json);
     return json;
 }
+
+
+time_t commtool::TimeNow_Min()
+{
+    time_t seconds = time(NULL);
+    struct tm * tm = localtime(&seconds);
+    tm->tm_sec = 0;
+    return  mktime(tm);
+}

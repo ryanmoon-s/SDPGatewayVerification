@@ -87,3 +87,32 @@ int SDPAppGatewayErpcServiceImpl::GateFuncBlackListOp(const erpc::GateFuncBlackL
     MSG_PROTO(objRsp);
     return 0;
 }
+
+int SDPAppGatewayErpcServiceImpl::GateFuncNotice(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, const erpc::Extra& extra)
+{
+    MSG_PROTO(objReq);
+
+    int ret = 0;
+    auto config = SDPAppGatewayConfig::GetInstance();
+    auto whitelist = config->GetWhiteListObj();
+    int app_tcp_port = config->get_app_tcp_port();
+
+    // 鉴权，权APPLICATION可调用此接口
+    std::string from_ip = extra.socket_info.ip;
+    if (from_ip != IP_APPLICATION_PB)
+    {
+        TLOG_WARN(("check permission faild, only application can all"));
+        return 1;
+    }
+
+    // 应用通知去白
+    if (objReq.op() == erpc::APP_NOTICE_CLOSE_PORT_FOR_IP)
+    {
+        ret = whitelist->OpWhiteList(IP_WHITE_LIST_DEL, objReq.op_ip(), app_tcp_port);
+        iAssert(ret, ("OpWhiteList faild"));
+    }
+
+    TLOG_MSG((" ************************* NOTICE DEL BLACK ************************* "));
+
+    MSG_PROTO(objRsp);
+}

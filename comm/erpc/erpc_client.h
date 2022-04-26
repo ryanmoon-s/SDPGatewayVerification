@@ -27,6 +27,7 @@ public:
 
     // AppGateway
     int GateFuncBlackListOpRequest(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, Header& header);
+    int GateFuncNoticeRequest(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, Header& header);
 
     /***************************** TCP *****************************/
 

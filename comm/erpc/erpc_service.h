@@ -20,6 +20,7 @@ namespace erpc {
         // APPGATEWAY
         CMD_UDP_APPGATEWAY_FUNC_RECV = 201,
         CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP = 202,
+        CMD_RPC_APPGATEWAY_FUNC_NOTICE = 203,
 
         // APPLICATION
         CMD_TCP_APPLICATION_FUNC_HTTPS = 301,
@@ -38,21 +39,30 @@ public:
 
     /***************************** CONTROLLER *****************************/
 
+    // UDP敲门
     virtual int ConFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port);
 
+    // 客户端获取可访问列表
     virtual int ConFuncGetAccess(const erpc::ConFuncGetAccessReq& objReq, erpc::ConFuncGetAccessRsp& objRsp, const erpc::Extra& extra);
     
+    // 网关注册应用
     virtual int ConFuncRegisterApp(const erpc::ConFuncRegisterAppReq& objReq, erpc::ConFuncRegisterAppRsp& objRsp, const erpc::Extra& extra);
 
     /***************************** APPGATEWAY *****************************/
 
+    // UDP敲门
     virtual int GateFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port);
 
+    // 黑名单操作，仅Controller调用
     virtual int GateFuncBlackListOp(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, const erpc::Extra& extra);
 
-    /***************************** APPGATEWAY *****************************/
+    // 通知，仅APPLICATION调用
+    virtual int GateFuncNotice(const erpc::GateFuncNoticeReq& objReq, erpc::GateFuncNoticeRsp& objRsp, const erpc::Extra& extra);
 
-    virtual int AppFuncHttps(const std::string& request, std::string& response);
+    /***************************** APPLICATION *****************************/
+
+    // HTTPS 服务
+    virtual int AppFuncHttps(const std::string& request, std::string& response, const erpc::Extra& extra);
 
 public:
     ~ErpcService() {}

@@ -6,6 +6,8 @@
 class SDPApplicationErpcServiceImpl: public ErpcService {
 public:
 
-    virtual int AppFuncHttps(const std::string& request, std::string& response) override;
+    virtual int AppFuncHttps(const std::string& request, std::string& response, const erpc::Extra& extra) override;
+
+    int HTTPS_HANDLER(const std::string& request, std::string& response);
     
 };
