@@ -160,6 +160,7 @@ int EpollDispatcher::Dispatch()
                     ret = handler.HandleRPCRequest(fd_data);
                     iAssertNoReturn(ret, ("HandleRPCRequest faild, fd:%d", fd));
                 }
+                
                 // Keep Alive TODO
                 ret = DispatcherDel(fd_data);
                 iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));

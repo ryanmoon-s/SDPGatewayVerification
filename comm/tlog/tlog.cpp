@@ -1,6 +1,6 @@
 #include "tlog.h"
 
-static const char *log_level[] = { "DEBUG", "MSG--", "WARN-", "ERROR", "NODEF"};
+static const char *log_level[] = {" ", "ERROR", "WARN-", "MSG--", "DEBUG", "NODEF"};
 
 void TLog::tlog(const char *msg) 
 {

@@ -13,7 +13,7 @@ using namespace commtool;
     if (ret != 0)                               \
     {                                           \
         config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_DEL, ip, port);    \
-        TLOG_MSG((LOG));                                                        \
+        TLOG_WARN((LOG));                                                        \
         return 1;                                                               \
     }
 
@@ -37,11 +37,11 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     // 1、账号密码正确
     spa::Account account = spaVoucher.account();
     ret = config->CheckUserPasswd(account.acc(), account.pwd());
-    HANDLE_VERIFY_FAILD("CheckUserPasswd faild", from_ip, config->get_tcp_port());
+    HANDLE_VERIFY_FAILD(" ~~~ ACCOUNT CHECK FAILD, STOP VERIFY ~~~ ", from_ip, config->get_tcp_port());
 
     // 2、有可访问的应用列表
     ret = config->CheckUserPermission_Exists(spaVoucher.account().acc());
-    HANDLE_VERIFY_FAILD("CheckUserPermission faild", from_ip, config->get_tcp_port());
+    HANDLE_VERIFY_FAILD(" ~~~ NO ACCESS LIST, STOP VERIFY ~~~ ", from_ip, config->get_tcp_port());
 
     // 3、ip 地址
     // 4、mac 地址
@@ -52,7 +52,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     int repeat = config->QueryAndInsertMD5(spaVoucherPacket.md5_data());
     if (repeat != 0)
     {
-        TLOG_MSG(("QueryAndInsertMD5 repeat md5"));
+        TLOG_WARN((" ~~~ MD5 REPEATED, STOP VERIFY ~~~ "));
         MSG_PROTO(spaVoucherPacket);
         return 1;
     }

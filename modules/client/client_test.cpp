@@ -9,15 +9,15 @@ int main()
 
     ret = Access_Test("xiaoming", "123456");
     iAssert(ret, ("Access_Test faild"));
-    TLOG_DBG(("======================== xiaoming ========================"));
+    TLOG_DBG(("======================== xiaoming finished ========================"));
     
     ret = Access_Test("xiaohong", "123456");
     iAssert(ret, ("Access_Test faild"));
-    TLOG_DBG(("======================== xiaohong ========================"));
+    TLOG_DBG(("======================== xiaohong finished ========================"));
 
     ret = Access_Test("xiaobai", "123456789");
     iAssert(ret, ("Access_Test faild"));
-    TLOG_DBG(("======================== xiaobai ========================"));
+    TLOG_DBG(("======================== xiaobai finished ========================"));
 
     return 0;
 }

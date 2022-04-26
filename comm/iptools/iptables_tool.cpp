@@ -25,7 +25,7 @@ IptablesTools::IptablesTools()
     _ExecuteCmd(cmd);
     iAssertNoReturn(ret, ("exec: clear all rules -F"));
 
-    TLOG_MSG(("iptables init success, clear all rules"));
+    TLOG_MSG((" == iptables init, clear all rules == "));
 }
 
 int IptablesTools::IptablesInit(const std::vector<std::string>& whitelist, int port)

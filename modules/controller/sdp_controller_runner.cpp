@@ -41,7 +41,7 @@ void scanning_func()
         {
             TLOG_MSG(("GateFuncBlackListOpRequest faild"));
         }
-        TLOG_MSG((" ************************* ADD Black ************************* "));
+        TLOG_MSG((" ************************* ADD BLACK ************************* "));
         MSG_PROTO(req);
 
         // 去除黑名单
@@ -53,7 +53,7 @@ void scanning_func()
         {
             TLOG_MSG(("GateFuncBlackListOpRequest faild"));
         }
-        TLOG_MSG((" ************************* DEL Black ************************* "));
+        TLOG_MSG((" ************************* DEL BLACK ************************* "));
         MSG_PROTO(req);
         
     }
