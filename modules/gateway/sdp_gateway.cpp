@@ -14,9 +14,10 @@ SDPAppGateway::SDPAppGateway()
     // 配置 config
     config->set_listen_info(IP_APPGATEWAY_IN, TCP_PORT_APPGATEWAY, UDP_PORT_APPGATEWAY, TCP_PORT_APPLICATION);
 
-    // 初始化防火墙; 与Controller交互端口; 加入CONTROLLER
+    // 初始化防火墙; 与Controller交互端口; 加入CONTROLLER APPLICATION
     std::vector<std::string> white_vec;
     white_vec.push_back(IP_CONTROLLER_PB); 
+    white_vec.push_back(IP_APPLICATION_PB);  // 熔断通知
     whitelist->InitWhiteList(white_vec, config->get_tcp_port());
 
     // 初始化防火墙; 应用通信端口

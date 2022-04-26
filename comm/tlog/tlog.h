@@ -5,7 +5,7 @@
 #include <string>
 
 // 日志级别开关，只打到此级别
-#define LOG_LEVEL_SWITCH 3
+#define LOG_LEVEL_SWITCH 4
 
 enum LOGLevel{
 	ERR = 1,

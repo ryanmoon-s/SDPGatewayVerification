@@ -3,15 +3,23 @@
 
 int SDPApplicationErpcServiceImpl::AppFuncHttps(const std::string& request, std::string& response, const erpc::Extra& extra)
 {
-    // 频率限制
     int ret = 0;
     auto config = SDPApplicationConfig::GetInstance();
     std::string from_ip = extra.socket_info.ip;
     
+    // 频率限制
     ret = config->FrequencyJudgment(from_ip);
     if (ret < 0)
     {
-        TLOG_WARN((" ~~~ %s visist too frequently, stop it ~~~ "));
+        TLOG_WARN((" ~~~ %s visist too frequently, stop it ~~~ ", from_ip.c_str()));
+        return -1;
+    }
+
+    // 超时限制
+    ret = config->TimeLimitJudgement(from_ip);
+    if (ret < 0)
+    {
+        TLOG_WARN((" ~~~ %s long time no visit , stop it ~~~ ", from_ip.c_str()));
         return -1;
     }
 

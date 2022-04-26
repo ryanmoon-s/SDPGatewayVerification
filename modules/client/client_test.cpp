@@ -11,13 +11,13 @@ int main()
     iAssert(ret, ("Access_Test faild"));
     TLOG_DBG(("======================== xiaoming finished ========================"));
     
-    ret = Access_Test("xiaohong", "123456");
-    iAssert(ret, ("Access_Test faild"));
-    TLOG_DBG(("======================== xiaohong finished ========================"));
+    // ret = Access_Test("xiaohong", "123456");
+    // iAssert(ret, ("Access_Test faild"));
+    // TLOG_DBG(("======================== xiaohong finished ========================"));
 
-    ret = Access_Test("xiaobai", "123456789");
-    iAssert(ret, ("Access_Test faild"));
-    TLOG_DBG(("======================== xiaobai finished ========================"));
+    // ret = Access_Test("xiaobai", "123456789");
+    // iAssert(ret, ("Access_Test faild"));
+    // TLOG_DBG(("======================== xiaobai finished ========================"));
 
     return 0;
 }
@@ -37,6 +37,21 @@ int Access_Test(std::string acc, std::string passwd)
     std::vector<erpc::AccessItem> list;
     ret = VerifyClient().GetAccessibleAppList(list, spaVoucher);
     iAssert(ret, ("GetAccessibleAppList faild"));
+
+    // 1
+    ret = AccessClient().AccessApplication_HTTPS(list);
+    iAssert(ret, ("AccessApplication_HTTPS faild"));
+
+    sleep(11);
+
+    ret = AccessClient().AccessApplication_HTTPS(list);
+    iAssert(ret, ("AccessApplication_HTTPS faild"));
+
+    ret = AccessClient().AccessApplication_HTTPS(list);
+    iAssert(ret, ("AccessApplication_HTTPS faild"));
+
+    ret = AccessClient().AccessApplication_HTTPS(list);
+    iAssert(ret, ("AccessApplication_HTTPS faild"));
 
     ret = AccessClient().AccessApplication_HTTPS(list);
     iAssert(ret, ("AccessApplication_HTTPS faild"));

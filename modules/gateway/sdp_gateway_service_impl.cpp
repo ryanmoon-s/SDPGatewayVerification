@@ -112,7 +112,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncNotice(const erpc::GateFuncNoticeReq& 
         iAssert(ret, ("OpWhiteList faild"));
     }
 
-    TLOG_MSG((" ************************* NOTICE DEL BLACK ************************* "));
+    TLOG_MSG((" ************************* APP NOTICE DEL BLACK ************************* "));
 
     MSG_PROTO(objRsp);
 }
