@@ -120,7 +120,7 @@ int EpollDispatcher::Dispatch()
 
         if (type & EPOLLIN) 
         {
-            TLOG_MSG(("=== ===  === Event Beg === === ==="));
+            TLOG_MSG(("= = ========================== EVENT BEG ========================== = ="));
             TLOG_MSG(("epoll in listen_fd_:%d, wakeup_fd:%d", listen_fd_, fd));
             FdDataType fd_data;
 
@@ -159,14 +159,13 @@ int EpollDispatcher::Dispatch()
                 {
                     ret = handler.HandleRPCRequest(fd_data);
                     iAssertNoReturn(ret, ("HandleRPCRequest faild, fd:%d", fd));
-
-                    // Keep Alive TODO
-                    ret = DispatcherDel(fd_data);
-                    iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
                 }
+                // Keep Alive TODO
+                ret = DispatcherDel(fd_data);
+                iAssertNoReturn(ret, ("DispatcherDel faild, fd:%d", fd));
             }
 
-            TLOG_MSG(("=== ===  === Event End === === ==="));
+            TLOG_MSG(("= = ========================== EVENT END ========================== = ="));
         }
 
         if (type & EPOLLOUT) 

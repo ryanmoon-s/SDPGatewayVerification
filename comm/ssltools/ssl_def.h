@@ -16,28 +16,57 @@
 
 // RSA
 
-#define RSA_PUB_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_pubkey.pem"
-#define RSA_PRI_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_key.pem"
+// #define RSA_PUB_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_pubkey.pem"
+// #define RSA_PRI_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/controller_key.pem"
 
-#define RSA_PUB_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_pubkey.pem"
-#define RSA_PRI_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_key.pem"
+// #define RSA_PUB_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_pubkey.pem"
+// #define RSA_PRI_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/rsa/gateway_key.pem"
 
 // SSL
 
-#define SSL_CRT_CA "/home/shun/SDPGatewayVerification/comm/ssltools/keys/certs/ca.crt"
+// #define SSL_CRT_CA "/home/shun/SDPGatewayVerification/comm/ssltools/keys/certs/ca.crt"
 
-#define SSL_CRT_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.crt"
-#define SSL_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.key"
+// #define SSL_CRT_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.crt"
+// #define SSL_KEY_CONTROLLER "/home/shun/SDPGatewayVerification/comm/ssltools/keys/controller/controller.key"
 
-#define SSL_CRT_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.crt"
-#define SSL_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.key"
+// #define SSL_CRT_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.crt"
+// #define SSL_KEY_GATEWAY "/home/shun/SDPGatewayVerification/comm/ssltools/keys/gateway/gateway.key"
 
-#define SSL_CRT_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.crt"
-#define SSL_KEY_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.key"
+// #define SSL_CRT_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.crt"
+// #define SSL_KEY_APPLICATION "/home/shun/SDPGatewayVerification/comm/ssltools/keys/application/application.key"
 
-#define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
-#define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
+// #define SSL_CRT_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.crt"
+// #define SSL_KEY_CLIENT "/home/shun/SDPGatewayVerification/comm/ssltools/keys/client/client.key"
 
+#if 1
+    #define ROOT_PATH "/etc/sdp/keys/"
+#else
+    #define ROOT_PATH "/home/shun/SDPGatewayVerification/comm/ssltools/keys/"
+#endif
+
+// RSA
+
+#define RSA_PUB_KEY_CONTROLLER  ROOT_PATH"rsa/controller_pubkey.pem"
+#define RSA_PRI_KEY_CONTROLLER  ROOT_PATH"rsa/controller_key.pem"
+
+#define RSA_PUB_KEY_GATEWAY  ROOT_PATH"rsa/gateway_pubkey.pem"
+#define RSA_PRI_KEY_GATEWAY  ROOT_PATH"rsa/gateway_key.pem"
+
+// SSL
+
+#define SSL_CRT_CA  ROOT_PATH"certs/ca.crt"
+
+#define SSL_CRT_CONTROLLER  ROOT_PATH"controller/controller.crt"
+#define SSL_KEY_CONTROLLER  ROOT_PATH"controller/controller.key"
+
+#define SSL_CRT_GATEWAY  ROOT_PATH"gateway/gateway.crt"
+#define SSL_KEY_GATEWAY  ROOT_PATH"gateway/gateway.key"
+
+#define SSL_CRT_APPLICATION  ROOT_PATH"application/application.crt"
+#define SSL_KEY_APPLICATION  ROOT_PATH"application/application.key"
+
+#define SSL_CRT_CLIENT  ROOT_PATH"client/client.crt"
+#define SSL_KEY_CLIENT  ROOT_PATH"client/client.key"
 
 #define SSL_ERR_TLOG()                                      \
     do {                                                    \

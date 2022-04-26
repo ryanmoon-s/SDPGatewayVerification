@@ -22,13 +22,14 @@ int AccessClient::AccessApplication_HTTPS(const std::vector<erpc::AccessItem>& l
     // 访问应用
     std::string ip = item.ip();
     int app_tcp_port = item.app().app_tcp_port();
-    std::string request("https request");
+    std::string request("https://www.sdpverificaton.com/test");
     std::string response;
 
     ret = erpc_client_.AppFuncHttpsRequest(request, response, ip, app_tcp_port);
     iAssert(ret, ("AppFuncHttpsRequest faild"));
 
-    TLOG_MSG(("HTTPS Response:"));
+    TLOG_MSG(("HTTPS Success"));
+    TLOG_MSG(("HTTPS Response is here:"));
     TLOG_MSG(("%s", response.c_str()));
 
     return 0;

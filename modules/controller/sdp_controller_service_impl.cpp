@@ -9,6 +9,14 @@
 
 using namespace commtool;
 
+#define HANDLE_VERIFY_FAILD(LOG, ip, port)      \
+    if (ret != 0)                               \
+    {                                           \
+        config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_DEL, ip, port);    \
+        TLOG_MSG((LOG));                                                        \
+        return 1;                                                               \
+    }
+
 int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::string from_ip, int from_port)
 {
     TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
@@ -24,17 +32,21 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     iAssert(ret, ("DecryptVoucher faild"));
     DBG_PROTO(spaVoucher);
 
-    // 用户鉴权
+    /***************************** 用户鉴权 *****************************/
+    
     // 1、账号密码正确
     spa::Account account = spaVoucher.account();
     ret = config->CheckUserPasswd(account.acc(), account.pwd());
-    iAssert(ret, ("CheckUserPasswd faild"));
+    HANDLE_VERIFY_FAILD("CheckUserPasswd faild", from_ip, config->get_tcp_port());
+
     // 2、有可访问的应用列表
     ret = config->CheckUserPermission_Exists(spaVoucher.account().acc());
-    iAssert(ret, ("CheckUserPermission_Exists faild"));
+    HANDLE_VERIFY_FAILD("CheckUserPermission faild", from_ip, config->get_tcp_port());
+
     // 3、ip 地址
     // 4、mac 地址
     // 5、address
+
 
     // 防止重放攻击
     int repeat = config->QueryAndInsertMD5(spaVoucherPacket.md5_data());
@@ -42,12 +54,14 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     {
         TLOG_MSG(("QueryAndInsertMD5 repeat md5"));
         MSG_PROTO(spaVoucherPacket);
-        return -1;
+        return 1;
     }
 
-    // 加入白名单 CONTROLLER
-    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, from_ip, TCP_PORT_CONTROLLER);
+    // 加入本机白名单
+    config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, from_ip, config->get_tcp_port());
     
+    TLOG_MSG((" ~~ NOTICE: CONTROLLER SPA VERIFICATION PASSED ~~ "));
+
     return 0;
 }
 

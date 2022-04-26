@@ -19,7 +19,6 @@ int main()
     iAssert(ret, ("Access_Test faild"));
     TLOG_DBG(("======================== xiaobai ========================"));
 
-
     return 0;
 }
 

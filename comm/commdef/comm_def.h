@@ -35,19 +35,22 @@
 #define IP_BAIDUYUN_PB "106.13.211.246"
 
 // 一台机器
-#define IP_CONTROLLER_IN IP_BAIDUYUN_IN
-#define IP_CONTROLLER_PB IP_BAIDUYUN_PB
+// Client
+#define IP_CLIENT_IN IP_ALIYUN_IN
+#define IP_CLIENT_PB IP_ALIYUN_PB
+
+// 一台机器
+// Controller
+#define IP_CONTROLLER_IN IP_TENCLOUD_IN
+#define IP_CONTROLLER_PB IP_TENCLOUD_PB
 
 // 同机部署
+// Gateway Application
 #define IP_APPGATEWAY_IN IP_BAIDUYUN_IN
 #define IP_APPGATEWAY_PB IP_BAIDUYUN_PB
-
 #define IP_APPLICATION_IN IP_BAIDUYUN_IN
 #define IP_APPLICATION_PB IP_BAIDUYUN_PB
 
-// 一台机器
-#define IP_CLIENT_IN IP_BAIDUYUN_IN
-#define IP_CLIENT_PB IP_BAIDUYUN_PB
 
 // 服务器端口开放 6000-6020
 
@@ -58,3 +61,6 @@
 #define TCP_PORT_APPGATEWAY             6003
 
 #define TCP_PORT_APPLICATION            6004
+
+// 定义则执行iptables封禁
+#define IP_TABLES_EXECUTE

@@ -1,5 +1,6 @@
 #include "sdp_controller.h"
 #include "comm/erpc/erpc_client.h"
+#include "comm/commdef/comm_tool.h"
 #include "comm/iptools/iptables_tool.h"
 #include <thread>
 
@@ -23,7 +24,7 @@ void scanning_func()
     TLOG_MSG(("controller scanning thread begin to run ..."));
     while (true)
     {
-        // 定期扫描不安全的客户端，加入网关黑名单
+        // 模拟：定期扫描不安全的客户端，加入网关黑名单
         this_thread::sleep_for(chrono::seconds(30));
 
         int ret = 0;
@@ -40,5 +41,20 @@ void scanning_func()
         {
             TLOG_MSG(("GateFuncBlackListOpRequest faild"));
         }
+        TLOG_MSG((" ************************* ADD Black ************************* "));
+        MSG_PROTO(req);
+
+        // 去除黑名单
+        this_thread::sleep_for(chrono::seconds(30));
+
+        req.set_op(IP_BLACK_LIST_DEL);
+        ret = ErpcClient(SSL_CRT_CONTROLLER, SSL_KEY_CONTROLLER).GateFuncBlackListOpRequest(req, rsp, header);
+        if (ret < 0)
+        {
+            TLOG_MSG(("GateFuncBlackListOpRequest faild"));
+        }
+        TLOG_MSG((" ************************* DEL Black ************************* "));
+        MSG_PROTO(req);
+        
     }
 }

@@ -14,8 +14,8 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     bool isblack = config->ControllerBlackList_IsIn(from_ip, config->get_app_tcp_port());
     if (isblack)
     {
-        TLOG_MSG(("Black IP, stop"));
-        return -1;
+        TLOG_WARN((" ~~~ BLACK IP, STOP VERIFY ~~~ "));
+        return 1;
     }
 
     // 验票、验证签名是否来自 Controller
@@ -30,14 +30,14 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     if (spaTicket.ip() != from_ip)
     {
         TLOG_MSG(("Ticket Verify faild: IP mismatch"));
-        return -1;
+        return 1;
     }
 
     // 票据是否过期
     if (spaTicket.timestamp() + spaTicket.valid_seconds() < time(NULL))
     {
         TLOG_MSG(("Ticket Verify faild: Ticket expired"));
-        return -1;
+        return 1;
     }
 
     // 防止重放攻击
@@ -47,10 +47,13 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
     // 加入白名单 APPLICATION
     config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, from_ip, config->get_app_tcp_port());
 
+    TLOG_MSG((" ~~ NOTICE: GATEWAY SPA VERIFICATION PASSED ~~ "));
+
     return 0;
 }
 
 // 此接口为Controller调用，控制黑名单
+// 添加后，需要Controller主动触发去除
 int SDPAppGatewayErpcServiceImpl::GateFuncBlackListOp(const erpc::GateFuncBlackListOpReq& objReq, erpc::GateFuncBlackListOpRsp& objRsp, const erpc::Extra& extra)
 {
     MSG_PROTO(objReq);
@@ -73,6 +76,9 @@ int SDPAppGatewayErpcServiceImpl::GateFuncBlackListOp(const erpc::GateFuncBlackL
         ret = whitelist->OpWhiteList(IP_WHITE_LIST_DEL, from_ip, app_tcp_port);
         iAssert(ret, ("OpWhiteList faild"));
     }
+
+    TLOG_MSG((" ************************* %s Black ************************* "
+            , op == IP_BLACK_LIST_ADD ? "ADD" : "DEL"));
 
     MSG_PROTO(objRsp);
     return 0;

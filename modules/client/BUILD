@@ -42,9 +42,9 @@ cc_library(
 )
 
 cc_binary(
-    name = "test_client",
+    name = "client_test",
     srcs = [
-        "test_client.cpp",
+        "client_test.cpp",
     ],
     deps = [
         ":sdp_verify_client_lib",

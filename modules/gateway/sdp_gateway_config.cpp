@@ -56,6 +56,8 @@ int SDPAppGatewayConfig::ControllerBlackList_OP(int op, const std::string& ip, i
     {
         controller_black_list_.erase(ip);
     }
+
+    TLOG_DBG(("success, op:%d, ip:%s, port:%d", op, ip.c_str(), port));
     return 0;
 }
 

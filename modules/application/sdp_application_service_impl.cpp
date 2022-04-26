@@ -2,7 +2,10 @@
 
 int SDPApplicationErpcServiceImpl::AppFuncHttps(const std::string& request, std::string& response)
 {
-    TLOG_MSG(("request:%s", request.c_str()));
+    TLOG_MSG(("HTTPS Get Request:%s", request.c_str()));
+    
     response = "<html><head></head><body>hello world!</body></html>";
+
+    TLOG_MSG(("HTTPS Send Response:%s", response.c_str()));
     return 0;
 }

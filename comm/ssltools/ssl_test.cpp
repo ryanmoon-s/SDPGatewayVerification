@@ -5,7 +5,7 @@
 int main () 
 {
     /* ---------- RSA ---------- */
-
+#if 1
     SSLTools tool;
     std::string text;
     for (int i = 0; i < 100; i++) 
@@ -36,7 +36,7 @@ int main ()
     std::string md5_result;
     tool.MD5Encrypt(md5_result, text);
     TLOG_DBG(("md5_result:%s", md5_result.c_str()));
-
+#endif
 
     return 0;
 }
