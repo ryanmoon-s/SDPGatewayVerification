@@ -2,20 +2,20 @@
 
 static const char *log_level[] = {" ", "ERROR", "WARN-", "MSG--", "DEBUG", "NODEF"};
 
-void TLog::tlog(const char *msg) 
+void TLog::_TLOGPRINT(const char *msg) 
 {
-	time_t t;
-	time(&t);
+	time_t t = time(NULL);
 	char time_str[20];
-    const char *prefix = log_level[_level];
+    const char *prefix = log_level[level_];
 
 	strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", localtime(&t));	
-    fprintf(stdout, "[%s] [%s] [%s:%d %s] %s\n", time_str, prefix, _file.c_str(), _line, _func.c_str(), msg);
+    fprintf(stdout, "[%s] [%s] [%s:%d %s] %s\n", time_str, prefix, file_.c_str(), line_, func_.c_str(), msg);
 }
 
-void TLog::msg_tlog(const char *fmt, ...)
+void TLog::LOGOUT(const char *fmt, ...)
 {
-    char buf[1024];
+    char buf[LOG_BUFF_SIZE];
+    buf[0] = '\0';
 	va_list ap;
 
     va_start(ap, fmt);
@@ -23,13 +23,7 @@ void TLog::msg_tlog(const char *fmt, ...)
     {
         vsnprintf(buf, sizeof(buf), fmt, ap);
     }
-    else 
-    {
-        buf[0] = '\0';
-    }
     va_end(ap);
 	
-	tlog(buf);
+	_TLOGPRINT(buf);
 }
-
-

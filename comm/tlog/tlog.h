@@ -7,6 +7,8 @@
 // 日志级别开关，只打到此级别
 #define LOG_LEVEL_SWITCH 4
 
+#define LOG_BUFF_SIZE 1024
+
 enum LOGLevel{
 	ERR = 1,
 	WARN = 2,
@@ -16,16 +18,19 @@ enum LOGLevel{
 
 class TLog {
 public:
-    TLog(int level, int line, std::string file, std::string func):_level(level), _line(line), _file(file), _func(func) {}
+    TLog(int level, int line, std::string file, std::string func):level_(level), line_(line), file_(file), func_(func) {}
 
-    void msg_tlog(const char *fmt, ...);
-    void tlog(const char *msg);
+    void LOGOUT(const char *fmt, ...);
 
 private:
-    int _level;
-    int _line;
-    std::string _file;
-    std::string _func;
+
+    void _TLOGPRINT(const char *msg);
+
+private:
+    int level_;
+    int line_;
+    std::string file_;
+    std::string func_;
 };
 
 // TLOG
@@ -38,7 +43,7 @@ private:
             break;                                       \
         }                                                \
         TLog tlog(Level, __LINE__, __FILE__, __func__);  \
-        tlog.msg_tlog Wrap;                              \
+        tlog.LOGOUT Wrap;                                \
     } while(0)
 
 #define TLOG_DBG(Wrap)                          \
