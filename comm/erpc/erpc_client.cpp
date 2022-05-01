@@ -42,7 +42,7 @@ int ErpcClient::GateFuncBlackListOpRequest(const erpc::GateFuncBlackListOpReq& o
         connector = std::make_shared<SSLConnector>(cert_, key_, 0);
 
     // 变更 1 cmdid
-    PacketReq.cmdid = erpc::CMD_RPC_APPGATEWAY_FUNC_WHITE_LIST_OP;
+    PacketReq.cmdid = erpc::CMD_RPC_APPGATEWAY_FUNC_BLACK_LIST_OP;
     objReq.SerializeToString(&PacketReq.body);
 
     // 变更 2 ip port
