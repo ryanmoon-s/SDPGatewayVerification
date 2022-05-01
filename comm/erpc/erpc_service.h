@@ -7,7 +7,7 @@
 #include "epoll_dispatcher.h"
 
 namespace erpc {
-    enum ServiceMapTable {
+    enum ServiceForwardTable {
         // TEST
         CMD_UDP_TEST_FUNC_RECV = 1,
         CMD_RPC_TEST_FUNC_REVERSE = 2,

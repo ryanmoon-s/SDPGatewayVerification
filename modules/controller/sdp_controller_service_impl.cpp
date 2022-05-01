@@ -13,7 +13,7 @@ using namespace commtool;
     if (ret != 0)                               \
     {                                           \
         config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_DEL, ip, port);    \
-        TLOG_WARN((LOG));                                                        \
+        TLOG_WARN((LOG));                                                       \
         return 1;                                                               \
     }
 
@@ -33,7 +33,7 @@ int SDPControllerErpcServiceImpl::ConFuncUdpRecv(const std::string& msg, std::st
     DBG_PROTO(spaVoucher);
 
     /***************************** 用户鉴权 *****************************/
-    
+
     // 1、账号密码正确
     spa::Account account = spaVoucher.account();
     ret = config->CheckUserPasswd(account.acc(), account.pwd());
