@@ -39,7 +39,7 @@ ErpcServer::ErpcServer(int id, const std::string& ip, int tcp_port, int udp_port
 
 // application
 ErpcServer::ErpcServer(int id, const std::string& ip, int tcp_port)
-    : id_(id), tcp_port_(tcp_port)
+    : id_(id), listen_ip_(ip), tcp_port_(tcp_port)
 {
     epoll_dispatcher_ = new EpollDispatcher(id, ip, tcp_port);
 }

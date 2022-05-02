@@ -7,6 +7,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
 {
     TLOG_MSG(("GateFuncUdpRecv begin size:%d", msg.size()));
     int ret = 0;
+    spa::SPATicket spaTicket;
     spa::SPATicketPacket spaTicketPacket;
     auto config = SDPAppGatewayConfig::GetInstance();
 
@@ -20,12 +21,11 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
 
     // 验票、验证签名是否来自 Controller
     spaTicketPacket.ParseFromString(msg);
-    ret = SPATools().VerifyTicket(spaTicketPacket, RSA_PUB_KEY_CONTROLLER);
+    ret = SPATools().DecryptTicket(spaTicket, spaTicketPacket, RSA_PUB_KEY_CONTROLLER, RSA_PRI_KEY_GATEWAY);
     iAssert(ret, ("DecryptVoucher faild"));
     MSG_PROTO(spaTicketPacket);
 
     // 票据ip 与 请求者ip 是否相同
-    spa::SPATicket spaTicket = spaTicketPacket.ticket();
     std::string sign_data = spaTicketPacket.sign_data();
     if (spaTicket.ip() != from_ip)
     {

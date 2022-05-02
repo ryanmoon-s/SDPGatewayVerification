@@ -4,7 +4,7 @@
 #ifdef IP_TABLES_EXECUTE
     #define SYSTEM_EXEC_CMD ret=system(cmd.c_str())
 #else
-    #define SYSTEM_EXEC_CMD {}
+    #define SYSTEM_EXEC_CMD TLOG_MSG((" == == Dont exec iptables cmd == =="));
 #endif
 
 IptablesTools::IptablesTools()

@@ -1,6 +1,9 @@
 #include "spa_tool.h"
 #include "comm/tlog/tlog.h"
 #include "comm/commdef/comm_def.h"
+#include "comm/commdef/comm_tool.h"
+
+using namespace commtool;
 
 int main() {
     int ret = 0;
@@ -11,7 +14,6 @@ int main() {
     spaVoucher.mutable_account()->set_pwd("123321");
     spaVoucher.set_mac("127.0.0.1");
     spaVoucher.set_address("ChengDu");
-    spaVoucher.set_is_valid(true);
     spaVoucher.set_timestamp(time(NULL));
     
     SPATools tool;
@@ -25,14 +27,17 @@ int main() {
 
     /* ---------- Ticket ---------- */
     spa::SPATicket spaTicket;
+    spa::SPATicket spaTicket_de;
     spa::SPATicketPacket spaTicketPacket;
     spaTicket.set_ip("127.0.0.1");
     spaTicket.set_timestamp(time(NULL));
-    ret = tool.SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
-    iAssert(ret, ("SignTicket"));
+    ret = tool.EncryptTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER, RSA_PUB_KEY_GATEWAY);
+    iAssert(ret, ("EncryptTicket"));
+    DBG_PROTO(spaTicketPacket);
 
-    ret = tool.VerifyTicket(spaTicketPacket, RSA_PUB_KEY_CONTROLLER);
-    iAssert(ret, ("VerifyTicket"));
+    ret = tool.DecryptTicket(spaTicket_de, spaTicketPacket, RSA_PUB_KEY_CONTROLLER, RSA_PRI_KEY_GATEWAY);
+    iAssert(ret, ("DecryptTicket"));
+    DBG_PROTO(spaTicket_de);
 
     return 0;
 }

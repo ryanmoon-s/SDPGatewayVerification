@@ -42,6 +42,7 @@ message SPATicket
 // 传播路径：Controller (Controller签名) -> Client -> GateWay (Controller验证签名)
 message SPATicketPacket
 {
-    optional SPATicket ticket = 1;
-    optional bytes sign_data = 2;
+    optional bytes enc_data = 1;
+    optional bytes md5_data = 2;
+    optional bytes sign_data = 3;
 }

@@ -36,7 +36,7 @@ SDPAppGateway::SDPAppGateway()
     item->set_gate_udp_port(UDP_PORT_APPGATEWAY);
     item->set_app_tcp_port(TCP_PORT_APPLICATION);
     item->set_appname("HTTPS");
-    item->set_description("Http over tls");
+    item->set_description("HTTP over TLS");
     ret = ErpcClient(SSL_CRT_GATEWAY, SSL_KEY_GATEWAY).ConFuncRegisterAppRequest(req, rsp, header);
     iAssertNoReturn(ret, ("ConFuncRegisterAppRequest faild"));
 }

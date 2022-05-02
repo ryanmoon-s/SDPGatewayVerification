@@ -9,6 +9,7 @@ cc_library(
     ],
     deps = [
         "//comm/commdef:comm_def_lib",
+        "//comm/commdef:comm_tool_lib",
         "//comm/tlog:tlog_lib",
         "//comm/ssltools:ssl_tools_lib",
         "//comm/proto:spa_cc_pb",

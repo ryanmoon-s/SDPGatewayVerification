@@ -216,7 +216,7 @@ int ErpcHandler::ClientTCPRequest(const std::string& request, std::string& respo
     addr.sin_addr.s_addr = inet_addr(ip.c_str()); 
 
     ret = connect(fd, (struct sockaddr*)&addr, (socklen_t)sizeof(addr));
-    iAssert(ret, ("connect"));
+    iAssert(ret, ("connect, ip:%s, port:%d", ip.c_str(), port));
 
     ret = connector->SSLConnect(fd);
     iAssert(ret, ("SSLConnect"));

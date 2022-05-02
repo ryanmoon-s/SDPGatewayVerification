@@ -108,7 +108,7 @@ int SDPControllerErpcServiceImpl::ConFuncGetAccess(const erpc::ConFuncGetAccessR
 
             // Ticket 签名
             spa::SPATicketPacket spaTicketPacket;
-            ret = SPATools().SignTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER);
+            ret = SPATools().EncryptTicket(spaTicketPacket, spaTicket, RSA_PRI_KEY_CONTROLLER, RSA_PUB_KEY_GATEWAY);
             iAssert(ret, ("EncryptVoucher faild"));
             acc_item->mutable_ticket_packet()->CopyFrom(spaTicketPacket);
         }

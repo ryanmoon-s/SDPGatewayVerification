@@ -19,7 +19,6 @@ public:
     // 2、启动运行
     int Run();
 
-
 public:
     // controller gateway
     ErpcServer(int id, const std::string& ip, int tcp_port, int udp_port);
