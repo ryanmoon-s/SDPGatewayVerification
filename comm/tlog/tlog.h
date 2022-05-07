@@ -35,15 +35,15 @@ private:
 
 // TLOG
 
-// TLOG_DBG(("%d", id));
-#define TLOG(Level, Wrap)                                \
-    do {                                                 \
-        if (Level > LOG_LEVEL_SWITCH)                    \
-        {                                                \
-            break;                                       \
-        }                                                \
-        TLog tlog(Level, __LINE__, __FILE__, __func__);  \
-        tlog.LOGOUT Wrap;                                \
+// TLOG(DEBUG, ("%d", id));
+#define TLOG(Level, Wrap)                                   \
+    do {                                                    \
+        if (Level > LOG_LEVEL_SWITCH)                       \
+        {                                                   \
+            break;                                          \
+        }                                                   \
+        TLog tlog(Level, __LINE__, __FILE__, __FUNCTION__); \
+        tlog.LOGOUT Wrap;                                   \
     } while(0)
 
 #define TLOG_DBG(Wrap)                          \
