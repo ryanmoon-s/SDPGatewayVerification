@@ -22,7 +22,7 @@
 
 
 // 线上环境
-// #define ONLINE_ENVIRONMENT
+#define ONLINE_ENVIRONMENT
 
 
 // 服务端监听 用内网IP
@@ -72,7 +72,7 @@
 #define IP_APPLICATION_IN IP_BAIDUYUN_IN
 #define IP_APPLICATION_PB IP_BAIDUYUN_PB
 
-#endif
+#endif  // end of ONLINE_ENVIRONMENT
 
 // 端口部署
 // 服务器端口开放 6000-6020

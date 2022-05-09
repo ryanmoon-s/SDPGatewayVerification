@@ -6,11 +6,11 @@
 
 using namespace std;
 
-void scanning_func();
+void scanning();
 
 int main()
 {
-    thread th(scanning_func);
+    thread th(scanning);
     th.detach();
 
     SDPController controller;
@@ -19,7 +19,7 @@ int main()
     return 0;
 }
 
-void scanning_func()
+void scanning()
 {
     TLOG_MSG(("controller scanning thread begin to run ..."));
     while (true)

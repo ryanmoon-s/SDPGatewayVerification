@@ -18,6 +18,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
         TLOG_WARN((" ~~~ BLACK IP, STOP VERIFY ~~~ "));
         return 1;
     }
+    TLOG_MSG(("VERIFY: not black"));
 
     // 验票、验证签名是否来自 Controller
     spaTicketPacket.ParseFromString(msg);
@@ -32,6 +33,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
         TLOG_WARN((" ~~~ IP DISMATCH, STOP VERIFY ~~~ "));
         return 1;
     }
+    TLOG_MSG(("VERIFY: ip matched"));
 
     // 票据是否过期
     if (spaTicket.timestamp() + spaTicket.valid_seconds() < time(NULL))
@@ -39,6 +41,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
         TLOG_WARN((" ~~~ TICKET EXPIRED, STOP VERIFY ~~~ "));
         return 1;
     }
+    TLOG_MSG(("VERIFY: ticket time valid"));
 
     // 防止重放攻击
     ret = config->QueryAndInsertMD5(sign_data);
@@ -47,6 +50,7 @@ int SDPAppGatewayErpcServiceImpl::GateFuncUdpRecv(const std::string& msg, std::s
         TLOG_WARN((" ~~~ MD5 REPEATED, STOP VERIFY ~~~ "));
         return 1;
     }
+    TLOG_MSG(("VERIFY: not repeated md5"));
 
     // 加入白名单 APPLICATION
     config->GetWhiteListObj()->OpWhiteList(IP_WHITE_LIST_ADD, from_ip, config->get_app_tcp_port());
