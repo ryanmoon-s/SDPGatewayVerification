@@ -8,8 +8,13 @@ void TLog::_TLOGPRINT(const char *msg)
 	char time_buffer[20];
     const char *prefix = log_level[level_];
 
-	strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", localtime(&t));	
-    fprintf(stdout, "[%s] [%s] [%s:%d %s] %s\n", time_buffer, prefix, file_.c_str(), line_, func_.c_str(), msg);
+	strftime(time_buffer, sizeof(time_buffer), "%Y-%m-%d %H:%M:%S", localtime(&t));
+    	
+    // 简短日志
+    fprintf(stdout, "[%s] %s\n", prefix, msg);
+
+    // 完整日志
+    // fprintf(stdout, "[%s] [%s] [%s:%d %s] %s\n", time_buffer, prefix, file_.c_str(), line_, func_.c_str(), msg);
 }
 
 void TLog::LOGOUT(const char *fmt, ...)
